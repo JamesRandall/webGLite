@@ -1,6 +1,7 @@
-import {getCobraMk3, ShipSpecification} from "./ships";
+import {ShipSpecification} from "./ships";
 import {ControlState, getEmptyControlState} from "../controls/controlState";
 import {Position, StarSystem} from "./starSystem";
+import {Resources} from "../resources/resources";
 
 enum MissileTargettingStatusEnum {
     Normal,
@@ -32,8 +33,8 @@ export interface Player {
     scannerCursor: Position
 }
 
-export function getStartingPlayer(currentSystem: StarSystem) : Player {
-    const cobra = getCobraMk3([0,0,0], [0,1,0]).type
+export function getStartingPlayer(resources: Resources, currentSystem: StarSystem) : Player {
+    const cobra = resources.ships.getCobraMk3([0,0,0], [0,1,0]).type
     return {
         previousControlState: getEmptyControlState(),
         controlState: getEmptyControlState(),

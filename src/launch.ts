@@ -1,4 +1,5 @@
-import {setupScene} from "./staticShipScene";
+import {createGameScene} from "./scenes/gameScene";
+import {loadResources} from "./resources/resources";
 require("./extensions.ts")
 
 async function mount(viewCanvas: HTMLCanvasElement, dashboardCanvas: HTMLCanvasElement) {
@@ -8,11 +9,11 @@ async function mount(viewCanvas: HTMLCanvasElement, dashboardCanvas: HTMLCanvasE
         return
     }
     const dashboardGl = dashboardCanvas.getContext("webgl2")!
-
-    const drawScene = await setupScene(gl, dashboardGl)
-    // TODO: we need to look for this resizing
     const viewportExtent = { width: gl.canvas.width, height: gl.canvas.height }
 
+    const resources = await loadResources(gl)
+
+    const drawScene = createGameScene(resources, gl, dashboardGl)
     function render(now:number) {
         drawScene(now, viewportExtent);
         requestAnimationFrame(render);

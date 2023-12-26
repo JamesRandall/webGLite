@@ -1,9 +1,9 @@
-import {Primitives} from "./primitives/primitives";
-import {Game} from "../model/game";
-import {isPointInRect} from "../model/geometry";
+import {Primitives} from "../primitives/primitives";
+import {Game} from "../../model/game";
+import {isPointInRect} from "../../model/geometry";
 import {vec2, vec4} from "gl-matrix";
-import {StarSystem} from "../model/starSystem";
-import {frameColor, frameWidth, galaxySize} from "../constants";
+import {StarSystem} from "../../model/starSystem";
+import {frameColor, frameWidth, galaxySize} from "../../constants";
 
 export function createLocalChartRenderer(draw2d: Primitives) {
     const xMax = 25 * (galaxySize.width/256.0)

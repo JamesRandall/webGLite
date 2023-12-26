@@ -1,5 +1,5 @@
-import {compileShaderProgram} from "../shader";
-import {LocalBubble} from "../model/localBubble";
+import {compileShaderProgram} from "../../shader";
+import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec2} from "gl-matrix";
 
 // This handily shows how to get a shadertoy shader in:

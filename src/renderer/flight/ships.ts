@@ -1,7 +1,7 @@
-import {compileShaderProgram, loadShader} from "../shader";
-import {LocalBubble} from "../model/localBubble";
+import {compileShaderProgram, loadShader} from "../../shader";
+import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec3} from "gl-matrix";
-import {worldToViewRatio} from "../constants";
+import {worldToViewRatio} from "../../constants";
 
 const vsSource = `#version 300 es
     in vec4 aVertexPosition;

@@ -1,11 +1,11 @@
 import {createShipsRenderer} from "./ships";
 import {createStardustRenderer} from "./stardust";
 import {createSunRenderer} from "./sun";
-import {createPrimitiveRenderer, Primitives} from "./primitives/primitives";
-import {Game, SceneEnum} from "../model/game";
-import {createLocalChartRenderer} from "./localChart";
-import {frameColor, frameWidth} from "../constants";
-import {createSystemDetailsRenderer} from "./systemDetails";
+import {createPrimitiveRenderer, Primitives} from "../primitives/primitives";
+import {Game, SceneEnum} from "../../model/game";
+import {createLocalChartRenderer} from "../screens/localChart";
+import {frameColor, frameWidth} from "../../constants";
+import {createSystemDetailsRenderer} from "../screens/systemDetails";
 
 function setup(gl: WebGLRenderingContext) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0)

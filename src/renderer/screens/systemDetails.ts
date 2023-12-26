@@ -1,8 +1,8 @@
-import {Primitives} from "./primitives/primitives";
-import {Game} from "../model/game";
-import {frameColor, frameWidth} from "../constants";
-import {economyText, governmentText, StarSystem} from "../model/starSystem";
-import {distance} from "../model/geometry";
+import {Primitives} from "../primitives/primitives";
+import {Game} from "../../model/game";
+import {frameColor, frameWidth} from "../../constants";
+import {economyText, governmentText, StarSystem} from "../../model/starSystem";
+import {distance} from "../../model/geometry";
 
 export function createSystemDetailsRenderer(draw2d: Primitives) {
     function getNearestSystemToCursor(game: Game) {

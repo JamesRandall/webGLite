@@ -1,8 +1,8 @@
 // We might be able to use gl_PointSize to draw the starfield. Maybe.
 //  https://webglfundamentals.org/webgl/lessons/webgl-points-lines-triangles.html
 
-import {LocalBubble} from "../model/localBubble";
-import {compileShaderProgram} from "../shader";
+import {LocalBubble} from "../../model/localBubble";
+import {compileShaderProgram} from "../../shader";
 import {mat4} from "gl-matrix";
 
 const vsSource = `#version 300 es

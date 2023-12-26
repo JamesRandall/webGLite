@@ -52,9 +52,9 @@ export interface ShipInstance {
     }
 }
 
-const ships : ShipSpecification[] = []
-
 export async function loadShipSpecifications(gl:WebGLRenderingContext) {
+    const ships : ShipSpecification[] = []
+
     const playerDefaults = {
         rollAcceleration: rollAcceleration,
         rollDeceleration: rollDeceleration,
@@ -102,43 +102,7 @@ export async function loadShipSpecifications(gl:WebGLRenderingContext) {
     ships.push({ name: "Transporter", model: await loadModel(gl, "ships/transporter.obj"), ...playerDefaults })
     ships.push({ name: "Viper", model: await loadModel(gl, "ships/viper.obj", 0.2), ...playerDefaults })
     ships.push({ name: "Worm", model: await loadModel(gl, "ships/worm.obj", 0.2), ...playerDefaults })
+
+    return ships
 }
 
-export function getCobraMk3(position: vec3, noseOrientation:vec3) {
-    return {
-        type: ships.find(s => s.name === 'Cobra Mk III')!,
-        position: position,
-        noseOrientation: noseOrientation,
-        roofOrientation: [0,1,0],
-        rightOrientation: [1,0,0],
-        rendering: {
-            shininess: 16.0
-        }
-    } as ShipInstance
-}
-
-export function getViper(position: vec3, noseOrientation:vec3) {
-    return {
-        type: ships.find(s => s.name === 'Viper')!,
-        position: position,
-        noseOrientation: noseOrientation,
-        roofOrientation: [0,1,0],
-        rightOrientation: vec3.create(),
-        rendering: {
-            shininess: 8.0
-        }
-    } as ShipInstance
-}
-
-export function getThargoid(position: vec3, noseOrientation:vec3) {
-    return {
-        type: ships.find(s => s.name === 'Thargoid')!,
-        position: position,
-        noseOrientation: noseOrientation,
-        roofOrientation: [0,1,0],
-        rightOrientation: vec3.create(),
-        rendering: {
-            shininess: 8.0
-        }
-    } as ShipInstance
-}
