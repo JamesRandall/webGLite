@@ -9,7 +9,7 @@ import {Game, SceneEnum} from "../model/game";
 import {createGameLoop} from "../gameloop/gameLoop";
 import {createDashboardRenderer} from "../renderer/dashboard/dashboard";
 import {Resources} from "../resources/resources";
-import {ShipInstance} from "../model/ships";
+import {ShipInstance} from "../model/ShipInstance";
 
 export function createGameScene(resources: Resources, gl: WebGLRenderingContext, dashboardGl: WebGLRenderingContext) {
     const clipSpaceRadius = 512
@@ -63,5 +63,5 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     bindKeys(game.player.controlState)
     const sceneRenderer = createSceneRenderer(gl)
     const dashboardRenderer = createDashboardRenderer(dashboardGl)
-    return createGameLoop(game, sceneRenderer, dashboardRenderer)
+    return createGameLoop(resources, game, sceneRenderer, dashboardRenderer)
 }

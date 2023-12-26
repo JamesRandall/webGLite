@@ -5,7 +5,6 @@ import {updateOrbitalBodies} from "./orbitalBody";
 import {Game} from "../model/game";
 
 export function flightLoop(game: Game, timeDelta:number) {
-    applyControlState(game.player, timeDelta)
     game.localBubble.ships.forEach(ship => {
         updateShipInstance(ship, game.player, timeDelta)
     })

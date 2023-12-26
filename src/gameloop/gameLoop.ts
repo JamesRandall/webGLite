@@ -3,6 +3,8 @@ import {Size} from "../model/geometry";
 import {flightLoop} from "./flightLoop";
 import {Scene} from "../scenes/scene";
 import {createLaunchingLoop} from "./launching";
+import {applyControlState} from "./applyControlState";
+import {Resources} from "../resources/resources";
 
 function applySceneSelection(game: Game) {
     if (game.player.controlState.sceneSelection === null) { return; }
@@ -27,7 +29,7 @@ function applySceneSelection(game: Game) {
     game.player.controlState.sceneSelection = null;
 }
 
-export function createGameLoop(game: Game, drawScene: (game: Game, timeDelta: number) => void, drawDashboard: (game: Game) => void) {
+export function createGameLoop(resources: Resources, game: Game, drawScene: (game: Game, timeDelta: number) => void, drawDashboard: (game: Game) => void) {
     let then = 0;
     let deltaTime = 0
     let launchingLoop: ((deltaTime: number) => void) | null = null
@@ -38,6 +40,7 @@ export function createGameLoop(game: Game, drawScene: (game: Game, timeDelta: nu
             then = now;
 
             applySceneSelection(game)
+            applyControlState(game.player, deltaTime)
 
             // the flight loop runs even if we're looking at another screen in gameplay unless we are docked
             if (!game.player.isDocked) {
@@ -45,7 +48,7 @@ export function createGameLoop(game: Game, drawScene: (game: Game, timeDelta: nu
             }
             if (game.currentScene === SceneEnum.Launching) {
                 if (launchingLoop === null) {
-                    launchingLoop = createLaunchingLoop(game)
+                    launchingLoop = createLaunchingLoop(game, resources)
                 }
                 launchingLoop!(deltaTime)
             }

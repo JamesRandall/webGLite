@@ -1,9 +1,11 @@
 import {Player} from "../model/player";
 
 export function applyControlState(player: Player, timeDelta: number) {
-    applyRoll(player, timeDelta)
-    applyPitch(player, timeDelta)
-    applyAcceleration(player, timeDelta)
+    if (!player.isDocked) {
+        applyRoll(player, timeDelta)
+        applyPitch(player, timeDelta)
+        applyAcceleration(player, timeDelta)
+    }
 
     applyCursors(player, timeDelta)
 }

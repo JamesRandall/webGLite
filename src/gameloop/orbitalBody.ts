@@ -1,7 +1,6 @@
-import {ShipInstance} from "../model/ships";
 import {Player} from "../model/player";
 import {vec3} from "gl-matrix";
-import {LocalBubble, OrbitalBody} from "../model/localBubble";
+import {OrbitalBody} from "../model/localBubble";
 import {Game} from "../model/game";
 
 export function updateOrbitalBodies(game: Game, timeDelta: number) {

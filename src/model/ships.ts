@@ -41,20 +41,6 @@ export interface ShipSpecification {
     maxMissiles: number
 }
 
-export interface ShipInstance {
-    type: ShipSpecification,
-    position: vec3,
-    noseOrientation: vec3
-    roofOrientation: vec3
-    rightOrientation: vec3,
-    roll: number,
-    pitch: number,
-    speed: number,
-    rendering: {
-        shininess: number
-    }
-}
-
 export async function loadShipSpecifications(gl:WebGLRenderingContext) {
     const ships : ShipSpecification[] = []
 
