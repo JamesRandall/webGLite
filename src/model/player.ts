@@ -9,6 +9,42 @@ enum MissileTargettingStatusEnum {
     LockedOn
 }
 
+export enum LegalStatusEnum {
+    Clean
+}
+
+export enum CombatRatingEnum {
+    Harmless,
+    MostlyHarmless,
+    Poor,
+    Average,
+    AboveAverage,
+    Competent,
+    Dangerous,
+    Deadly,
+    Elite
+}
+
+export enum LaserTypeEnum {
+    None,
+    Pulse,
+    Beam,
+    Mining,
+    Military
+}
+
+export interface PlayerEquipment {
+    frontLaser: LaserTypeEnum,
+    aftLaser: LaserTypeEnum,
+    portLaser: LaserTypeEnum,
+    starboardLaser: LaserTypeEnum
+    largeCargoBay: boolean,
+    ecmSystem: boolean,
+    fuelScoops: boolean,
+    galacticHyperdrive: boolean
+    dockingComputer: boolean
+}
+
 export interface Player {
     previousControlState: ControlState
     controlState: ControlState
@@ -16,6 +52,10 @@ export interface Player {
     pitch: number
     roll: number
     speed: number
+    cash: number,
+    name: string,
+    legalStatus: LegalStatusEnum,
+    combatRating: CombatRatingEnum,
     isDocked: boolean
     fuel: number
     energyBankLevel: number[]
@@ -28,6 +68,7 @@ export interface Player {
         currentNumber: number
         status: MissileTargettingStatusEnum
     }
+    equipment: PlayerEquipment
     currentSystem: StarSystem // the system the player is currently in
     selectedSystem: StarSystem // the system the player has selected in the star charts
     scannerCursor: Position
@@ -42,7 +83,11 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         pitch: 0.0, // radians per second
         roll: 0.0, // radians per second
         speed: 0.0,
-        isDocked: false,
+        cash: 100.0,
+        name: 'Jameson',
+        legalStatus: LegalStatusEnum.Clean,
+        combatRating: CombatRatingEnum.Harmless,
+        isDocked: true,
         fuel: cobra.maxFuel, // 70 is a full tank, goes 7 lightyears
         energyBankLevel: [cobra.maxEnergyBankLevel[0]-1,cobra.maxEnergyBankLevel[1],cobra.maxEnergyBankLevel[2],cobra.maxEnergyBankLevel[3]],
         cabinTemperature: 10,
@@ -53,6 +98,17 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         missiles: {
             currentNumber: cobra.maxMissiles,
             status: MissileTargettingStatusEnum.Normal
+        },
+        equipment: {
+            frontLaser: LaserTypeEnum.Pulse,
+            aftLaser: LaserTypeEnum.None,
+            portLaser: LaserTypeEnum.None,
+            starboardLaser: LaserTypeEnum.None,
+            largeCargoBay: false,
+            dockingComputer: false,
+            ecmSystem: false,
+            galacticHyperdrive: false,
+            fuelScoops: false
         },
         currentSystem: currentSystem,
         selectedSystem: currentSystem,

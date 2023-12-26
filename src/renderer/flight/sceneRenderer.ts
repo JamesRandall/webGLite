@@ -1,12 +1,13 @@
 import {createShipsRenderer} from "./ships";
 import {createStardustRenderer} from "./stardust";
 import {createSunRenderer} from "./sun";
-import {createPrimitiveRenderer, Primitives} from "../primitives/primitives";
+import {createPrimitiveRenderer} from "../primitives/primitives";
 import {Game, SceneEnum} from "../../model/game";
 import {createLocalChartRenderer} from "../screens/localChart";
-import {frameColor, frameWidth} from "../../constants";
 import {createSystemDetailsRenderer} from "../screens/systemDetails";
 import {drawFrame, setupGl} from "../common";
+import {createPlayerDetailsRenderer} from "../screens/playerDetails";
+import {createLaunchingRenderer} from "../screens/launching";
 
 export function createSceneRenderer(gl:WebGLRenderingContext) {
     const shipRenderer = createShipsRenderer(gl)
@@ -15,6 +16,8 @@ export function createSceneRenderer(gl:WebGLRenderingContext) {
     const draw2d = createPrimitiveRenderer(gl)
     const localChartRenderer = createLocalChartRenderer(draw2d)
     const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)
+    const playerDetailsRenderer = createPlayerDetailsRenderer(draw2d)
+    const launchingRenderer = createLaunchingRenderer(gl)
 
     return (game:Game, timeDelta:number) => {
         setupGl(gl)
@@ -24,13 +27,23 @@ export function createSceneRenderer(gl:WebGLRenderingContext) {
                 shipRenderer(game.localBubble)
                 sunRenderer(game.localBubble,timeDelta)
                 stardustRenderer(game.localBubble)
+                break
 
-                break;
             case SceneEnum.LocalMap:
                 localChartRenderer(game)
-                break;
+                break
+
             case SceneEnum.SystemDetails:
                 systemDetailsRenderer(game)
+                break
+
+            case SceneEnum.PlayerDetails:
+                playerDetailsRenderer(game)
+                break
+
+            case SceneEnum.Launching:
+                launchingRenderer(game)
+
         }
 
         gl.disable(gl.DEPTH_TEST)

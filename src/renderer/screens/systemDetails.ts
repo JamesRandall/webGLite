@@ -20,7 +20,7 @@ export function createSystemDetailsRenderer(draw2d: Primitives) {
         const system = getNearestSystemToCursor(game)
         game.player.scannerCursor = {...system.galacticPosition}
         const title = `DATA ON ${system.name.toUpperCase()}`
-        draw2d.text.draw(title, [19-title.length/2,0.75])
+        draw2d.text.draw(title, [19-title.length/2,0.5])
         draw2d.rect([0,40], [draw2d.size().width, frameWidth], frameColor)
         //draw2d.text.draw("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", [0,0])
 

@@ -15,7 +15,9 @@ async function mount(viewCanvas: HTMLCanvasElement, dashboardCanvas: HTMLCanvasE
     const resources = await loadResources(gl)
 
     //let scene = createGameScene(resources, gl, dashboardGl)
-    let scene = createPregameScene(resources, gl, dashboardGl)
+    let scene =
+        new URLSearchParams(window.location.search).get("skipStart") !== null ?
+            createGameScene(resources, gl, dashboardGl) : createPregameScene(resources, gl, dashboardGl)
     function render(now:number) {
         scene = scene.update(now, viewportExtent) ?? scene;
         requestAnimationFrame(render);

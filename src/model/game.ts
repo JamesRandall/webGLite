@@ -5,7 +5,15 @@ import {LocalBubble} from "./localBubble";
 export enum SceneEnum {
     Front,
     LocalMap,
-    SystemDetails
+    SystemDetails,
+    PlayerDetails,
+    Inventory,
+    Launching
+}
+
+export interface LaunchingData {
+    outboundRadii: number[]
+    inboundRadii: number[]
 }
 
 export interface Game {
@@ -13,4 +21,5 @@ export interface Game {
     localBubble: LocalBubble
     stars: StarSystem[]
     currentScene: SceneEnum
+    launching: LaunchingData | null
 }

@@ -95,6 +95,8 @@ export function createScannerShipRenderer(gl:WebGLRenderingContext, projectionMa
     const programInfo = initShaderProgram(gl)!
 
     return function(game: Game) {
+        if (game.player.isDocked) { return }
+
         game.localBubble.ships.forEach(ship => {
             const normalisedPosition = vec3.divide(vec3.create(), ship.position, scannerRadialWorldRange)
             if (Math.abs(normalisedPosition[0]) > 1.0 ||

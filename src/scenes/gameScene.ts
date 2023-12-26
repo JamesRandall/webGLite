@@ -1,4 +1,3 @@
-import {vec3} from "gl-matrix";
 import {getStartingPlayer} from "../model/player";
 import {bindKeys} from "../controls/bindKeys";
 import {createSceneRenderer} from "../renderer/flight/sceneRenderer";
@@ -8,19 +7,19 @@ import {createSquareModel, createSquareModelWithTexture} from "../resources/mode
 import {generateGalaxy} from "../proceduralGeneration/starSystems";
 import {Game, SceneEnum} from "../model/game";
 import {createGameLoop} from "../gameloop/gameLoop";
-import {scannerRadialWorldRange} from "../constants";
 import {createDashboardRenderer} from "../renderer/dashboard/dashboard";
 import {Resources} from "../resources/resources";
+import {ShipInstance} from "../model/ships";
 
 export function createGameScene(resources: Resources, gl: WebGLRenderingContext, dashboardGl: WebGLRenderingContext) {
     const clipSpaceRadius = 512
 
     // TODO: The ship models are currently pointing the wrong way round, wwe need to rotate them around Y 180 degrees
     // when we load them!
-    const ships = [
-        resources.ships.getCobraMk3(vec3.fromValues(0, 0.0, -scannerRadialWorldRange[2]/2.0), vec3.fromValues(0.0, 0.0, -1.0)),
-        resources.ships.getViper(vec3.fromValues(1500.0, -(scannerRadialWorldRange[1]/9.0), -(scannerRadialWorldRange[2]/3.0)), vec3.fromValues(0.0, 0.0, 1.0)),
-        resources.ships.getCobraMk3(vec3.fromValues(0, -4000.0, 4000.0), vec3.fromValues(0.0, 0.0, -1.0)),
+    const ships : ShipInstance[] = [
+        //resources.ships.getCobraMk3(vec3.fromValues(0, 0.0, -scannerRadialWorldRange[2]/2.0), vec3.fromValues(0.0, 0.0, -1.0)),
+        //resources.ships.getViper(vec3.fromValues(1500.0, -(scannerRadialWorldRange[1]/9.0), -(scannerRadialWorldRange[2]/3.0)), vec3.fromValues(0.0, 0.0, 1.0)),
+        //resources.ships.getCobraMk3(vec3.fromValues(0, -4000.0, 4000.0), vec3.fromValues(0.0, 0.0, -1.0)),
         //getThargoid(vec3.fromValues(0.0, -30.0, -200.0), vec3.fromValues(0.0, 0.0, 1.0))
     ]
 
@@ -57,7 +56,8 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
         player: getStartingPlayer(resources, startingSystem),
         stars: stars,
         localBubble: localBubble,
-        currentScene: SceneEnum.Front
+        launching: null,
+        currentScene: SceneEnum.PlayerDetails
     }
 
     bindKeys(game.player.controlState)
