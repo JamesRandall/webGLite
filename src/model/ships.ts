@@ -47,6 +47,9 @@ export interface ShipInstance {
     noseOrientation: vec3
     roofOrientation: vec3
     rightOrientation: vec3,
+    roll: number,
+    pitch: number,
+    speed: number,
     rendering: {
         shininess: number
     }
@@ -76,32 +79,34 @@ export async function loadShipSpecifications(gl:WebGLRenderingContext) {
         maxMissiles: 4
     }
 
-    ships.push({ name: "Adder", model: await loadModel(gl, "ships/adder.obj"), ...playerDefaults })
-    ships.push({ name: "Anaconda", model: await loadModel(gl, "ships/anaconda.obj"), ...playerDefaults })
-    ships.push({ name: "Asp", model: await loadModel(gl, "ships/asp2.obj"), ...playerDefaults })
-    ships.push({ name: "Asteroid", model: await loadModel(gl, "ships/asteroid.obj"), ...playerDefaults })
-    ships.push({ name: "Boa", model: await loadModel(gl, "ships/boa.obj"), ...playerDefaults })
-    ships.push({ name: "Boulder", model: await loadModel(gl, "ships/boulder.obj"), ...playerDefaults })
-    ships.push({ name: "Cargo", model: await loadModel(gl, "ships/cargo.obj"), ...playerDefaults })
-    ships.push({ name: "Cobra Mk I", model: await loadModel(gl, "ships/cobra1.obj"), ...playerDefaults })
-    ships.push({ name: "Cobra Mk III", model: await loadModel(gl, "ships/cobra3.obj", 0.05), ...playerDefaults })
-    ships.push({ name: "Constrictor", model: await loadModel(gl, "ships/constric.obj", 0.05), ...playerDefaults })
-    ships.push({ name: "Coriolis", model: await loadModel(gl, "ships/coriolis.obj"), ...playerDefaults })
-    ships.push({ name: "Dodo", model: await loadModel(gl, "ships/dodo.obj"), ...playerDefaults })
-    ships.push({ name: "Escape Pod", model: await loadModel(gl, "ships/escape.obj"), ...playerDefaults })
-    ships.push({ name: "Fer de Lance", model: await loadModel(gl, "ships/ferdelan.obj"), ...playerDefaults })
-    ships.push({ name: "Gecko", model: await loadModel(gl, "ships/gecko.obj"), ...playerDefaults })
-    ships.push({ name: "Krait", model: await loadModel(gl, "ships/krait.obj"), ...playerDefaults })
-    ships.push({ name: "Mamba", model: await loadModel(gl, "ships/mamba.obj"), ...playerDefaults })
-    ships.push({ name: "Missile", model: await loadModel(gl, "ships/missile.obj"), ...playerDefaults })
-    ships.push({ name: "Moray", model: await loadModel(gl, "ships/moray.obj"), ...playerDefaults })
-    ships.push({ name: "Python", model: await loadModel(gl, "ships/python.obj"), ...playerDefaults })
-    ships.push({ name: "Shuttle", model: await loadModel(gl, "ships/shuttle.obj"), ...playerDefaults })
-    ships.push({ name: "Sidewinder", model: await loadModel(gl, "ships/sidewind.obj"), ...playerDefaults })
-    ships.push({ name: "Thargoid", model: await loadModel(gl, "ships/thargoid.obj", 0.01), ...playerDefaults })
-    ships.push({ name: "Transporter", model: await loadModel(gl, "ships/transporter.obj"), ...playerDefaults })
-    ships.push({ name: "Viper", model: await loadModel(gl, "ships/viper.obj", 0.2), ...playerDefaults })
-    ships.push({ name: "Worm", model: await loadModel(gl, "ships/worm.obj", 0.2), ...playerDefaults })
+    const scale = 0.05
+    // put the Cobra at the start as we always want to kick off the new game screen with that
+    ships.push({ name: "Cobra Mk III", model: await loadModel(gl, "ships/cobra3.obj", scale), ...playerDefaults })
+    ships.push({ name: "Adder", model: await loadModel(gl, "ships/adder.obj", scale), ...playerDefaults })
+    ships.push({ name: "Anaconda", model: await loadModel(gl, "ships/anaconda.obj", scale), ...playerDefaults })
+    ships.push({ name: "Asp", model: await loadModel(gl, "ships/asp2.obj", scale), ...playerDefaults })
+    ships.push({ name: "Asteroid", model: await loadModel(gl, "ships/asteroid.obj", scale), ...playerDefaults })
+    ships.push({ name: "Boa", model: await loadModel(gl, "ships/boa.obj", scale), ...playerDefaults })
+    ships.push({ name: "Boulder", model: await loadModel(gl, "ships/boulder.obj", scale), ...playerDefaults })
+    ships.push({ name: "Cargo", model: await loadModel(gl, "ships/cargo.obj", scale), ...playerDefaults })
+    ships.push({ name: "Cobra Mk I", model: await loadModel(gl, "ships/cobra1.obj", scale), ...playerDefaults })
+    ships.push({ name: "Constrictor", model: await loadModel(gl, "ships/constric.obj", scale), ...playerDefaults })
+    ships.push({ name: "Coriolis", model: await loadModel(gl, "ships/coriolis.obj", scale), ...playerDefaults })
+    ships.push({ name: "Dodo", model: await loadModel(gl, "ships/dodo.obj", scale), ...playerDefaults })
+    ships.push({ name: "Escape Pod", model: await loadModel(gl, "ships/escape.obj", scale), ...playerDefaults })
+    ships.push({ name: "Fer de Lance", model: await loadModel(gl, "ships/ferdelan.obj", scale), ...playerDefaults })
+    ships.push({ name: "Gecko", model: await loadModel(gl, "ships/gecko.obj", scale), ...playerDefaults })
+    ships.push({ name: "Krait", model: await loadModel(gl, "ships/krait.obj", scale), ...playerDefaults })
+    ships.push({ name: "Mamba", model: await loadModel(gl, "ships/mamba.obj", scale), ...playerDefaults })
+    ships.push({ name: "Missile", model: await loadModel(gl, "ships/missile.obj", scale), ...playerDefaults })
+    ships.push({ name: "Moray", model: await loadModel(gl, "ships/moray.obj", scale), ...playerDefaults })
+    ships.push({ name: "Python", model: await loadModel(gl, "ships/python.obj", scale), ...playerDefaults })
+    ships.push({ name: "Shuttle", model: await loadModel(gl, "ships/shuttle.obj", scale), ...playerDefaults })
+    ships.push({ name: "Sidewinder", model: await loadModel(gl, "ships/sidewind.obj", scale), ...playerDefaults })
+    ships.push({ name: "Thargoid", model: await loadModel(gl, "ships/thargoid.obj", scale), ...playerDefaults })
+    ships.push({ name: "Transporter", model: await loadModel(gl, "ships/transporter.obj", scale), ...playerDefaults })
+    ships.push({ name: "Viper", model: await loadModel(gl, "ships/viper.obj", scale), ...playerDefaults })
+    ships.push({ name: "Worm", model: await loadModel(gl, "ships/worm.obj", scale), ...playerDefaults })
 
     return ships
 }

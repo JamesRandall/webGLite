@@ -1,7 +1,7 @@
 import {vec3} from "gl-matrix";
 import {getStartingPlayer} from "../model/player";
 import {bindKeys} from "../controls/bindKeys";
-import {createSceneRenderer} from "../renderer/flight/scene";
+import {createSceneRenderer} from "../renderer/flight/sceneRenderer";
 import {createStardust} from "../gameloop/stardust";
 import {LocalBubble} from "../model/localBubble";
 import {createSquareModel, createSquareModelWithTexture} from "../resources/models";

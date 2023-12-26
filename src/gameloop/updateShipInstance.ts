@@ -43,5 +43,8 @@ function rotateOrientationVectorsAccordingToPlayerPitchAndRoll(shipInstance: Shi
 }
 
 function rotateShipByPitchAndRoll(shipInstance: ShipInstance, timeDelta:number) {
-
+    vec3.rotateZ(shipInstance.noseOrientation, shipInstance.noseOrientation, [0,0,0], shipInstance.roll  * timeDelta)
+    vec3.rotateZ(shipInstance.roofOrientation, shipInstance.roofOrientation, [0,0,0], shipInstance.roll * timeDelta)
+    vec3.rotateX(shipInstance.noseOrientation, shipInstance.noseOrientation, [0,0,0], shipInstance.pitch * timeDelta)
+    vec3.rotateX(shipInstance.roofOrientation, shipInstance.roofOrientation, [0,0,0], shipInstance.pitch * timeDelta)
 }

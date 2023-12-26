@@ -6,26 +6,7 @@ import {Game, SceneEnum} from "../../model/game";
 import {createLocalChartRenderer} from "../screens/localChart";
 import {frameColor, frameWidth} from "../../constants";
 import {createSystemDetailsRenderer} from "../screens/systemDetails";
-
-function setup(gl: WebGLRenderingContext) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0)
-    gl.clearDepth(1.0)
-    gl.enable(gl.DEPTH_TEST)
-    gl.depthFunc(gl.LEQUAL)
-    gl.enable(gl.BLEND)
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-}
-
-function drawFrame(draw2d: Primitives) {
-    const sz = draw2d.size()
-
-
-    draw2d.rect([0,0], [sz.width, frameWidth], frameColor)
-    draw2d.rect([0,sz.height-frameWidth], [sz.width, frameWidth], frameColor)
-    draw2d.rect([0,0], [frameWidth, sz.height], frameColor)
-    draw2d.rect([sz.width-frameWidth,0], [frameWidth, sz.height], frameColor)
-}
+import {drawFrame, setupGl} from "../common";
 
 export function createSceneRenderer(gl:WebGLRenderingContext) {
     const shipRenderer = createShipsRenderer(gl)
@@ -36,7 +17,7 @@ export function createSceneRenderer(gl:WebGLRenderingContext) {
     const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)
 
     return (game:Game, timeDelta:number) => {
-        setup(gl)
+        setupGl(gl)
 
         switch(game.currentScene) {
             case SceneEnum.Front:

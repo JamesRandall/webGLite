@@ -1,5 +1,6 @@
 import {createGameScene} from "./scenes/gameScene";
 import {loadResources} from "./resources/resources";
+import {createPregameScene} from "./scenes/pregameScene";
 require("./extensions.ts")
 
 async function mount(viewCanvas: HTMLCanvasElement, dashboardCanvas: HTMLCanvasElement) {
@@ -13,9 +14,10 @@ async function mount(viewCanvas: HTMLCanvasElement, dashboardCanvas: HTMLCanvasE
 
     const resources = await loadResources(gl)
 
-    const drawScene = createGameScene(resources, gl, dashboardGl)
+    //let scene = createGameScene(resources, gl, dashboardGl)
+    let scene = createPregameScene(resources, gl, dashboardGl)
     function render(now:number) {
-        drawScene(now, viewportExtent);
+        scene = scene.update(now, viewportExtent) ?? scene;
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render)
