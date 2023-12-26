@@ -1,0 +1,29 @@
+{
+  "name": "elitedemo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "private": true,
+  "source": "src/index.html",
+  "devDependencies": {
+    "@parcel/transformer-glsl": "^2.9.3",
+    "@parcel/transformer-inline-string": "^2.9.3",
+    "@types/delaunator": "^5.0.0",
+    "@types/jest": "^29.5.11",
+    "jest": "^29.7.0",
+    "parcel": "^2.9.3",
+    "parcel-reporter-static-files-copy": "^1.5.3",
+    "postcss": "^8.4.23",
+    "serve": "^14.2.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "delaunator": "^5.0.0",
+    "gl-matrix": "^3.4.3"
+  }
+}

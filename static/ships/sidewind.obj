@@ -1,0 +1,24 @@
+mtllib sidewind.mtl
+
+o obj1
+v -32 0 36
+v 32 0 36
+v 64 0 -28
+v -64 0 -28
+v 0 16 -28
+v 0 -16 -28
+v -12 6 -28
+v 12 6 -28
+v 12 -6 -28
+v -12 -6 -28
+
+f 1 2 5
+f 1 2 6
+f 1 4 5
+f 1 4 6
+f 2 3 5
+f 2 3 6
+f 3 5 4
+f 3 4 6
+# Vertices: 10, normals: 0, texture coordinates: 0, faces: 8
+

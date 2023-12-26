@@ -1,0 +1,14 @@
+import {updateShipInstance} from "./updateShipInstance";
+import {updateStardust} from "./stardust";
+import {applyControlState} from "./applyControlState";
+import {updateOrbitalBodies} from "./orbitalBody";
+import {Game} from "../model/game";
+
+export function flightLoop(game: Game, timeDelta:number) {
+    applyControlState(game.player, timeDelta)
+    game.localBubble.ships.forEach(ship => {
+        updateShipInstance(ship, game.player, timeDelta)
+    })
+    updateOrbitalBodies(game, timeDelta)
+    updateStardust(game, timeDelta)
+}

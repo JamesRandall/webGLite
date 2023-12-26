@@ -1,0 +1,8 @@
+node_modules
+dist
+.parcel-cache
+.idea
+.DS_Store
+build
+*.js
+*.js.map

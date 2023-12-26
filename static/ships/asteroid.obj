@@ -1,0 +1,29 @@
+mtllib asteroid.mtl
+
+o obj1
+v 0 80 0
+v -80 -10 0
+v 0 -80 0
+v 70 -40 0
+v 60 50 0
+v 50 0 60
+v -40 0 70
+v 0 30 -75
+v 0 -50 -60
+
+f 1 2 7
+f 1 2 8
+f 1 5 6
+f 1 5 8
+f 1 6 7
+f 2 3 7
+f 2 3 9
+f 2 8 9
+f 3 4 6
+f 3 4 9
+f 3 6 7
+f 4 5 6
+f 4 5 8
+f 4 8 9
+# Vertices: 9, normals: 0, texture coordinates: 0, faces: 14
+
