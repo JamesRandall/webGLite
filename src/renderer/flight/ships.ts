@@ -208,9 +208,6 @@ export function createShipsRenderer(gl:WebGLRenderingContext) {
             // Firstly we point the ship along the nose orientation
             const targetToMatrix = mat4.targetTo(mat4.create(), [0,0,0], ship.noseOrientation, ship.roofOrientation)
             const targetToQuat = mat4.getRotation(quat.create(), targetToMatrix)
-
-            //quat.setAxisAngle(targetToQuat, ship.noseOrientation, 0.1)
-            //const targetToQuat = quat.setAxes(quat.create(), ship.noseOrientation, ship.rightOrientation, ship.roofOrientation)
             const viewPosition = vec3.multiply(vec3.create(), ship.position, worldToViewRatio)
             const modelViewMatrix = mat4.fromRotationTranslation(mat4.create(), targetToQuat, viewPosition)
             const normalMatrix = mat4.create()

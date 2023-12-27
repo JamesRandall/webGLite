@@ -56,7 +56,7 @@ export function createLaunchingLoop(game: Game, resources: Resources) {
 
 function createLocalBubbleOnLaunch(resources: Resources, game: Game) : LocalBubble {
     const station = resources.ships.getCoriolis([0,0,250], [0,0,-1])
-    station.roll = Math.PI/4
+    //station.roll = Math.PI/4
     return {
         ...game.localBubble,
         ships: [ station ]

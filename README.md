@@ -37,6 +37,10 @@ http://www.elitehomepage.org/archive/index.htm
 
 The ship models in this demo / conversion come from taking those VRML files and running them through a converter to Wavefront Obj format which is then pretty straightforward to load into vertex and index buffers in WebGL.
 
+The lighting might occasionally look odd - I've discovered the winding order of the faces isn't consistent so will need to fix this up (winding order impacts the direction in which a normal faces, you can tell when a normal is wrong as the face will be strangely dark even when facing the sun - it will only be impacted by the ambient light).
+
+It looks like importing and exporting from Blender will resolve this, but need to expand the model importing code. No biggie. Do today! 
+
 ## The scanner
 
 I'm currently rendering the scanner in 3D using a texture however this leads to its "dirty" look as we are looking at it obliquely. Alternatives to consider:

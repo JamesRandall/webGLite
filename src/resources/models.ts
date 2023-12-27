@@ -13,7 +13,10 @@ export interface Model {
 const materials:{ [key:string]: number[] } = {
     "gray": [0.5, 0.5, 0.5, 1.0],
     "orange": [0xf5/255.0, 0x9e/255.0, 0x0b/255.0, 1.0],
-    "lightblue": [0x7d/255.0, 0xd3/255.0, 0xfd/255.0, 1.0]
+    "lightblue": [0x7d/255.0, 0xd3/255.0, 0xfd/255.0, 1.0],
+    "red": [1.0, 0.0, 0.0, 1.0],
+    "green": [0.0, 1.0, 0.0, 1.0],
+    "yellow": [1.0, 1.0, 0.0, 0.0]
 }
 
 function loadTexture(gl:WebGLRenderingContext, url:string, smoothScaling:boolean=false) {
@@ -118,7 +121,9 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
         const numberOfTriangles = face.length-2
         const subFaces = []
         const newMaterial = materialChanges[index]
-        if (newMaterial) { currentColor = materials[newMaterial] }
+        if (newMaterial) {
+            currentColor = materials[newMaterial]
+        }
         for(let subFaceIndex=0; subFaceIndex < numberOfTriangles; subFaceIndex++) {
             //const faceVertices = face.slice(subFaceIndex,subFaceIndex+3).map(index => vertices[index-1])
             const faceVertices = [
@@ -133,8 +138,8 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
             if (faceVertices.length < 3) debugger;
 
             // The normal of a triangle is the cross-product of two edges of the triangle, normalised for the lighting
-            vec3.subtract(edge1, faceVertices[1], faceVertices[0])
-            vec3.subtract(edge2, faceVertices[2], faceVertices[1])
+            vec3.subtract(edge1, faceVertices[0], faceVertices[1])
+            vec3.subtract(edge2, faceVertices[1], faceVertices[2])
             vec3.cross(normal, edge1, edge2)
             vec3.normalize(normal, normal)
 
