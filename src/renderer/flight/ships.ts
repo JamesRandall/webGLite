@@ -16,6 +16,9 @@ const vsSource = `#version 300 es
     out lowp vec4 vColor;
     out highp vec3 vNormal;
     out highp vec3 vVertex;
+    //out highp vec3 v_surfaceToLight;
+    
+    uniform vec3 uLightWorldPosition;
 
     void main(void) {
       gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
@@ -23,6 +26,11 @@ const vsSource = `#version 300 es
       vVertex = vec3(uModelViewMatrix*aVertexPosition);
       highp vec3 transformedNormal = mat3(uNormalMatrix) * aVertexNormal;
       vNormal = transformedNormal;
+      
+      // this simpler lighting model can be used to test normals
+      /*
+      vec3 surfaceWorldPosition = (uModelViewMatrix * aVertexPosition).xyz;
+      v_surfaceToLight = uLightWorldPosition - surfaceWorldPosition;*/
     }
   `
 const fsSource = `#version 300 es
@@ -32,6 +40,7 @@ const fsSource = `#version 300 es
     in lowp vec4 vColor;
     in highp vec3 vNormal;
     in highp vec3 vVertex;
+    //in highp vec3 v_surfaceToLight;
     
     out lowp vec4 outputColor;
     
@@ -76,6 +85,13 @@ const fsSource = `#version 300 es
   color = ambient_color + diffuse_color + specular_color;
    
         outputColor = vec4(color,vColor.a);
+        
+        // this simpler lighting model can be used for debugging normals
+        /*
+        vec3 surfaceToLightDirection = normalize(v_surfaceToLight);
+        float light = dot(vNormal, surfaceToLightDirection);
+        outputColor = vColor;
+        outputColor.rgb *= light;*/
     }
   `
 

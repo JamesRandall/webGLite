@@ -46,6 +46,7 @@ export function createLaunchingLoop(game: Game, resources: Resources) {
                     game.localBubble = createLocalBubbleOnLaunch(resources, game)
                     game.player.isDocked = false
                     game.player.speed = game.player.ship.maxSpeed * 0.25
+                    game.player.roll = game.player.ship.maxRollSpeed/4
                     //game.player.roll = Math.PI/2
                     game.currentScene = SceneEnum.Front
                 }
@@ -56,7 +57,7 @@ export function createLaunchingLoop(game: Game, resources: Resources) {
 
 function createLocalBubbleOnLaunch(resources: Resources, game: Game) : LocalBubble {
     const station = resources.ships.getCoriolis([0,0,250], [0,0,-1])
-    //station.roll = Math.PI/4
+    station.roll = game.player.ship.maxRollSpeed/4
     return {
         ...game.localBubble,
         ships: [ station ]
