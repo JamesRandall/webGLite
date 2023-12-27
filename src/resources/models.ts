@@ -19,7 +19,7 @@ const materials:{ [key:string]: number[] } = {
     "yellow": [1.0, 1.0, 0.0, 0.0]
 }
 
-function loadTexture(gl:WebGLRenderingContext, url:string, smoothScaling:boolean=false) {
+export function loadTexture(gl:WebGLRenderingContext, url:string, smoothScaling:boolean=false) {
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 

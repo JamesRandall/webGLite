@@ -1,13 +1,13 @@
-import {ShipInstance} from "./ships";
-import {Player} from "./player";
 import {vec3} from "gl-matrix";
 import {Model} from "../resources/models";
+import {ShipInstance} from "./ShipInstance";
 
 export interface OrbitalBody {
     color: vec3
     position: vec3
     orientation: vec3
     upOrientation: vec3
+    initialOrientation: vec3
     distance: number
     radius: number
     model: Model

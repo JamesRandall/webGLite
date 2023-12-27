@@ -12,7 +12,7 @@ import {Resources} from "../resources/resources";
 import {ShipInstance} from "../model/ShipInstance";
 
 export function createGameScene(resources: Resources, gl: WebGLRenderingContext, dashboardGl: WebGLRenderingContext) {
-    const clipSpaceRadius = 512
+    const clipSpaceRadius = 2048
 
     // TODO: The ship models are currently pointing the wrong way round, wwe need to rotate them around Y 180 degrees
     // when we load them!
@@ -28,8 +28,9 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     // around).
     const localBubble : LocalBubble = {
         sun: {
-            position: [0,0,-clipSpaceRadius+1],
-            orientation: [0,0,1],
+            position: [0,0,clipSpaceRadius-1],
+            orientation: [0,0,-1],
+            initialOrientation: [0,0,-1],
             upOrientation: [0,1,0],
             color: [1.0,0.0,0.0],
             radius: 1/0,
@@ -37,8 +38,9 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
             model: createSquareModelWithTexture(gl, "/starmask.png")
         },
         planet: {
-            position: [0,0,clipSpaceRadius],
-            orientation: [0,0,-1],
+            position: [0,0,-clipSpaceRadius+1],
+            orientation: [0,0,1],
+            initialOrientation: [0,0,1],
             upOrientation: [0, 1, 0],
             color: [0.0,0.0,0.8],
             radius: 1/0,

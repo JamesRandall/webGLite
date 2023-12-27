@@ -8,11 +8,13 @@ import {createSystemDetailsRenderer} from "../screens/systemDetails";
 import {drawFrame, setupGl} from "../common";
 import {createPlayerDetailsRenderer} from "../screens/playerDetails";
 import {createLaunchingRenderer} from "../screens/launching";
+import {createPlanetRenderer} from "./planet";
 
 export function createSceneRenderer(gl:WebGLRenderingContext) {
     const shipRenderer = createShipsRenderer(gl)
     const stardustRenderer = createStardustRenderer(gl)
     const sunRenderer = createSunRenderer(gl)
+    const planetRenderer = createPlanetRenderer(gl)
     const draw2d = createPrimitiveRenderer(gl)
     const localChartRenderer = createLocalChartRenderer(draw2d)
     const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)
@@ -26,6 +28,7 @@ export function createSceneRenderer(gl:WebGLRenderingContext) {
             case SceneEnum.Front:
                 shipRenderer(game.localBubble)
                 sunRenderer(game.localBubble,timeDelta)
+                planetRenderer(game.localBubble,timeDelta)
                 stardustRenderer(game.localBubble)
                 break
 
