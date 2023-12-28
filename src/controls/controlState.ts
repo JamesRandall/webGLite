@@ -13,6 +13,7 @@ export interface ControlState {
     cursorRight: boolean
     cursorUp: boolean
     cursorDown: boolean
+    jump: boolean
 }
 
 export function getEmptyControlState() {

@@ -33,8 +33,8 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
     const localBubble : LocalBubble = {
         sun: {
             position: [-1000,1000,3],
-            orientation: [0,0,1],
-            upOrientation: [0,1,0],
+            noseOrientation: [0,0,1],
+            roofOrientation: [0,1,0],
             color: [1.0,0.0,0.0],
             radius: 1/0,
             distance: 1.0,
@@ -42,8 +42,8 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
         },
         planet: {
             position: [0,0,clipSpaceRadius],
-            orientation: [0,0,-1],
-            upOrientation: [0, 1, 0],
+            noseOrientation: [0,0,-1],
+            roofOrientation: [0, 1, 0],
             color: [0.0,0.0,0.8],
             radius: 1/0,
             distance: 1.0,

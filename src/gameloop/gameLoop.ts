@@ -40,7 +40,7 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
             then = now;
 
             applySceneSelection(game)
-            applyControlState(game.player, deltaTime)
+            applyControlState(game, deltaTime)
 
             // the flight loop runs even if we're looking at another screen in gameplay unless we are docked
             if (!game.player.isDocked) {

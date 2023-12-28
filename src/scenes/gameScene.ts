@@ -10,9 +10,12 @@ import {createGameLoop} from "../gameloop/gameLoop";
 import {createDashboardRenderer} from "../renderer/dashboard/dashboard";
 import {Resources} from "../resources/resources";
 import {ShipInstance} from "../model/ShipInstance";
+import {vec3} from "gl-matrix";
+import {worldSize} from "../constants";
 
 export function createGameScene(resources: Resources, gl: WebGLRenderingContext, dashboardGl: WebGLRenderingContext) {
-    const clipSpaceRadius = 2048
+    //const clipSpaceRadius = 2048
+    const clipSpaceRadius = worldSize
 
     // TODO: The ship models are currently pointing the wrong way round, wwe need to rotate them around Y 180 degrees
     // when we load them!
@@ -29,28 +32,33 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     const localBubble : LocalBubble = {
         sun: {
             position: [0,0,clipSpaceRadius-1],
-            orientation: [0,0,-1],
+            noseOrientation: [0,0,-1],
             initialOrientation: [0,0,-1],
-            upOrientation: [0,1,0],
+            roofOrientation: [0,1,0],
+            rightOrientation: [1,0,0],
             color: [1.0,0.0,0.0],
-            radius: 1/0,
-            distance: 1.0,
+            radius: 1,
             model: createSquareModelWithTexture(gl, "/starmask.png")
         },
         planet: {
-            position: [0,0,-clipSpaceRadius+1],
-            orientation: [0,0,1],
+            position: [0,0,-clipSpaceRadius/2],
+            noseOrientation: [0,0,1],
             initialOrientation: [0,0,1],
-            upOrientation: [0, 1, 0],
+            roofOrientation: [0, 1, 0],
+            rightOrientation: [-1,0,0],
             color: [0.0,0.0,0.8],
-            radius: 1/0,
-            distance: 1.0,
+            radius: 1,
             model: createSquareModel(gl, [0.0,0.0,0.8,1.0])
         },
         clipSpaceRadius: clipSpaceRadius,
         ships: ships,
-        stardust: createStardust()
+        stardust: createStardust(),
+        sunPlanetLightingDirection: [0,0,0]
     }
+    localBubble.sunPlanetLightingDirection =
+        vec3.normalize(vec3.create(),
+            vec3.subtract(vec3.create(), localBubble.sun.position, localBubble.planet.position)
+            )
 
     const stars = generateGalaxy(0)
     const startingSystem = stars.find(s => s.name === 'Lave')!

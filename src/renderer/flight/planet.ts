@@ -270,7 +270,7 @@ export function createPlanetRenderer(gl:WebGLRenderingContext) {
     let time = 0.0
 
     return function (localBubble: LocalBubble, timeDelta: number) {
-        time = 12.0
+        time += timeDelta
 
         // we can't use the current orientation of the sun to light the planet due to it not really being a sphere
         // so instead we just keep hold of the original normal of the sun and that prevents it shifting slightly
@@ -296,9 +296,9 @@ export function createPlanetRenderer(gl:WebGLRenderingContext) {
         )
 
         const planet = localBubble.planet
-        const targetToMatrix = mat4.targetTo(mat4.create(), [0,0,0], planet.orientation, planet.upOrientation)
+        const targetToMatrix = mat4.targetTo(mat4.create(), [0,0,0], planet.noseOrientation, planet.roofOrientation)
         const targetToQuat = mat4.getRotation(quat.create(), targetToMatrix)
-        const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), targetToQuat, planet.position,[480.0,480.0,1.0])
+        const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), targetToQuat, planet.position,[planet.radius,planet.radius,1.0])
         const normalMatrix = mat4.create()
         mat4.invert(normalMatrix, modelViewMatrix)
         mat4.transpose(normalMatrix, normalMatrix)

@@ -31,4 +31,6 @@ I expect this to require some fiddling with to get things to feel right.
 */
 export const scannerRadialWorldRange = vec3.fromValues(0x3300, 0x3300, 0x3300)
 export const webglScannerRadialWorldRange = vec3.fromValues(512.0, 512.0, 512.0)
-export const worldToViewRatio = vec3.divide(vec3.create(), webglScannerRadialWorldRange, scannerRadialWorldRange)
+export const worldToScannerViewRatio = vec3.divide(vec3.create(), webglScannerRadialWorldRange, scannerRadialWorldRange)
+//export const worldToViewRatio = vec3.fromValues(1,1,1)
+export const worldSize = 8388607 // max value of a signed 24-bit number

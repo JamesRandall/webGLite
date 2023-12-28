@@ -15,6 +15,7 @@ export function bindKeys(controlState: ControlState) {
             case "x": controlState.pitchUp = newState; break;
             case " ": controlState.accelerate = newState; break;
             case "/": controlState.decelerate = newState; break;
+            case "j": controlState.jump = newState; break;
             case "ArrowLeft": controlState.cursorLeft = newState; break;
             case "ArrowRight": controlState.cursorRight = newState; break;
             case "ArrowUp": controlState.cursorUp = newState; break;

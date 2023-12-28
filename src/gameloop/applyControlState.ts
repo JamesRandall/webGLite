@@ -1,13 +1,26 @@
 import {Player} from "../model/player";
+import {Game} from "../model/game";
+import {move} from "./utilities/transforms";
+import {vec3} from "gl-matrix";
 
-export function applyControlState(player: Player, timeDelta: number) {
+export function applyControlState(game: Game, timeDelta: number) {
+    const player = game.player
     if (!player.isDocked) {
         applyRoll(player, timeDelta)
         applyPitch(player, timeDelta)
         applyAcceleration(player, timeDelta)
+        applyJump(game)
     }
 
     applyCursors(player, timeDelta)
+}
+
+function applyJump(game: Game) {
+    if (game.player.controlState.jump) {
+        const distance = vec3.length(game.localBubble.planet.position)
+        move(game.localBubble.planet, [0, 0, (distance / 2)])
+        game.player.controlState.jump = false
+    }
 }
 
 function applyCursors(player: Player, timeDelta: number) {

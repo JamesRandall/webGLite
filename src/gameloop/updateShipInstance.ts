@@ -1,7 +1,8 @@
 import {Player} from "../model/player";
 import {mat4, quat, vec3} from "gl-matrix";
-import {worldToViewRatio} from "../constants";
+import {worldToScannerViewRatio} from "../constants";
 import {ShipInstance} from "../model/ShipInstance";
+import {rotateLocationInSpaceByPitchAndRoll, rotateOrientationVectorsByPitchAndRoll} from "./utilities/transforms";
 
 // Based on this game loop: https://www.bbcelite.com/deep_dives/program_flow_of_the_ship-moving_routine.html
 export function updateShipInstance(shipInstance: ShipInstance, player: Player, timeDelta: number) {
@@ -27,23 +28,18 @@ function applyAcceleration(shipInstance: ShipInstance, timeDelta:number) {
 }
 
 function rotateLocationInSpaceByPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta:number) {
-    vec3.rotateZ(shipInstance.position, shipInstance.position, [0,0,0], player.roll * timeDelta)
-    vec3.rotateX(shipInstance.position, shipInstance.position, [0,0,0], player.pitch * timeDelta)
+    rotateLocationInSpaceByPitchAndRoll(shipInstance, player.roll*timeDelta, player.pitch*timeDelta)
 }
 
 function moveShipByPlayerSpeed(shipInstance: ShipInstance, player: Player, timeDelta:number) {
-    vec3.add(shipInstance.position, shipInstance.position, vec3.divide(vec3.create(),[0,0,player.speed*timeDelta],worldToViewRatio))
+    // I want to specify the velocities in the units given in the Elite manual but want the in game velocity to be
+    // accurate to the original - this fudge factor lands us in about the right ballpark
+    const playerShipRelativeSpeedFudgeFactor = 16
+    vec3.add(shipInstance.position, shipInstance.position, [0,0,player.speed*timeDelta*playerShipRelativeSpeedFudgeFactor])
 }
 
 function rotateOrientationVectorsAccordingToPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta:number) {
-    vec3.rotateZ(shipInstance.noseOrientation, shipInstance.noseOrientation, [0,0,0], player.roll * timeDelta)
-    vec3.rotateZ(shipInstance.roofOrientation, shipInstance.roofOrientation, [0,0,0], player.roll * timeDelta)
-    //vec3.rotateZ(shipInstance.rightOrientation, shipInstance.rightOrientation, [0,0,0], player.roll * timeDelta)
-    vec3.rotateX(shipInstance.noseOrientation, shipInstance.noseOrientation, [0,0,0], player.pitch * timeDelta)
-    vec3.rotateX(shipInstance.roofOrientation, shipInstance.roofOrientation, [0,0,0], player.pitch * timeDelta)
-    //vec3.rotateX(shipInstance.rightOrientation, shipInstance.rightOrientation, [0,0,0], player.pitch * timeDelta)
-    vec3.normalize(shipInstance.noseOrientation,shipInstance.noseOrientation)
-    vec3.normalize(shipInstance.roofOrientation,shipInstance.roofOrientation)
+    rotateOrientationVectorsByPitchAndRoll(shipInstance, player.roll*timeDelta, player.pitch*timeDelta)
 }
 
 function rotateShipByPitchAndRoll(shipInstance: ShipInstance, timeDelta:number) {

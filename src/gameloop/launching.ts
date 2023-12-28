@@ -2,6 +2,7 @@ import {Game, SceneEnum} from "../model/game";
 import {StarSystem} from "../model/starSystem";
 import {LocalBubble} from "../model/localBubble";
 import {Resources} from "../resources/resources";
+import {updateLocalBubbleOnLaunch} from "./utilities/updateLocalBubbleOnLaunch";
 
 export function createLaunchingLoop(game: Game, resources: Resources) {
     let now = 0
@@ -42,24 +43,11 @@ export function createLaunchingLoop(game: Game, resources: Resources) {
                     inboundOffset++
                 }
                 else {
-                    // we've finished launching
-                    game.localBubble = createLocalBubbleOnLaunch(resources, game)
-                    game.player.isDocked = false
-                    game.player.speed = game.player.ship.maxSpeed * 0.25
-                    game.player.roll = game.player.ship.maxRollSpeed/4
-                    //game.player.roll = Math.PI/2
+                    // we've finished launching so update the local bubble and set the scene to the front view
+                    updateLocalBubbleOnLaunch(game, resources)
                     game.currentScene = SceneEnum.Front
                 }
             }
         }
-    }
-}
-
-function createLocalBubbleOnLaunch(resources: Resources, game: Game) : LocalBubble {
-    const station = resources.ships.getCoriolis([0,0,250], [0,0,-1])
-    station.roll = game.player.ship.maxRollSpeed/4
-    return {
-        ...game.localBubble,
-        ships: [ station ]
     }
 }
