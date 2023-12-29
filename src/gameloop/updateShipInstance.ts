@@ -1,6 +1,6 @@
 import {Player} from "../model/player";
 import {mat4, quat, vec3} from "gl-matrix";
-import {worldToScannerViewRatio} from "../constants";
+import {playerShipRelativeSpeedFudgeFactor } from "../constants";
 import {ShipInstance} from "../model/ShipInstance";
 import {rotateLocationInSpaceByPitchAndRoll, rotateOrientationVectorsByPitchAndRoll} from "./utilities/transforms";
 
@@ -34,7 +34,7 @@ function rotateLocationInSpaceByPlayerPitchAndRoll(shipInstance: ShipInstance, p
 function moveShipByPlayerSpeed(shipInstance: ShipInstance, player: Player, timeDelta:number) {
     // I want to specify the velocities in the units given in the Elite manual but want the in game velocity to be
     // accurate to the original - this fudge factor lands us in about the right ballpark
-    const playerShipRelativeSpeedFudgeFactor = 16
+
     vec3.add(shipInstance.position, shipInstance.position, [0,0,player.speed*timeDelta*playerShipRelativeSpeedFudgeFactor])
 }
 

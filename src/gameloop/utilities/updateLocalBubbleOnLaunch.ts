@@ -49,9 +49,9 @@ function positionPlayerInOrbit(game: Game) {
     rotateOrientationVectorsByPitchAndRoll(sun, randomRoll, randomPitch)
 
     // Step 3 (we also reset the orientation as the planet will now be directly ahead of the player)
-    //move(planet,[0,0,-planet.radius*2])
+    move(planet,[0,0,-planet.radius*2])
     // The below puts us at approximately the right position after a hyperspace jump
-    move(planet,[0,0,-worldSize/(Math.random()*128 + 128)])
+    //move(planet,[0,0,-worldSize/(Math.random()*128 + 128)])
     planet.noseOrientation = [0,0,1]
     planet.roofOrientation = [0,1,0]
     planet.rightOrientation = [1,0,0]

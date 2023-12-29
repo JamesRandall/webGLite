@@ -22,15 +22,15 @@ The scanner shows ships that have a high byte that is < 63 (0x33) and so to be i
     y > -0x3300 and x < 0x3300
     z > -0x3300 and x < 0x3300
 
-We then set our view up with a far clipping plane at 512.0 pixels.
-
-And so to render our ships we translate their position in world space to view space we convert between these two systems
-using the ratio defined in worldToViewRatio (multiply the game co-ordinates by this vector)
-
-I expect this to require some fiddling with to get things to feel right.
+Based on the above and attempting to time the speed things happen in Elite the below numbers attempt to scale
+things so that things "feel" right in this interpretation. There isn't really n expression of things
+"per second" in the code as things are expressed in terms of cycles of the main loop and the frame rate is very
+variable.
 */
-export const scannerRadialWorldRange = vec3.fromValues(0x3300, 0x3300, 0x3300)
-export const webglScannerRadialWorldRange = vec3.fromValues(512.0, 512.0, 512.0)
-export const worldToScannerViewRatio = vec3.divide(vec3.create(), webglScannerRadialWorldRange, scannerRadialWorldRange)
-//export const worldToViewRatio = vec3.fromValues(1,1,1)
+
+// Based on the above and the Elite world size (
+export const playerOrbitalBodyRelativeSpeedFudgeFactor = 2
+export const playerShipRelativeSpeedFudgeFactor = 2
+export const shipScaleFactor = 0.1
+export const scannerRadialWorldRange = vec3.divide(vec3.create(),vec3.fromValues(0x3300, 0x3300, 0x3300),[8,8,8])
 export const worldSize = 8388607 // max value of a signed 24-bit number

@@ -1,7 +1,6 @@
 import {compileShaderProgram, loadShader} from "../../shader";
 import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec3} from "gl-matrix";
-import {worldToScannerViewRatio} from "../../constants";
 
 const vsSource = `#version 300 es
     in vec4 aVertexPosition;
@@ -224,7 +223,7 @@ export function createShipsRenderer(gl:WebGLRenderingContext) {
             // Firstly we point the ship along the nose orientation
             const targetToMatrix = mat4.targetTo(mat4.create(), [0,0,0], ship.noseOrientation, ship.roofOrientation)
             const targetToQuat = mat4.getRotation(quat.create(), targetToMatrix)
-            const viewPosition = vec3.multiply(vec3.create(), ship.position, worldToScannerViewRatio)
+            const viewPosition = ship.position
             const modelViewMatrix = mat4.fromRotationTranslation(mat4.create(), targetToQuat, viewPosition)
             const normalMatrix = mat4.create()
             mat4.invert(normalMatrix, modelViewMatrix)
