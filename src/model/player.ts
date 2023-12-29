@@ -54,7 +54,6 @@ export interface Player {
     roll: number
     speed: number
     cash: number,
-    hyperspaceCountdown: number | null,
     name: string,
     legalStatus: LegalStatusEnum,
     combatRating: CombatRatingEnum,
@@ -86,7 +85,6 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         roll: 0.0, // radians per second
         speed: 0.0,
         cash: 100.0,
-        hyperspaceCountdown: null,
         name: 'Jameson',
         legalStatus: LegalStatusEnum.Clean,
         combatRating: CombatRatingEnum.Harmless,

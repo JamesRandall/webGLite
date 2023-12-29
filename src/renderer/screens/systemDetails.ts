@@ -11,6 +11,7 @@ export function createSystemDetailsRenderer(draw2d: Primitives) {
     return function renderLocalChart(game: Game) {
         const system = getNearestSystemToCursor(game)
         game.player.scannerCursor = vec2.copy(vec2.create(), system.galacticPosition)
+        game.player.selectedSystem = system
         const title = `DATA ON ${system.name.toUpperCase()}`
         draw2d.text.draw(title, [19-title.length/2,0.5])
         draw2d.rect([0,40], [draw2d.size().width, frameWidth], frameColor)

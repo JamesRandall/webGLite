@@ -8,10 +8,18 @@ export enum SceneEnum {
     SystemDetails,
     PlayerDetails,
     Inventory,
-    Launching
+    Launching,
+    Hyperspace
 }
 
 export interface LaunchingData {
+    outboundRadii: number[]
+    inboundRadii: number[]
+}
+
+export interface HyperspaceData {
+    countdown: number
+    rotation: number
     outboundRadii: number[]
     inboundRadii: number[]
 }
@@ -22,4 +30,5 @@ export interface Game {
     stars: StarSystem[]
     currentScene: SceneEnum
     launching: LaunchingData | null
+    hyperspace: HyperspaceData | null
 }

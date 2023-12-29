@@ -14,18 +14,26 @@ export function applyControlState(game: Game, timeDelta: number) {
         applyHyperspace(game)
     }
 
-    applyCursors(player, timeDelta)
+    if (game.hyperspace === null) {
+        applyCursors(player, timeDelta)
+    }
 }
 
 function applyHyperspace(game: Game) {
     if (game.player.controlState.hyperspace) {
         game.player.controlState.hyperspace = false
-        if (game.player.hyperspaceCountdown === null) {
+        if (game.hyperspace === null) {
             const selectedSystem = getNearestSystemToCursor(game)
+            game.player.selectedSystem = selectedSystem
             if (selectedSystem !== game.player.currentSystem) {
                 const distance = vec2.length(vec2.subtract(vec2.create(), game.player.selectedSystem.galacticPosition, game.player.currentSystem.galacticPosition))
                 if (distance * 10 <= game.player.fuel) {
-                    game.player.hyperspaceCountdown = 15
+                    game.hyperspace = {
+                        rotation: 0,
+                        countdown: 15,
+                        outboundRadii: [],
+                        inboundRadii: []
+                    }
                 }
             }
         }
@@ -41,8 +49,6 @@ function applyJump(game: Game) {
 }
 
 function applyCursors(player: Player, timeDelta: number) {
-    if (player.hyperspaceCountdown !== null) { return }
-
     let xDelta = 0
     let yDelta = 0
     if (player.controlState.cursorLeft) {

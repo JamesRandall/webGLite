@@ -5,6 +5,7 @@ import {Scene} from "../scenes/scene";
 import {createLaunchingLoop} from "./launching";
 import {applyControlState} from "./applyControlState";
 import {Resources} from "../resources/resources";
+import {createHyperspaceLoop} from "./hyperspace";
 
 function applySceneSelection(game: Game) {
     if (game.player.controlState.sceneSelection === null) { return; }
@@ -29,10 +30,33 @@ function applySceneSelection(game: Game) {
     game.player.controlState.sceneSelection = null;
 }
 
+function applyHyperspaceCountdown(game: Game, hyperspaceClock: number | null, deltaTime: number)
+{
+    if (hyperspaceClock === null && game.hyperspace !== null) {
+        hyperspaceClock = 0
+    }
+    else if (hyperspaceClock !== null) {
+        if (hyperspaceClock > 0.1 && game.hyperspace !== null) {
+            game.hyperspace.countdown--
+            if (game.hyperspace.countdown === 0) {
+                game.currentScene = SceneEnum.Hyperspace
+            }
+            else {
+                hyperspaceClock = 0
+            }
+        }
+        else {
+            hyperspaceClock += deltaTime
+        }
+    }
+    return hyperspaceClock
+}
+
 export function createGameLoop(resources: Resources, game: Game, drawScene: (game: Game, timeDelta: number) => void, drawDashboard: (game: Game) => void) {
     let then = 0;
     let deltaTime = 0
     let launchingLoop: ((deltaTime: number) => void) | null = null
+    let hyperspaceLoop: ((deltaTime: number) => void) | null = null
     let hyperspaceClock: number | null = null
     const scene: Scene = {
         update: (now: number, viewportExtent: Size) => {
@@ -40,20 +64,7 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
             deltaTime = now - then
             then = now;
 
-
-            if (hyperspaceClock === null && game.player.hyperspaceCountdown !== null) {
-                hyperspaceClock = 0
-            }
-            else if (hyperspaceClock !== null) {
-                if (hyperspaceClock > 1 && game.player.hyperspaceCountdown !== null) {
-                    game.player.hyperspaceCountdown--
-                    hyperspaceClock = 0
-                }
-                else {
-                    hyperspaceClock += deltaTime
-                }
-            }
-
+            hyperspaceClock = applyHyperspaceCountdown(game, hyperspaceClock, deltaTime)
             applySceneSelection(game)
             applyControlState(game, deltaTime)
 
@@ -66,6 +77,12 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
                     launchingLoop = createLaunchingLoop(game, resources)
                 }
                 launchingLoop!(deltaTime)
+            }
+            else if (game.currentScene === SceneEnum.Hyperspace) {
+                if (hyperspaceLoop === null) {
+                    hyperspaceLoop = createHyperspaceLoop(game, resources)
+                }
+                hyperspaceLoop!(deltaTime)
             }
 
             drawScene(game, deltaTime)

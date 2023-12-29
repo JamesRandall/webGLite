@@ -94,8 +94,9 @@ export function createPolygonRenderer(gl:WebGLRenderingContext, points:number) {
     const projectionMatrix = mat4.create()
     mat4.ortho(projectionMatrix, 0, gl.canvas.width, gl.canvas.height, 0, -1.0, 1.0)
 
-    return function (position: vec2, radius: number, color: vec4) {
-        const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), quat.create(), [position[0], position[1],0.0], [radius, radius, 1.0])
+    return function (position: vec2, radius: number, color: vec4, rotation:number=0) {
+        const rotationQuat = quat.rotateZ(quat.create(), quat.create(), rotation)
+        const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), rotationQuat, [position[0], position[1],0.0], [radius, radius, 1.0])
 
         gl.useProgram(programInfo.program)
         gl.uniformMatrix4fv(

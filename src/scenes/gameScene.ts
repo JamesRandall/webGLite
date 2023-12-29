@@ -66,8 +66,9 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
         player: getStartingPlayer(resources, startingSystem),
         stars: stars,
         localBubble: localBubble,
+        currentScene: SceneEnum.PlayerDetails,
         launching: null,
-        currentScene: SceneEnum.PlayerDetails
+        hyperspace: null
     }
 
     bindKeys(game.player.controlState)
