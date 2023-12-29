@@ -37,7 +37,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
             roofOrientation: [0,1,0],
             rightOrientation: [1,0,0],
             color: [1.0,0.0,0.0],
-            radius: 1,
+            radius: 1300000,
             model: createSquareModelWithTexture(gl, "/starmask.png")
         },
         planet: {

@@ -427,9 +427,11 @@ export function createSunRenderer(gl:WebGLRenderingContext) {
     )
 
     const sun = localBubble.sun
+    const scale = sun.radius
+
     const targetToMatrix = mat4.targetTo(mat4.create(), [0,0,0], sun.noseOrientation, sun.roofOrientation)
     const targetToQuat = mat4.getRotation(quat.create(), targetToMatrix)
-    const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), targetToQuat, sun.position,[20000.0,20000.0,1.0])
+    const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), targetToQuat, sun.position,[scale,scale,1.0])
     const normalMatrix = mat4.create()
     mat4.invert(normalMatrix, modelViewMatrix)
     mat4.transpose(normalMatrix, normalMatrix)

@@ -187,8 +187,8 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
     const response = await fetch(path)
     const text = await response.text()
     const lines = text.split("\n")
-    const vertices:vec3[] = []
-    const vertexNormals:vec3[] = []
+    let vertices:vec3[] = []
+    let vertexNormals:vec3[] = []
     const vertexTextures:vec2[] = []
     const faceIndices:FaceVertex[][] = []
     //const materialChanges:{[faceIndex:number], material:string}[] = []
@@ -200,6 +200,10 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
     else if (path.endsWith(".wrl")) {
         extractFromWrl(lines, scale, vertices, faceIndices, materialChanges, vertexNormals, vertexTextures);
     }
+
+    // Our models all have the nose pointing the wrong way so we rotate them as we load
+    vertices = vertices.map(v => vec3.rotateY(vec3.create(), v, [0,0,0], Math.PI))
+    vertexNormals = vertexNormals.map(v => vec3.rotateY(vec3.create(), v, [0,0,0], Math.PI))
 
     let currentColor = materials.gray
     const faces = faceIndices.flatMap((face,index) => {

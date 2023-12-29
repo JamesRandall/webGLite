@@ -40,7 +40,7 @@ function positionPlayerInOrbit(game: Game) {
     // Step 1
     const translateDelta = vec3.subtract(vec3.create(), [0,0,0], planet.position)
     move(planet,translateDelta)
-    move(sun,translateDelta)
+    //move(sun,translateDelta)
 
     // Step 2
     const randomRoll = Math.random()*Math.PI*2
@@ -50,11 +50,11 @@ function positionPlayerInOrbit(game: Game) {
 
     // Step 3 (we also reset the orientation as the planet will now be directly ahead of the player)
     move(planet,[0,0,-planet.radius*2])
-    // The below puts us at approximately the right position after a hyperspace jump
-    //move(planet,[0,0,-worldSize/(Math.random()*128 + 128)])
     planet.noseOrientation = [0,0,1]
     planet.roofOrientation = [0,1,0]
     planet.rightOrientation = [1,0,0]
+
+    sun.initialOrientation = vec3.subtract(vec3.create(), planet.position, sun.position)
 }
 
 function launchPlayer(player:Player) {
