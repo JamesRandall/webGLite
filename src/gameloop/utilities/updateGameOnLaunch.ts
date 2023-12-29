@@ -14,7 +14,7 @@ export function updateGameOnLaunch(game:Game, resources:Resources) {
 }
 
 function calculateSpaceStationRotationSpeed(player: Player) {
-    return player.ship.maxRollSpeed/4
+    return -player.ship.maxRollSpeed/4
 }
 
 function spawnSpaceStation(game:Game, resources:Resources) {

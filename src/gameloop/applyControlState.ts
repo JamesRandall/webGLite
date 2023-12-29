@@ -44,6 +44,7 @@ function applyJump(game: Game) {
     if (game.player.controlState.jump) {
         const distance = vec3.length(game.localBubble.planet.position)
         move(game.localBubble.planet, [0, 0, (distance / 2)])
+        move(game.localBubble.sun, [0, 0, (distance / 2)])
         game.player.controlState.jump = false
     }
 }
