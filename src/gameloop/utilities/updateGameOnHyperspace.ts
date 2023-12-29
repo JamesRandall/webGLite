@@ -9,6 +9,7 @@ export function updateGameOnHyperspace(game:Game, resources:Resources) {
     game.player.fuel = Math.max(0, game.player.fuel - Math.floor(distance*10))
     game.hyperspace = null
     game.player.currentSystem = game.player.selectedSystem
+    game.player.isInSafeArea = false
 
     positionPlayerAwayFromPlanet(game)
 }

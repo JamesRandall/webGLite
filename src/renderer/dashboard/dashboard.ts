@@ -1,7 +1,7 @@
 import {Game} from "../../model/game";
 import {frameColor, frameWidth} from "../../constants";
 import {createPrimitiveRenderer, Primitives} from "../primitives/primitives";
-import {mat4, vec3, vec4} from "gl-matrix";
+import {mat4, vec2, vec3, vec4} from "gl-matrix";
 import {createScannerBackgroundRenderer} from "./scannerBackground";
 import {createScannerShipRenderer} from "./scannerShips";
 
@@ -13,6 +13,27 @@ function setup(gl: WebGLRenderingContext) {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthFunc(gl.LEQUAL)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+}
+
+function drawCompass(width: number, sidePanelWidth: number, draw2d: Primitives, game: Game) {
+    const compassRadius = 33.0
+    const innerCompassRadius = compassRadius - frameWidth
+    const compassCenter = vec2.fromValues(width - sidePanelWidth - frameWidth - compassRadius, compassRadius)
+    draw2d.rect([compassCenter[0] - compassRadius, 0], [frameWidth, compassRadius], frameColor)
+    draw2d.rect([compassCenter[0] - compassRadius + frameWidth, 0], [compassRadius * 2 - frameWidth, compassRadius], [1, 0, 0, 1])
+    draw2d.rect(compassCenter, [compassRadius, compassRadius], [1, 0, 0, 1])
+    draw2d.rect([compassCenter[0], compassRadius * 2 - frameWidth], [compassRadius, frameWidth], frameColor)
+    draw2d.circle(compassCenter, compassRadius, frameColor)
+    draw2d.circle(compassCenter, compassRadius - frameWidth, [0, 0, 0, 1])
+    // TODO: fish out the space station
+    const compassPointsTowards = game.player.isInSafeArea ? game.localBubble.sun.position : game.localBubble.planet.position
+    const directionVector = vec3.normalize(vec3.create(), compassPointsTowards)
+    const compassWidth = 8.0
+    const compassHeight = 6.0
+    const xPos = innerCompassRadius * directionVector[0] - compassWidth / 2
+    const yPos = (innerCompassRadius - compassHeight / 2) * directionVector[1] * -1 - compassHeight / 2
+    const compassColor = directionVector[2] < 0 ? vec4.fromValues(1, 1, 1, 1) : vec4.fromValues(0.5, 0.5, 0.5, 1)
+    draw2d.rect([compassCenter[0] + xPos, compassCenter[1] + yPos], [compassWidth, compassHeight], compassColor)
 }
 
 function drawHud(draw2d:Primitives, width: number, height: number, game:Game) {
@@ -150,6 +171,9 @@ function drawHud(draw2d:Primitives, width: number, height: number, game:Game) {
         standardBarColor
     )
     draw2d.text.drawAtSize('4', [tr+cw/2,barHeight*7], cw , ch ,0, standardBarColor)
+
+
+    drawCompass(width, sidePanelWidth, draw2d, game);
 }
 
 function drawFrame(draw2d:Primitives, width: number, height: number) {

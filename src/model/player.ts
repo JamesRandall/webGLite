@@ -53,11 +53,12 @@ export interface Player {
     pitch: number
     roll: number
     speed: number
-    cash: number,
-    name: string,
-    legalStatus: LegalStatusEnum,
-    combatRating: CombatRatingEnum,
+    cash: number
+    name: string
+    legalStatus: LegalStatusEnum
+    combatRating: CombatRatingEnum
     isDocked: boolean
+    isInSafeArea: boolean
     fuel: number
     energyBankLevel: number[]
     cabinTemperature: number
@@ -89,6 +90,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         legalStatus: LegalStatusEnum.Clean,
         combatRating: CombatRatingEnum.Harmless,
         isDocked: true,
+        isInSafeArea: true,
         fuel: cobra.maxFuel, // 70 is a full tank, goes 7 lightyears
         energyBankLevel: [cobra.maxEnergyBankLevel[0]-1,cobra.maxEnergyBankLevel[1],cobra.maxEnergyBankLevel[2],cobra.maxEnergyBankLevel[3]],
         cabinTemperature: 10,
@@ -97,7 +99,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         forwardShield: cobra.maxForwardShield,
         aftShield: cobra.maxAftShield,
         missiles: {
-            currentNumber: cobra.maxMissiles,
+            currentNumber: cobra.maxMissiles-1,
             status: MissileTargettingStatusEnum.Normal
         },
         equipment: {
