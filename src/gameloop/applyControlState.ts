@@ -1,7 +1,8 @@
 import {Player} from "../model/player";
 import {Game} from "../model/game";
 import {move} from "./utilities/transforms";
-import {vec3} from "gl-matrix";
+import {vec2, vec3} from "gl-matrix";
+import {getNearestSystemToCursor} from "./utilities/map";
 
 export function applyControlState(game: Game, timeDelta: number) {
     const player = game.player
@@ -10,9 +11,25 @@ export function applyControlState(game: Game, timeDelta: number) {
         applyPitch(player, timeDelta)
         applyAcceleration(player, timeDelta)
         applyJump(game)
+        applyHyperspace(game)
     }
 
     applyCursors(player, timeDelta)
+}
+
+function applyHyperspace(game: Game) {
+    if (game.player.controlState.hyperspace) {
+        game.player.controlState.hyperspace = false
+        if (game.player.hyperspaceCountdown === null) {
+            const selectedSystem = getNearestSystemToCursor(game)
+            if (selectedSystem !== game.player.currentSystem) {
+                const distance = vec2.length(vec2.subtract(vec2.create(), game.player.selectedSystem.galacticPosition, game.player.currentSystem.galacticPosition))
+                if (distance * 10 <= game.player.fuel) {
+                    game.player.hyperspaceCountdown = 15
+                }
+            }
+        }
+    }
 }
 
 function applyJump(game: Game) {
@@ -24,18 +41,23 @@ function applyJump(game: Game) {
 }
 
 function applyCursors(player: Player, timeDelta: number) {
+    if (player.hyperspaceCountdown !== null) { return }
+
+    let xDelta = 0
+    let yDelta = 0
     if (player.controlState.cursorLeft) {
-        player.scannerCursor.x -= 10 * timeDelta
+        xDelta -= 10 * timeDelta
     }
     if (player.controlState.cursorRight) {
-        player.scannerCursor.x += 10 * timeDelta
+        xDelta += 10 * timeDelta
     }
     if (player.controlState.cursorUp) {
-        player.scannerCursor.y -= 10 * timeDelta
+        yDelta -= 10 * timeDelta
     }
     if (player.controlState.cursorDown) {
-        player.scannerCursor.y += 10 * timeDelta
+        yDelta += 10 * timeDelta
     }
+    vec2.add(player.scannerCursor, player.scannerCursor, [xDelta, yDelta])
 }
 
 function applyAcceleration(player: Player, timeDelta: number) {

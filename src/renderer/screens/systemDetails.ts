@@ -2,23 +2,15 @@ import {Primitives} from "../primitives/primitives";
 import {Game} from "../../model/game";
 import {frameColor, frameWidth} from "../../constants";
 import {economyText, governmentText, StarSystem} from "../../model/starSystem";
-import {distance} from "../../model/geometry";
+import {vec2} from "gl-matrix";
+import {getNearestSystemToCursor} from "../../gameloop/utilities/map";
 
 export function createSystemDetailsRenderer(draw2d: Primitives) {
-    function getNearestSystemToCursor(game: Game) {
-        const result = game.stars.reduce((memo, star) => {
-            const thisDistance = distance(game.player.scannerCursor, star.galacticPosition)
-            if (thisDistance < memo.distance) {
-                return { star: star, distance: thisDistance }
-            }
-            return memo
-        }, { star: null as StarSystem | null, distance: 1000})
-        return result.star!
-    }
+
 
     return function renderLocalChart(game: Game) {
         const system = getNearestSystemToCursor(game)
-        game.player.scannerCursor = {...system.galacticPosition}
+        game.player.scannerCursor = vec2.copy(vec2.create(), system.galacticPosition)
         const title = `DATA ON ${system.name.toUpperCase()}`
         draw2d.text.draw(title, [19-title.length/2,0.5])
         draw2d.rect([0,40], [draw2d.size().width, frameWidth], frameColor)

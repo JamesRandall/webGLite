@@ -33,11 +33,26 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
     let then = 0;
     let deltaTime = 0
     let launchingLoop: ((deltaTime: number) => void) | null = null
+    let hyperspaceClock: number | null = null
     const scene: Scene = {
         update: (now: number, viewportExtent: Size) => {
             now *= 0.001; // convert to seconds
             deltaTime = now - then
             then = now;
+
+
+            if (hyperspaceClock === null && game.player.hyperspaceCountdown !== null) {
+                hyperspaceClock = 0
+            }
+            else if (hyperspaceClock !== null) {
+                if (hyperspaceClock > 1 && game.player.hyperspaceCountdown !== null) {
+                    game.player.hyperspaceCountdown--
+                    hyperspaceClock = 0
+                }
+                else {
+                    hyperspaceClock += deltaTime
+                }
+            }
 
             applySceneSelection(game)
             applyControlState(game, deltaTime)

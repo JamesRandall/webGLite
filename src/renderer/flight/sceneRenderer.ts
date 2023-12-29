@@ -46,10 +46,12 @@ export function createSceneRenderer(gl:WebGLRenderingContext) {
 
             case SceneEnum.Launching:
                 launchingRenderer(game)
-
         }
 
         gl.disable(gl.DEPTH_TEST)
         drawFrame(draw2d)
+        if (game.player.hyperspaceCountdown !== null) {
+            draw2d.text.draw(game.player.hyperspaceCountdown.toString(), [2,2])
+        }
     }
 }

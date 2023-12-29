@@ -2,6 +2,7 @@ import {ShipSpecification} from "./ships";
 import {ControlState, getEmptyControlState} from "../controls/controlState";
 import {Position, StarSystem} from "./starSystem";
 import {Resources} from "../resources/resources";
+import {vec2} from "gl-matrix";
 
 enum MissileTargettingStatusEnum {
     Normal,
@@ -53,6 +54,7 @@ export interface Player {
     roll: number
     speed: number
     cash: number,
+    hyperspaceCountdown: number | null,
     name: string,
     legalStatus: LegalStatusEnum,
     combatRating: CombatRatingEnum,
@@ -71,7 +73,7 @@ export interface Player {
     equipment: PlayerEquipment
     currentSystem: StarSystem // the system the player is currently in
     selectedSystem: StarSystem // the system the player has selected in the star charts
-    scannerCursor: Position
+    scannerCursor: vec2
 }
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem) : Player {
@@ -84,6 +86,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         roll: 0.0, // radians per second
         speed: 0.0,
         cash: 100.0,
+        hyperspaceCountdown: null,
         name: 'Jameson',
         legalStatus: LegalStatusEnum.Clean,
         combatRating: CombatRatingEnum.Harmless,
@@ -112,7 +115,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         },
         currentSystem: currentSystem,
         selectedSystem: currentSystem,
-        scannerCursor: { x: currentSystem.galacticPosition.x, y: currentSystem.galacticPosition.y }
+        scannerCursor: vec2.copy(vec2.create(), currentSystem.galacticPosition)
     }
 }
 

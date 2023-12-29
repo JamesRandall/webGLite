@@ -5,7 +5,7 @@ import {vec3} from "gl-matrix";
 import {move, rotateLocationInSpaceByPitchAndRoll, rotateOrientationVectorsByPitchAndRoll} from "./transforms";
 import {worldSize} from "../../constants";
 
-export function updateLocalBubbleOnLaunch(game:Game, resources:Resources) {
+export function updateGameOnLaunch(game:Game, resources:Resources) {
     game.localBubble.ships = []
 
     positionPlayerInOrbit(game)

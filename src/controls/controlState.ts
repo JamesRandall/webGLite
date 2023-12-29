@@ -14,6 +14,7 @@ export interface ControlState {
     cursorUp: boolean
     cursorDown: boolean
     jump: boolean
+    hyperspace: boolean
 }
 
 export function getEmptyControlState() {
@@ -28,6 +29,8 @@ export function getEmptyControlState() {
         cursorLeft: false,
         cursorRight: false,
         cursorUp: false,
-        cursorDown: false
+        cursorDown: false,
+        jump: false,
+        hyperspace: false
     }
 }

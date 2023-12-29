@@ -2,7 +2,7 @@ import {Game, SceneEnum} from "../model/game";
 import {StarSystem} from "../model/starSystem";
 import {LocalBubble} from "../model/localBubble";
 import {Resources} from "../resources/resources";
-import {updateLocalBubbleOnLaunch} from "./utilities/updateLocalBubbleOnLaunch";
+import {updateGameOnLaunch} from "./utilities/updateGameOnLaunch";
 
 export function createLaunchingLoop(game: Game, resources: Resources) {
     let now = 0
@@ -44,7 +44,7 @@ export function createLaunchingLoop(game: Game, resources: Resources) {
                 }
                 else {
                     // we've finished launching so update the local bubble and set the scene to the front view
-                    updateLocalBubbleOnLaunch(game, resources)
+                    updateGameOnLaunch(game, resources)
                     game.currentScene = SceneEnum.Front
                 }
             }

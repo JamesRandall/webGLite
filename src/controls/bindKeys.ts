@@ -20,6 +20,7 @@ export function bindKeys(controlState: ControlState) {
             case "ArrowRight": controlState.cursorRight = newState; break;
             case "ArrowUp": controlState.cursorUp = newState; break;
             case "ArrowDown": controlState.cursorDown = newState; break;
+            case "h": controlState.hyperspace = newState; break;
         }
     }
 

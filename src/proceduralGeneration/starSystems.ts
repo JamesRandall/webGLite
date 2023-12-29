@@ -3,6 +3,7 @@ import {EconomyEnum, GovernmentEnum, StarSystem} from "../model/starSystem";
 import {generateSystemName} from "./systemNames";
 import {getSpecies} from "./species";
 import {galaxySize} from "../constants";
+import {vec2} from "gl-matrix";
 
 export function generateStarSystem(seed: ProceduralSeed) : StarSystem {
     const economy = seed.s0_hi.getBitRange(0,3)
@@ -27,7 +28,7 @@ export function generateStarSystem(seed: ProceduralSeed) : StarSystem {
         // the positions are 8-bits but a galaxy looks to be sized 102.4x51.2 so we scale here
         // https://www.bbcelite.com/master/main/workspace/zp.html#qq8
         // galacticPosition: { x: seed.s1_hi, y: seed.s0_hi },
-        galacticPosition: { x: seed.s1_hi * (galaxySize.width/256), y: seed.s0_hi * (galaxySize.height/256) },
+        galacticPosition: vec2.fromValues(seed.s1_hi * (galaxySize.width/256), seed.s0_hi * (galaxySize.height/256)),
         planetDistance: seed.s0_hi & 7,
         sunDistance: seed.s1_hi & 7,
         sunXYOffset: seed.s2_hi & 3,

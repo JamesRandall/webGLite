@@ -1,4 +1,5 @@
 import {ProceduralSeed} from "../proceduralGeneration/seeds";
+import {vec2} from "gl-matrix";
 
 export enum EconomyEnum {
     RichIndustrial,
@@ -60,7 +61,7 @@ export interface StarSystem {
     productivity: number,
     averageRadius: number,
     description: string
-    galacticPosition: Position
+    galacticPosition: vec2
     // TODO: see following link for the below https://www.bbcelite.com/cassette/main/subroutine/solar.html
     sunDistance: number
     planetDistance: number

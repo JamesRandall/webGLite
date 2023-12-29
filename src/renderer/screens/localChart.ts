@@ -15,29 +15,31 @@ export function createLocalChartRenderer(draw2d: Primitives) {
     const xOffset = -1
     const yOffset = -1
 
-    function distance(star1: StarSystem, star2: StarSystem) {
+    /*function distance(star1: StarSystem, star2: StarSystem) {
         const xDelta = star2.galacticPosition.x - star1.galacticPosition.x
         const yDelta = star2.galacticPosition.y - star1.galacticPosition.y
         return Math.sqrt(xDelta*xDelta + yDelta*yDelta)
-    }
+    }*/
 
     return function renderLocalChart(game: Game) {
         const viewRect = {
-            left: game.player.currentSystem.galacticPosition.x - xMax + xOffset,
-            top: game.player.currentSystem.galacticPosition.y - yMax + yOffset,
+            left: game.player.currentSystem.galacticPosition[0] - xMax + xOffset,
+            top: game.player.currentSystem.galacticPosition[1] - yMax + yOffset,
             width: xRange,
             height: yRange
         }
 
         const orange = vec4.fromValues(0xf5/255.0, 0x9e/255.0, 0x0b/255.0, 1.0)
         const currentCenter = vec2.fromValues(
-            (game.player.currentSystem.galacticPosition.x - viewRect.left) * xScale,
-            (game.player.currentSystem.galacticPosition.y - viewRect.top) * yScale
+            (game.player.currentSystem.galacticPosition[0] - viewRect.left) * xScale,
+            (game.player.currentSystem.galacticPosition[1] - viewRect.top) * yScale
         )
-        const currentCursor = vec2.fromValues(
-            (game.player.scannerCursor.x - viewRect.left) * xScale,
-            (game.player.scannerCursor.y - viewRect.top) * yScale
-        )
+        const currentCursor =
+            vec2.multiply(vec2.create(),
+                vec2.subtract(vec2.create(), game.player.scannerCursor, [viewRect.left, viewRect.top]),
+                [xScale,yScale]
+            )
+
         draw2d.circle(currentCenter, game.player.fuel / 10.0 * xScale, [1.0,0.0,0.0,1.0])
         draw2d.circle(currentCenter, game.player.fuel / 10.0 * xScale - 2, [0.0,0.0,0.0,1.0])
 
@@ -48,10 +50,11 @@ export function createLocalChartRenderer(draw2d: Primitives) {
                 //const xDist = Math.abs(star.galacticPosition.x - game.player.currentSystem.galacticPosition.x)
                 //const yDist = Math.abs(star.galacticPosition.y - game.player.currentSystem.galacticPosition.y)
                 //if (xDist < xMax && yDist < yMax) {
-                if (distance(star, game.player.currentSystem) < 8) {
+                const distance = vec2.distance(star.galacticPosition, game.player.currentSystem.galacticPosition)
+                if (distance < 8) {
                     const center = vec2.fromValues(
-                        (star.galacticPosition.x - viewRect.left) * xScale,
-                        (star.galacticPosition.y - viewRect.top) * yScale
+                        (star.galacticPosition[0] - viewRect.left) * xScale,
+                        (star.galacticPosition[1] - viewRect.top) * yScale
                     )
                     draw2d.circle(center, star.shortRangeDotSize * 2, orange)
                     const characterPosition = draw2d.text.convertToCharacterCoordinates(vec2.fromValues(center[0], center[1]))

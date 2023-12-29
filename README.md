@@ -37,9 +37,13 @@ http://www.elitehomepage.org/archive/index.htm
 
 The ship models in this demo / conversion come from taking those VRML files and running them through a converter to Wavefront Obj format which is then pretty straightforward to load into vertex and index buffers in WebGL.
 
-The lighting might occasionally look odd - I've discovered the winding order of the faces isn't consistent so will need to fix this up (winding order impacts the direction in which a normal faces, you can tell when a normal is wrong as the face will be strangely dark even when facing the sun - it will only be impacted by the ambient light).
+## Timings
 
-It looks like importing and exporting from Blender will resolve this, but need to expand the model importing code. No biggie. Do today! 
+In the original game things like acceleration aren't modelled in terms of meters per second. Instead times are expressed in terms of cycles through the main game loop. This worked fine for the original game which was running on fixed hardware but doesn't really work on modern hardware.
+
+I've approximated the feel of the original game by recording myself playing Elite in BeebEm and then figuring out how long it takes to do accelerate to match speed, pitch, roll etc. And then time how long it takes to travel a distance on the scanner etc.
+
+I think I've landed in the right ballpark but due to its approach to timing and the very limited hardware available at the time the frame rate can vary wildly and this impacts how long it takes to get through the main loop. So the time to accelerate to max speed is impacted by, for example, how many objects are on the screen.
 
 ## The scanner
 

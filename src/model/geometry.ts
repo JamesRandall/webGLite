@@ -1,4 +1,5 @@
 import {StarSystem} from "./starSystem";
+import {vec2} from "gl-matrix";
 
 export interface Size {
     width: number
@@ -14,8 +15,8 @@ export interface Rect {
     height: number
 }
 
-export function isPointInRect(pt:Point, rect: Rect) {
-    return pt.x >= rect.left && pt.x < (rect.left + rect.width) && pt.y >= rect.top && pt.y < (rect.top + rect.height);
+export function isPointInRect(pt:vec2, rect: Rect) {
+    return pt[0] >= rect.left && pt[0] < (rect.left + rect.width) && pt[1] >= rect.top && pt[1] < (rect.top + rect.height);
 }
 
 export function distance(p1: Point, p2: Point) {
