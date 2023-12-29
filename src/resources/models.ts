@@ -11,12 +11,14 @@ export interface Model {
 }
 
 const materials:{ [key:string]: number[] } = {
-    "gray": [0.5, 0.5, 0.5, 1.0],
+    "darkgray": [0.2, 0.2, 0.2, 1.0],
+    "gray": [0.6, 0.6, 0.6, 1.0],
     "orange": [0xf5/255.0, 0x9e/255.0, 0x0b/255.0, 1.0],
     "lightblue": [0x7d/255.0, 0xd3/255.0, 0xfd/255.0, 1.0],
     "red": [1.0, 0.0, 0.0, 1.0],
     "green": [0.0, 1.0, 0.0, 1.0],
-    "yellow": [1.0, 1.0, 0.0, 0.0]
+    "yellow": [1.0, 1.0, 0.0, 1.0],
+    "black": [0.0, 0.0, 0.0, 1.0]
 }
 
 export function loadTexture(gl:WebGLRenderingContext, url:string, smoothScaling:boolean=false) {
