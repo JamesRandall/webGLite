@@ -32,35 +32,45 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
 
     const localBubble : LocalBubble = {
         sun: {
-            position: [-1000,1000,3],
-            noseOrientation: [0,0,1],
+            position: [0,0,clipSpaceRadius-1],
+            noseOrientation: [0,0,-1],
+            initialOrientation: [0,0,-1],
             roofOrientation: [0,1,0],
+            rightOrientation: [1,0,0],
             color: [1.0,0.0,0.0],
-            radius: 1/0,
-            distance: 1.0,
+            radius: 1300000,
+            pitch: 0.0,
+            roll: 0.0,
+            surfaceTextureIndex: 0,
             model: createSquareModelWithTexture(gl, "/starmask.png")
         },
         planet: {
-            position: [0,0,clipSpaceRadius],
-            noseOrientation: [0,0,-1],
+            position: [0,0,-clipSpaceRadius/2],
+            noseOrientation: [0,0,1],
+            initialOrientation: [0,0,1],
             roofOrientation: [0, 1, 0],
+            rightOrientation: [-1,0,0],
             color: [0.0,0.0,0.8],
-            radius: 1/0,
-            distance: 1.0,
+            radius: 1,
+            pitch: 0.0,
+            roll: 0.0,
+            surfaceTextureIndex: 0,
             model: createSquareModel(gl, [0.0,0.0,0.8,1.0])
         },
         clipSpaceRadius: clipSpaceRadius,
         ships: ships,
-        stardust: createStardust()
+        stardust: createStardust(),
+        sunPlanetLightingDirection: [0,0,0]
     }
-    const stars = generateGalaxy(0)
+    const stars = generateGalaxy(0, resources.textures.planets.length)
     const startingSystem = stars.find(s => s.name === 'Lave')!
     const game: Game = {
         player: getStartingPlayer(resources, startingSystem),
         stars: stars,
         localBubble: localBubble,
         currentScene: SceneEnum.Front,
-        launching: null
+        launching: null,
+        hyperspace: null
     }
 
     const sceneRenderer = createPregameSceneRenderer(gl)

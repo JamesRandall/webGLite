@@ -29,6 +29,11 @@ Early days. Bits and pieces are up and running but with lots left to figure out.
 
 If my previous retro-remake type work is anything to go by expect me to blunder around a lot: I'm neither a games programmer or a maths guy. I get by!
 
+Beyond finishing the game obvious to dos include:
+
+1. Move shaders to load from external files
+2. Rationalise the WebGL code - I've got a consistent view of what I'm doing now and this can be massively flattened now 
+
 ## Ship Models
 
 The original ship format is a bit weird to a modern general purpose renderer however Ian Bell (one of the original authors, we're not worthy we're not worthy) maintains an archive of files which include the ship models in VRML format.

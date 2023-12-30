@@ -7,6 +7,8 @@ export interface PositionedObject {
     noseOrientation: vec3
     roofOrientation: vec3
     rightOrientation: vec3
+    roll: number
+    pitch: number
 }
 
 export interface OrbitalBody extends PositionedObject {
@@ -15,6 +17,7 @@ export interface OrbitalBody extends PositionedObject {
     //distance: number
     radius: number
     model: Model
+    surfaceTextureIndex: number
 }
 
 export interface LocalBubble {

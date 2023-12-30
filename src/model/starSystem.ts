@@ -68,4 +68,5 @@ export interface StarSystem {
     sunXYOffset: number
     longRangeDotSize: number
     shortRangeDotSize: number
+    surfaceTextureIndex: number
 }

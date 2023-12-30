@@ -38,6 +38,9 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
             rightOrientation: [1,0,0],
             color: [1.0,0.0,0.0],
             radius: 1300000,
+            pitch: 0.0,
+            roll: 0.0,
+            surfaceTextureIndex: 0,
             model: createSquareModelWithTexture(gl, "/starmask.png")
         },
         planet: {
@@ -48,6 +51,9 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
             rightOrientation: [-1,0,0],
             color: [0.0,0.0,0.8],
             radius: 1,
+            pitch: 0.0,
+            roll: 0.0,
+            surfaceTextureIndex: 0,
             model: createSquareModel(gl, [0.0,0.0,0.8,1.0])
         },
         clipSpaceRadius: clipSpaceRadius,
@@ -60,7 +66,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
             vec3.subtract(vec3.create(), localBubble.sun.position, localBubble.planet.position)
             )
 
-    const stars = generateGalaxy(0)
+    const stars = generateGalaxy(0, resources.textures.planets.length)
     const startingSystem = stars.find(s => s.name === 'Lave')!
     const game: Game = {
         player: getStartingPlayer(resources, startingSystem),
@@ -72,7 +78,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     }
 
     bindKeys(game.player.controlState)
-    const sceneRenderer = createSceneRenderer(gl)
+    const sceneRenderer = createSceneRenderer(gl, resources)
     const dashboardRenderer = createDashboardRenderer(dashboardGl)
     return createGameLoop(resources, game, sceneRenderer, dashboardRenderer)
 }

@@ -10,12 +10,15 @@ import {createPlayerDetailsRenderer} from "../screens/playerDetails";
 import {createLaunchingRenderer} from "../screens/launching";
 import {createPlanetRenderer} from "./planet";
 import {createHyperspaceRenderer} from "../screens/hyperspace";
+import {createSphericalPlanetRenderer} from "./sphericalPlanet";
+import {Resources} from "../../resources/resources";
 
-export function createSceneRenderer(gl:WebGLRenderingContext) {
+export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
     const shipRenderer = createShipsRenderer(gl)
     const stardustRenderer = createStardustRenderer(gl)
     const sunRenderer = createSunRenderer(gl)
-    const planetRenderer = createPlanetRenderer(gl)
+    //const planetRenderer = createPlanetRenderer(gl)
+    const planetRenderer = createSphericalPlanetRenderer(gl, resources)
     const draw2d = createPrimitiveRenderer(gl)
     const localChartRenderer = createLocalChartRenderer(draw2d)
     const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)

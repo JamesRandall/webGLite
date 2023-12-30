@@ -1,7 +1,7 @@
 import {compileShaderProgram} from "../../shader";
 import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec2, vec3} from "gl-matrix";
-import {loadTexture} from "../../resources/models";
+import {loadTexture} from "../../resources/texture";
 
 // This handily shows how to get a shadertoy shader in:
 //    https://webglfundamentals.org/webgl/lessons/webgl-shadertoy.html

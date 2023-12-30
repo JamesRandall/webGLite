@@ -5,7 +5,7 @@ require ('../extensions.ts')
 
 describe('Tests star system generation', () => {
     test('First system is Tibedied', () => {
-        const starSystem = generateStarSystem(new ProceduralSeed(0))
+        const starSystem = generateStarSystem(new ProceduralSeed(0), 0)
         expect(starSystem.name).toBe('Tibedied')
         expect(starSystem.economy).toBe(EconomyEnum.PoorIndustrial)
         expect(starSystem.government).toBe(GovernmentEnum.Feudal)
@@ -17,7 +17,7 @@ describe('Tests star system generation', () => {
     })
 
     test('Galaxy 0 contains Lave', () => {
-        const stars = generateGalaxy(0)
+        const stars = generateGalaxy(0, 5)
         const starSystem = stars.find(s => s.name === 'Lave')
         expect(starSystem).toBeTruthy()
         expect(starSystem!.economy).toBe(EconomyEnum.RichAgricultural)
@@ -31,7 +31,7 @@ describe('Tests star system generation', () => {
     })
 
     test('Galaxy 0 contains Leesti', () => {
-        const stars = generateGalaxy(0)
+        const stars = generateGalaxy(0, 2)
         const starSystem = stars.find(s => s.name === 'Leesti')
         expect(starSystem).toBeTruthy()
         expect(starSystem!.economy).toBe(EconomyEnum.PoorIndustrial)
@@ -45,7 +45,7 @@ describe('Tests star system generation', () => {
     })
 
     test('Galaxy 0 contains Diso', () => {
-        const stars = generateGalaxy(0)
+        const stars = generateGalaxy(0, 5)
         const starSystem = stars.find(s => s.name === 'Diso')
         expect(starSystem).toBeTruthy()
         expect(starSystem!.economy).toBe(EconomyEnum.AverageAgricultural)
@@ -59,7 +59,7 @@ describe('Tests star system generation', () => {
     })
 
     test('Galaxy 0 contains Zaonce', () => {
-        const stars = generateGalaxy(0)
+        const stars = generateGalaxy(0, 2)
         const starSystem = stars.find(s => s.name === 'Zaonce')
         expect(starSystem).toBeTruthy()
         expect(starSystem!.economy).toBe(EconomyEnum.AverageIndustrial)
@@ -73,7 +73,7 @@ describe('Tests star system generation', () => {
     })
 
     test('Galaxy 0 contains Riveis', () => {
-        const stars = generateGalaxy(0)
+        const stars = generateGalaxy(0, 5)
         const starSystem = stars.find(s => s.name === 'Riveis')
         expect(starSystem).toBeTruthy()
         expect(starSystem!.economy).toBe(EconomyEnum.AverageAgricultural)

@@ -38,6 +38,9 @@ function positionPlayerAwayFromPlanet(game:Game) {
     planet.noseOrientation = planetNoseOrientation
     planet.roofOrientation = planetRoofOrientation
     planet.rightOrientation = planetRightOrientation
+    planet.pitch = 0.01
+    planet.roll = 0.02
+    planet.surfaceTextureIndex = game.player.currentSystem.surfaceTextureIndex
 }
 
 function positionSun(game:Game) {

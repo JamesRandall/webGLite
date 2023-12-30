@@ -5,7 +5,7 @@ import {getSpecies} from "./species";
 import {galaxySize} from "../constants";
 import {vec2} from "gl-matrix";
 
-export function generateStarSystem(seed: ProceduralSeed) : StarSystem {
+export function generateStarSystem(seed: ProceduralSeed, surfaceTextureIndex: number) : StarSystem {
     const economy = seed.s0_hi.getBitRange(0,3)
     const flippedEconomy = seed.s0_hi.flipBitRange(0, 3)
     const government = seed.s1_lo.getBitRange(3,3)
@@ -37,16 +37,17 @@ export function generateStarSystem(seed: ProceduralSeed) : StarSystem {
         // print name operation on the short range scanner - to make this accurate I will need to carefully
         // replicate that routine - or at least figure out what is responsible for the final carry flag
         // on first pass I thought it was the twist, but its not. Need to go back through.
-        shortRangeDotSize: (seed.s2_lo & 1) + 2 + (systemNameResult.carryFlag ? 1 : 0)
+        shortRangeDotSize: (seed.s2_lo & 1) + 2 + (systemNameResult.carryFlag ? 1 : 0),
+        surfaceTextureIndex: surfaceTextureIndex
     }
 }
 
-export function generateGalaxy(galaxyNumber: number) {
+export function generateGalaxy(galaxyNumber: number, numberOfSurfaceTextures: number) {
     const seed = new ProceduralSeed(galaxyNumber)
     const systems : StarSystem[] = []
     // each galaxy contains 256 stars
     for (var counter=0; counter < 256; counter++) {
-        systems.push(generateStarSystem(seed))
+        systems.push(generateStarSystem(seed, Math.floor(counter % numberOfSurfaceTextures)))
         // we twist four times to get to the next system
         seed.twist()
         seed.twist()

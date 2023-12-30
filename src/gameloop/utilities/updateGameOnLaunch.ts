@@ -10,6 +10,7 @@ export function updateGameOnLaunch(game:Game, resources:Resources) {
 
     positionPlayerInOrbit(game)
     spawnSpaceStation(game, resources)
+    positionSun(game)
     launchPlayer(game.player)
 }
 
@@ -53,8 +54,26 @@ function positionPlayerInOrbit(game: Game) {
     planet.noseOrientation = [0,0,1]
     planet.roofOrientation = [0,1,0]
     planet.rightOrientation = [1,0,0]
+    planet.pitch = 0.01
+    planet.roll = 0.02
+    planet.surfaceTextureIndex = game.player.currentSystem.surfaceTextureIndex
+}
 
-    sun.initialOrientation = vec3.subtract(vec3.create(), planet.position, sun.position)
+function positionSun(game:Game) {
+    const sun = game.localBubble.sun
+
+    const sunDirectionVector = vec3.normalize(vec3.create(),[Math.random()*2-1,Math.random()*2-1,Math.random()*2-1])
+    const approximateDistance = worldSize - 1000000
+    const sunPosition = vec3.multiply(vec3.create(),sunDirectionVector,[approximateDistance,approximateDistance,approximateDistance])
+    // orient it to the player
+    const sunNoseOrientation = vec3.multiply(vec3.create(), sunDirectionVector,[-1,-1,-1])
+    const sunRoofOrientation = vec3.rotateX(vec3.create(), sunNoseOrientation, [0,0,0], 90 * Math.PI/180)
+    const sunRightOrientation = vec3.rotateY(vec3.create(), sunNoseOrientation, [0,0,0], 90 * Math.PI/180)
+
+    sun.position = sunPosition
+    sun.noseOrientation = sunNoseOrientation
+    sun.roofOrientation = sunRoofOrientation
+    sun.rightOrientation = sunRightOrientation
 }
 
 function launchPlayer(player:Player) {

@@ -1,6 +1,7 @@
 import {loadShipSpecifications, ShipSpecification} from "../model/ships";
 import {vec3} from "gl-matrix";
 import {ShipInstance} from "../model/ShipInstance";
+import {loadTexture} from "./texture";
 
 export interface Resources {
     ships: {
@@ -11,8 +12,13 @@ export interface Resources {
         getViper: (position: vec3, noseOrientation: vec3) => ShipInstance,
         getThargoid: (position: vec3, noseOrientation: vec3) => ShipInstance,
         getCoriolis: (position: vec3, noseOrientation: vec3) => ShipInstance
+    },
+    textures: {
+        planets: WebGLTexture[]
     }
 }
+
+
 
 export async function loadResources(gl:WebGLRenderingContext) : Promise<Resources> {
     const ships = await loadShipSpecifications(gl)
@@ -25,6 +31,16 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
             getViper: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Viper', position, noseOrientation),
             getThargoid: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Thargoid', position, noseOrientation),
             getCoriolis: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Coriolis', position, noseOrientation)
+        },
+        textures: {
+            planets: [
+                "./mars.png",
+                "./neptune.png",
+                "./venusSurface.png",
+                "./venusAtmosphere.png",
+                "./saturn.png",
+                "./uranus.png"
+            ].map(t => loadTexture(gl, t)!)
         }
     }
 }
