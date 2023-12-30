@@ -229,10 +229,10 @@ export function createShipsRenderer(gl:WebGLRenderingContext) {
             mat4.invert(normalMatrix, modelViewMatrix)
             mat4.transpose(normalMatrix, normalMatrix)
 
-            setPositionAttribute(gl, ship.type.model, programInfo)
-            setColorAttribute(gl, ship.type.model, programInfo)
-            setNormalAttribute(gl, ship.type.model, programInfo)
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ship.type.model.indices)
+            setPositionAttribute(gl, ship.blueprint.model, programInfo)
+            setColorAttribute(gl, ship.blueprint.model, programInfo)
+            setNormalAttribute(gl, ship.blueprint.model, programInfo)
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ship.blueprint.model.indices)
             // Tell WebGL to use our program when drawing
             gl.uniformMatrix4fv(
                 programInfo.uniformLocations.modelViewMatrix,
@@ -248,7 +248,7 @@ export function createShipsRenderer(gl:WebGLRenderingContext) {
             gl.uniform1f(programInfo.uniformLocations.shininessPosition,ship.rendering.shininess)
 
             {
-                const vertexCount = ship.type.model.vertexCount;
+                const vertexCount = ship.blueprint.model.vertexCount;
                 const type = gl.UNSIGNED_SHORT;
                 const offset = 0;
                 gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);

@@ -1,15 +1,14 @@
-import {loadShipSpecifications, ShipSpecification} from "../model/ships";
+import {loadShipSpecifications, ShipBlueprint} from "../model/shipBlueprint";
 import {vec3} from "gl-matrix";
-import {ShipInstance} from "../model/ShipInstance";
+import {ShipInstance, ShipRoleEnum} from "../model/ShipInstance";
 import {loadTexture} from "./texture";
 
 export interface Resources {
     ships: {
         numberOfShips: number,
-        getRandomShip: () => ShipSpecification,
+        getRandomShip: () => ShipBlueprint,
         getIndexedShip: (index:number, position: vec3, noseOrientation: vec3) => ShipInstance
         getCobraMk3: (position: vec3, noseOrientation: vec3) => ShipInstance,
-        getViper: (position: vec3, noseOrientation: vec3) => ShipInstance,
         getThargoid: (position: vec3, noseOrientation: vec3) => ShipInstance,
         getCoriolis: (position: vec3, noseOrientation: vec3) => ShipInstance
     },
@@ -28,9 +27,8 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
             getRandomShip: () => getRandomShip(ships),
             getIndexedShip: (index:number, position: vec3, noseOrientation: vec3) => toInstance(ships[index], position, noseOrientation),
             getCobraMk3: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Cobra Mk III', position, noseOrientation),
-            getViper: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Viper', position, noseOrientation),
-            getThargoid: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Thargoid', position, noseOrientation),
-            getCoriolis: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Coriolis', position, noseOrientation)
+            getThargoid: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Thargoid', position, noseOrientation, ShipRoleEnum.Thargoid),
+            getCoriolis: (position: vec3, noseOrientation: vec3) => getNamedShip(ships, 'Coriolis', position, noseOrientation, ShipRoleEnum.Station)
         },
         textures: {
             planets: [
@@ -51,9 +49,14 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
     }
 }
 
-function getNamedShip(ships: ShipSpecification[], name: string, position: vec3, noseOrientation:vec3) {
+function getNamedShip(ships: ShipBlueprint[], name: string, position: vec3, noseOrientation:vec3, role?: ShipRoleEnum) {
+    return toInstance(ships.find(s => s.name === name)!, position, noseOrientation, role)
+}
+
+function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation:vec3, role?: ShipRoleEnum) {
     return {
-        type: ships.find(s => s.name === name)!,
+        role: role ?? ShipRoleEnum.Trader,
+        blueprint: ship,
         position: position,
         noseOrientation: noseOrientation,
         roofOrientation: [0,1,0],
@@ -69,24 +72,6 @@ function getNamedShip(ships: ShipSpecification[], name: string, position: vec3, 
     } as ShipInstance
 }
 
-function toInstance(ship: ShipSpecification, position: vec3, noseOrientation:vec3) {
-    return {
-        type: ship,
-        position: position,
-        noseOrientation: noseOrientation,
-        roofOrientation: [0,1,0],
-        rightOrientation: [1,0,0],
-        roll: 0.0,
-        totalRoll: 0.0,
-        pitch: 0.0,
-        totalPitch: 0.0,
-        speed: 0.0,
-        rendering: {
-            shininess: 16.0
-        }
-    } as ShipInstance
-}
-
-function getRandomShip(ships:ShipSpecification[]) {
+function getRandomShip(ships:ShipBlueprint[]) {
     return ships[Math.floor(Math.random() * ships.length)]
 }

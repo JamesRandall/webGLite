@@ -19,7 +19,7 @@ const pitchDeceleration = maxPitchSpeed / 7.0
 const maxSpeed = 32.0
 const speedAcceleration = maxSpeed / 3.0
 
-export interface ShipSpecification {
+export interface ShipBlueprint {
     name: string,
     model: Model,
     rollAcceleration: number
@@ -43,7 +43,7 @@ export interface ShipSpecification {
 }
 
 export async function loadShipSpecifications(gl:WebGLRenderingContext) {
-    const ships : ShipSpecification[] = []
+    const ships : ShipBlueprint[] = []
 
     const playerDefaults = {
         rollAcceleration: rollAcceleration,

@@ -72,7 +72,7 @@ Elite uses 23 bit numbers + 1 bit for the sign for ship co-ordinates. So +/- 23-
 
 The player is always at position (0,0,0) and the world "revolves", quite literally, around them.
 
-The scanner shows ships that have a high byte that is < 63 (0x33) and so to be in range the ships must have co-ordinates:
+The scanner shows shipBlueprint that have a high byte that is < 63 (0x33) and so to be in range the shipBlueprint must have co-ordinates:
 
     x > -0x3300 and x < 0x3300
     y > -0x3300 and x < 0x3300

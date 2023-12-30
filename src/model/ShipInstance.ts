@@ -1,8 +1,21 @@
-import {ShipSpecification} from "./ships";
+import {ShipBlueprint} from "./shipBlueprint";
 import {PositionedObject} from "./localBubble";
 
+export enum ShipRoleEnum {
+    Missile,
+    EscapePod,
+    PlanetartTrader, // go between the station and the planet
+    Trader, // go between the station and other systems
+    Police,
+    Pirate,
+    BountyHunter,
+    Thargoid,
+    Station
+}
+
 export interface ShipInstance extends PositionedObject {
-    type: ShipSpecification,
+    role: ShipRoleEnum
+    blueprint: ShipBlueprint,
     totalRoll: number,
     totalPitch: number,
     speed: number,

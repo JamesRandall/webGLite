@@ -1,4 +1,4 @@
-import {ShipSpecification} from "./ships";
+import {ShipBlueprint} from "./shipBlueprint";
 import {ControlState, getEmptyControlState} from "../controls/controlState";
 import {Position, StarSystem} from "./starSystem";
 import {Resources} from "../resources/resources";
@@ -49,7 +49,7 @@ export interface PlayerEquipment {
 export interface Player {
     previousControlState: ControlState
     controlState: ControlState
-    ship: ShipSpecification
+    ship: ShipBlueprint
     pitch: number
     roll: number
     speed: number
@@ -77,7 +77,7 @@ export interface Player {
 }
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem) : Player {
-    const cobra = resources.ships.getCobraMk3([0,0,0], [0,1,0]).type
+    const cobra = resources.ships.getCobraMk3([0,0,0], [0,1,0]).blueprint
     return {
         previousControlState: getEmptyControlState(),
         controlState: getEmptyControlState(),

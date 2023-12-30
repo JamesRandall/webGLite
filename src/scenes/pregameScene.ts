@@ -27,8 +27,8 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
         //resources.ships.getCobraMk3(vec3.fromValues(0, 0.0, -scannerRadialWorldRange[2] / 24.0), vec3.fromValues(0.0, 0.0, -1.0))
         resources.ships.getIndexedShip(startingShip, vec3.fromValues(0, 0.0, startingZ), vec3.fromValues(0.0, 0.0, -1.0))
     ]
-    ships[0].roll = ships[0].type.maxRollSpeed
-    ships[0].pitch = ships[0].type.maxPitchSpeed*2
+    ships[0].roll = ships[0].blueprint.maxRollSpeed
+    ships[0].pitch = ships[0].blueprint.maxPitchSpeed*2
 
     const localBubble : LocalBubble = {
         sun: {
@@ -92,8 +92,8 @@ function createPregameLoop(game: Game, gl:WebGLRenderingContext, dashboardGl: We
     function createShip()
     {
         game.localBubble.ships[0] = resources.ships.getIndexedShip(currentShipIndex, vec3.fromValues(0, 0.0, startingZ), vec3.fromValues(0.0, 0.0, -1.0))
-        game.localBubble.ships[0].roll = game.localBubble.ships[0].type.maxRollSpeed*2
-        game.localBubble.ships[0].pitch = -game.localBubble.ships[0].type.maxPitchSpeed
+        game.localBubble.ships[0].roll = game.localBubble.ships[0].blueprint.maxRollSpeed*2
+        game.localBubble.ships[0].pitch = -game.localBubble.ships[0].blueprint.maxPitchSpeed
     }
 
     function nextShip() {
