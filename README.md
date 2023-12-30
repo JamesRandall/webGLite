@@ -78,15 +78,13 @@ The scanner shows ships that have a high byte that is < 63 (0x33) and so to be i
     y > -0x3300 and x < 0x3300
     z > -0x3300 and x < 0x3300
 
+## Planet textures
 
+I sourced the textures for the planets from here:
 
-## Possible planet shaders
+https://www.solarsystemscope.com/textures/
 
-Still trying to decide how to render planets and stars... simple shapes or something more complex... will decide later. In the meantime here are some cool shaders I'm gathering.
-
-https://www.shadertoy.com/view/ls2Bzd
-
-https://www.shadertoy.com/view/wsGBzR
+Super cool and, handily, licensed under the CC Attribution license.
 
 ## License
 

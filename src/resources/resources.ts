@@ -39,7 +39,13 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
                 "./venusSurface.png",
                 "./venusAtmosphere.png",
                 "./saturn.png",
-                "./uranus.png"
+                "./uranus.png",
+                "./mercury.png",
+                "./moon.png",
+                "./ceres.png",
+                "./eris.png",
+                "./haumea.png",
+                "./makemake.png"
             ].map(t => loadTexture(gl, t)!)
         }
     }
