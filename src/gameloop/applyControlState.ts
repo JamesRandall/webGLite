@@ -25,8 +25,8 @@ function applyHyperspace(game: Game) {
         if (game.hyperspace === null) {
             const selectedSystem = getNearestSystemToCursor(game)
             game.player.selectedSystem = selectedSystem
-            if (selectedSystem !== game.player.currentSystem) {
-                const distance = vec2.length(vec2.subtract(vec2.create(), game.player.selectedSystem.galacticPosition, game.player.currentSystem.galacticPosition))
+            if (selectedSystem !== game.currentSystem) {
+                const distance = vec2.length(vec2.subtract(vec2.create(), game.player.selectedSystem.galacticPosition, game.currentSystem.galacticPosition))
                 if (distance * 10 <= game.player.fuel) {
                     game.hyperspace = {
                         rotation: 0,

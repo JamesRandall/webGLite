@@ -23,16 +23,16 @@ export function createLocalChartRenderer(draw2d: Primitives) {
 
     return function renderLocalChart(game: Game) {
         const viewRect = {
-            left: game.player.currentSystem.galacticPosition[0] - xMax + xOffset,
-            top: game.player.currentSystem.galacticPosition[1] - yMax + yOffset,
+            left: game.currentSystem.galacticPosition[0] - xMax + xOffset,
+            top: game.currentSystem.galacticPosition[1] - yMax + yOffset,
             width: xRange,
             height: yRange
         }
 
         const orange = vec4.fromValues(0xf5/255.0, 0x9e/255.0, 0x0b/255.0, 1.0)
         const currentCenter = vec2.fromValues(
-            (game.player.currentSystem.galacticPosition[0] - viewRect.left) * xScale,
-            (game.player.currentSystem.galacticPosition[1] - viewRect.top) * yScale
+            (game.currentSystem.galacticPosition[0] - viewRect.left) * xScale,
+            (game.currentSystem.galacticPosition[1] - viewRect.top) * yScale
         )
         const currentCursor =
             vec2.multiply(vec2.create(),
@@ -50,7 +50,7 @@ export function createLocalChartRenderer(draw2d: Primitives) {
                 //const xDist = Math.abs(star.galacticPosition.x - game.player.currentSystem.galacticPosition.x)
                 //const yDist = Math.abs(star.galacticPosition.y - game.player.currentSystem.galacticPosition.y)
                 //if (xDist < xMax && yDist < yMax) {
-                const distance = vec2.distance(star.galacticPosition, game.player.currentSystem.galacticPosition)
+                const distance = vec2.distance(star.galacticPosition, game.currentSystem.galacticPosition)
                 if (distance < 8) {
                     const center = vec2.fromValues(
                         (star.galacticPosition[0] - viewRect.left) * xScale,

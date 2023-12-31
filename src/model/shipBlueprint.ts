@@ -40,6 +40,7 @@ export interface ShipBlueprint {
     maxForwardShield: number
     maxAftShield: number
     maxMissiles: number
+    maxCargo: number
 }
 
 export async function loadShipSpecifications(gl:WebGLRenderingContext) {
@@ -63,7 +64,8 @@ export async function loadShipSpecifications(gl:WebGLRenderingContext) {
         maxAltitude: 255,
         maxForwardShield: 255,
         maxAftShield: 255,
-        maxMissiles: 4
+        maxMissiles: 4,
+        maxCargo: 20
     }
 
 

@@ -13,6 +13,7 @@ import {Scene} from "./scene";
 import {Size} from "../model/geometry";
 import {updateShipInstance} from "../gameloop/updateShipInstance";
 import {createGameScene} from "./gameScene";
+import {generateMarketItems} from "../proceduralGeneration/marketItems";
 
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
@@ -70,7 +71,9 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
         localBubble: localBubble,
         currentScene: SceneEnum.Front,
         launching: null,
-        hyperspace: null
+        hyperspace: null,
+        currentSystem: startingSystem,
+        marketItems: generateMarketItems(startingSystem)
     }
 
     const sceneRenderer = createPregameSceneRenderer(gl)

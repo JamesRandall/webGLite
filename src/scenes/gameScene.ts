@@ -12,6 +12,8 @@ import {Resources} from "../resources/resources";
 import {ShipInstance} from "../model/ShipInstance";
 import {vec3} from "gl-matrix";
 import {worldSize} from "../constants";
+import {generateMarketItems} from "../proceduralGeneration/marketItems";
+import {bindMouse} from "../controls/bindMouse";
 
 export function createGameScene(resources: Resources, gl: WebGLRenderingContext, dashboardGl: WebGLRenderingContext) {
     //const clipSpaceRadius = 2048
@@ -74,10 +76,14 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
         localBubble: localBubble,
         currentScene: SceneEnum.PlayerDetails,
         launching: null,
-        hyperspace: null
+        hyperspace: null,
+        currentSystem: startingSystem,
+        marketItems: generateMarketItems(startingSystem)
     }
+    game.player.cargoHoldContents = game.marketItems.map(() => 0)
 
     bindKeys(game.player.controlState)
+    bindMouse(game.player.controlState)
     const sceneRenderer = createSceneRenderer(gl, resources)
     const dashboardRenderer = createDashboardRenderer(dashboardGl)
     return createGameLoop(resources, game, sceneRenderer, dashboardRenderer)

@@ -8,23 +8,24 @@ import {createSystemDetailsRenderer} from "../screens/systemDetails";
 import {drawFrame, setupGl} from "../common";
 import {createPlayerDetailsRenderer} from "../screens/playerDetails";
 import {createLaunchingRenderer} from "../screens/launching";
-import {createPlanetRenderer} from "./planet";
 import {createHyperspaceRenderer} from "../screens/hyperspace";
 import {createSphericalPlanetRenderer} from "./sphericalPlanet";
 import {Resources} from "../../resources/resources";
+import {createBuyMarketItemsRenderer} from "../screens/buyMarketItems";
 
 export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
+    const draw2d = createPrimitiveRenderer(gl)
+
     const shipRenderer = createShipsRenderer(gl)
     const stardustRenderer = createStardustRenderer(gl)
     const sunRenderer = createSunRenderer(gl)
-    //const planetRenderer = createPlanetRenderer(gl)
     const planetRenderer = createSphericalPlanetRenderer(gl, resources)
-    const draw2d = createPrimitiveRenderer(gl)
     const localChartRenderer = createLocalChartRenderer(draw2d)
     const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)
     const playerDetailsRenderer = createPlayerDetailsRenderer(draw2d)
     const launchingRenderer = createLaunchingRenderer(gl)
     const hyperspaceRenderer = createHyperspaceRenderer(gl)
+    const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
 
     return (game:Game, timeDelta:number) => {
         setupGl(gl)
@@ -51,9 +52,15 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
 
             case SceneEnum.Launching:
                 launchingRenderer(game)
+                break
 
             case SceneEnum.Hyperspace:
                 hyperspaceRenderer(game)
+                break
+
+            case SceneEnum.BuyMarketItems:
+                buyMarketItemsRenderer(game)
+                break
         }
 
         gl.disable(gl.DEPTH_TEST)

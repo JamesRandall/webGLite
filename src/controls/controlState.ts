@@ -1,5 +1,6 @@
 // we could do this with a bitmask but this seems more readable
 import {SceneEnum} from "../model/game";
+import {vec2} from "gl-matrix";
 
 export interface ControlState {
     rollLeft: boolean
@@ -15,6 +16,9 @@ export interface ControlState {
     cursorDown: boolean
     jump: boolean
     hyperspace: boolean
+    mousePosition: vec2
+    mouseDown: boolean
+    shiftPressed: boolean
 }
 
 export function getEmptyControlState() {
@@ -31,6 +35,9 @@ export function getEmptyControlState() {
         cursorUp: false,
         cursorDown: false,
         jump: false,
-        hyperspace: false
+        hyperspace: false,
+        mousePosition: vec2.fromValues(-1,-1),
+        mouseDown: false,
+        shiftPressed: false
     }
 }

@@ -49,7 +49,7 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
         draw2d.text.draw(title, [19-title.length/2,0.5])
         draw2d.rect([0,40], [draw2d.size().width, frameWidth], frameColor)
 
-        draw2d.text.draw(`Present System          :${player.currentSystem.name}`, [1,3])
+        draw2d.text.draw(`Present System          :${game.currentSystem.name}`, [1,3])
         draw2d.text.draw(`Hyperspace System       :${player.selectedSystem.name}`, [1,4])
         draw2d.text.draw(`Condition               :${player.isDocked ? 'Docked':'Space'}`, [1,5])
         draw2d.text.draw(`Fuel:${(player.fuel/10).toLocaleString(undefined,{maximumFractionDigits: 1, minimumFractionDigits: 1 })} Light Years`, [1,6])

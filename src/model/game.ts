@@ -1,6 +1,7 @@
 import {Player} from "./player";
 import {StarSystem} from "./starSystem";
 import {LocalBubble} from "./localBubble";
+import {MarketItem} from "../proceduralGeneration/marketItems";
 
 export enum SceneEnum {
     Front,
@@ -9,7 +10,8 @@ export enum SceneEnum {
     PlayerDetails,
     Inventory,
     Launching,
-    Hyperspace
+    Hyperspace,
+    BuyMarketItems
 }
 
 export interface LaunchingData {
@@ -25,6 +27,8 @@ export interface HyperspaceData {
 }
 
 export interface Game {
+    currentSystem: StarSystem,
+    marketItems: MarketItem[],
     player: Player
     localBubble: LocalBubble
     stars: StarSystem[]

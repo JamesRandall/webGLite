@@ -14,6 +14,7 @@ function applySceneSelection(game: Game) {
         // scenes are slightly different when docked
         switch (game.player.controlState.sceneSelection!) {
             case 1: game.currentScene = SceneEnum.Launching; break;
+            case 2: game.currentScene = SceneEnum.BuyMarketItems; break;
             case 6: game.currentScene = SceneEnum.LocalMap; break;
             case 7: game.currentScene = SceneEnum.SystemDetails; break;
             case 9: game.currentScene = SceneEnum.PlayerDetails; break;
@@ -87,6 +88,7 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
 
             drawScene(game, deltaTime)
             drawDashboard(game)
+            game.player.previousControlState = {...game.player.controlState}
             return null
         }
     }

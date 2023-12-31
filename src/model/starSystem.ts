@@ -1,15 +1,17 @@
 import {ProceduralSeed} from "../proceduralGeneration/seeds";
 import {vec2} from "gl-matrix";
 
+// I realise the numbers I have assigned are the normal order - but the values are important and so
+// I'd rather be explicit.
 export enum EconomyEnum {
-    RichIndustrial,
-    AverageIndustrial,
-    PoorIndustrial,
-    MainlyIndustrial,
-    MainlyAgricultural,
-    RichAgricultural,
-    AverageAgricultural,
-    PoorAgricultural
+    RichIndustrial = 0,
+    AverageIndustrial = 1,
+    PoorIndustrial = 2,
+    MainlyIndustrial = 3,
+    MainlyAgricultural = 4,
+    RichAgricultural = 5,
+    AverageAgricultural = 6,
+    PoorAgricultural = 7
 }
 
 export const economyText = [

@@ -4,10 +4,12 @@ import {ControlState} from "./controlState";
 export function bindKeys(controlState: ControlState) {
     const setControl = (e:KeyboardEvent, newState:boolean) => {
         if (e.key >= "0" && e.key <= "9" && newState) {
+            e.preventDefault()
             controlState.sceneSelection = parseInt(e.key)
             return
         }
 
+        let handled = true
         switch (e.key) {
             case ",": controlState.rollLeft = newState; break;
             case ".": controlState.rollRight = newState; break;
@@ -21,6 +23,11 @@ export function bindKeys(controlState: ControlState) {
             case "ArrowUp": controlState.cursorUp = newState; break;
             case "ArrowDown": controlState.cursorDown = newState; break;
             case "h": controlState.hyperspace = newState; break;
+            case "Shift": controlState.shiftPressed = newState; break;
+            default: handled = false
+        }
+        if (handled) {
+            e.preventDefault()
         }
     }
 

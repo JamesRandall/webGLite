@@ -3,17 +3,19 @@ import {Resources} from "../../resources/resources";
 import {vec2, vec3} from "gl-matrix";
 import {move, rotateLocationInSpaceByPitchAndRoll, rotateOrientationVectorsByPitchAndRoll} from "./transforms";
 import {worldSize} from "../../constants";
+import {generateMarketItems} from "../../proceduralGeneration/marketItems";
 
 export function updateGameOnHyperspace(game:Game, resources:Resources) {
-    const distance = vec2.distance(game.player.currentSystem.galacticPosition, game.player.selectedSystem.galacticPosition)
+    const distance = vec2.distance(game.currentSystem.galacticPosition, game.player.selectedSystem.galacticPosition)
     game.player.fuel = Math.max(0, game.player.fuel - Math.floor(distance*10))
     game.hyperspace = null
-    game.player.currentSystem = game.player.selectedSystem
+    game.currentSystem = game.player.selectedSystem
     game.player.isInSafeArea = false
     game.localBubble.ships = []
 
     positionPlayerAwayFromPlanet(game)
     positionSun(game)
+    game.marketItems = generateMarketItems(game.currentSystem)
 }
 
 // TODO: come back to the below when fresher, I've a horrible feeling its nonsense
@@ -21,7 +23,7 @@ export function updateGameOnHyperspace(game:Game, resources:Resources) {
 function positionPlayerAwayFromPlanet(game:Game) {
     const planet = game.localBubble.planet
     const player = game.player
-    planet.radius = player.currentSystem.averageRadius
+    planet.radius = game.currentSystem.averageRadius
 
     // create a random directional vector for the planet then move it to a random distance suitable for hyperspace
     // exit along that vector
@@ -40,7 +42,7 @@ function positionPlayerAwayFromPlanet(game:Game) {
     planet.rightOrientation = planetRightOrientation
     planet.pitch = 0.01
     planet.roll = 0.02
-    planet.surfaceTextureIndex = game.player.currentSystem.surfaceTextureIndex
+    planet.surfaceTextureIndex = game.currentSystem.surfaceTextureIndex
 }
 
 function positionSun(game:Game) {

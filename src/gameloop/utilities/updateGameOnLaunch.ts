@@ -28,7 +28,7 @@ function positionPlayerInOrbit(game: Game) {
     const planet = game.localBubble.planet
     const sun = game.localBubble.sun
     const player = game.player
-    planet.radius = player.currentSystem.averageRadius // set the planets radius to that of the current system
+    planet.radius = game.currentSystem.averageRadius // set the planets radius to that of the current system
     // to position the player in orbit what we actually do is move the world bubble so that the player is at
     // a distance of (planet radius * 2) from the planet and facing it
     // to do this we:
@@ -56,7 +56,7 @@ function positionPlayerInOrbit(game: Game) {
     planet.rightOrientation = [1,0,0]
     planet.pitch = 0.01
     planet.roll = 0.02
-    planet.surfaceTextureIndex = game.player.currentSystem.surfaceTextureIndex
+    planet.surfaceTextureIndex = game.currentSystem.surfaceTextureIndex
 }
 
 function positionSun(game:Game) {
