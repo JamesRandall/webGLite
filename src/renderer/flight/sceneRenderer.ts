@@ -26,8 +26,15 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
     const launchingRenderer = createLaunchingRenderer(gl)
     const hyperspaceRenderer = createHyperspaceRenderer(gl)
     const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
+    let flashOn = true
+    let flashOnTime = 0
 
     return (game:Game, timeDelta:number) => {
+        flashOnTime += timeDelta
+        if (flashOnTime > 1.5) {
+            flashOnTime = 0
+            flashOn = !flashOn
+        }
         setupGl(gl)
 
         switch(game.currentScene) {
@@ -70,6 +77,9 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
             const hyperspaceText = `HYPERSPACE - ${game.player.selectedSystem.name}`
             const xPos = 38/2 - hyperspaceText.length/2
             draw2d.text.draw(hyperspaceText, [xPos,21.5])
+        }
+        if (game.player.dockingComputerFlightExecuter !== null && flashOn) {
+            draw2d.text.draw('DOCKING COMPUTER ON', [9.5,21.5])
         }
 
         game.diagnostics

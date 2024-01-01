@@ -6,6 +6,8 @@ import {createLaunchingLoop} from "./launching";
 import {applyControlState} from "./applyControlState";
 import {Resources} from "../resources/resources";
 import {createHyperspaceLoop} from "./hyperspace";
+import {ShipRoleEnum} from "../model/ShipInstance";
+import {vec3} from "gl-matrix";
 
 function applySceneSelection(game: Game) {
     if (game.player.controlState.sceneSelection === null) { return; }
@@ -59,6 +61,7 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
     let launchingLoop: ((deltaTime: number) => void) | null = null
     let hyperspaceLoop: ((deltaTime: number) => void) | null = null
     let hyperspaceClock: number | null = null
+
     const scene: Scene = {
         update: (now: number, viewportExtent: Size) => {
             now *= 0.001; // convert to seconds
@@ -85,6 +88,17 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
                 }
                 hyperspaceLoop!(deltaTime)
             }
+
+            // !!!!!!!!!! A diag for roof orientation
+            // Also see in updateGameOnLaunch.ts
+            /*const cobra = game.localBubble.ships.find(s => s.role !== ShipRoleEnum.Station)
+            const station = game.localBubble.ships.find(s => s.role === ShipRoleEnum.Station)
+            if (station && cobra) {
+                const stationRoofDelta = vec3.multiply(vec3.create(), station.roofOrientation, [50,50,50])
+                const cobraPosition = vec3.add(vec3.create(), station.position, stationRoofDelta)
+                cobra.position = cobraPosition
+            }*/
+            ///// END OF DIG
 
             drawScene(game, deltaTime)
             drawDashboard(game)

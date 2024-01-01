@@ -1,9 +1,10 @@
 import {Game} from "../../model/game";
-import {ShipRoleEnum} from "../../model/ShipInstance";
+import {ShipInstance, ShipRoleEnum} from "../../model/ShipInstance";
 import {vec3} from "gl-matrix";
 import {radiansToDegrees} from "./transforms";
 import {shipScaleFactor} from "../../constants";
 import {Resources} from "../../resources/resources";
+import {Player} from "../../model/player";
 
 function decelerateToZero(game: Game, timeDelta: number) {
     if (game.player.speed > 0) {
@@ -105,10 +106,16 @@ function rollAndPitchToFacePosition(targetPosition: [number, number, number] | F
     }
 
     const rollDotProduct = vec3.dot([1, 0, 0], normalisedTarget)
-    const remainingAngle = normalisedTarget[1] === 0 ? 0 : Math.atan(normalisedTarget[0] / normalisedTarget[1])
+    //const remainingAngle = Math.acos(rollDotProduct) //normalisedTarget[1] === 0 ? 0 : Math.atan(normalisedTarget[0] / normalisedTarget[1])
     if (!(facingTowards && rollDotProduct === 0)) {
         const rollDirection = rollDotProduct * pitchAngle >= 0 ? 1 : -1
-        rollAngle = Math.min(Math.abs(remainingAngle / timeDelta), game.player.ship.maxRollSpeed)
+        if (Math.abs(rollDotProduct) < 0.200) {
+            rollAngle = game.player.ship.maxRollSpeed
+        }
+        else {
+            rollAngle = game.player.ship.maxRollSpeed
+        }
+        //rollAngle = Math.min(Math.abs(remainingAngle / timeDelta), game.player.ship.maxRollSpeed)
         rollAngle *= rollDirection
     }
 
@@ -117,15 +124,36 @@ function rollAndPitchToFacePosition(targetPosition: [number, number, number] | F
     previousPitch = pitchAngle
     previousRoll = rollAngle
 
+    game.diagnostics.push(`PA: ${radiansToDegrees(pitchAngle)}`)
+    game.diagnostics.push(`RA: ${radiansToDegrees(rollAngle)}`)
+    game.diagnostics.push(`RDP: ${rollDotProduct}`)
+    game.diagnostics.push(`FDP: ${facingTowardsDotProduct}`)
+    game.diagnostics.push(`PDP: ${pitchDotProduct}`)
+
+    if (facingTowards &&
+    //distance > 100 ? Math.abs(facingTowardsDotProduct) === 1 : Math.abs(pitchAngle) < 0.0002 && Math.abs(rollDotProduct) < 0.1
+        ((distance > 100 && facingTowardsDotProduct === -1) ||
+        (distance <= 100 && Math.abs(pitchDotProduct) < 0.05 && Math.abs(rollDotProduct) < 0.05)))
+    {
+        game.player.pitch = 0
+        game.player.roll = 0
+        return true
+    }
+
     game.player.pitch = pitchAngle
     game.player.roll = rollAngle
+    return false
+}
 
-    game.diagnostics.push(`PA: ${pitchAngle}`)
-    game.diagnostics.push(`RA: ${radiansToDegrees(rollAngle)}`)
-    game.diagnostics.push(`FDP: ${facingTowardsDotProduct}`)
-
-    return facingTowards &&
-        distance > 100 ? Math.abs(facingTowardsDotProduct) === 1 : Math.abs(pitchAngle) < 0.0002 && Math.abs(rollAngle) < 0.0002
+function matchRotation(game: Game, station: ShipInstance) {
+    const dotProduct = vec3.dot([1,0,0], station.roofOrientation)
+    game.diagnostics.push(`DP: ${dotProduct}`)
+    if (Math.abs(dotProduct) > 0.9) {
+        game.player.roll = -station.roll
+        return true
+    }
+    game.player.roll = station.roll/2
+    return false
 }
 
 export function createDockingComputer(game: Game, resources: Resources) {
@@ -134,7 +162,8 @@ export function createDockingComputer(game: Game, resources: Resources) {
         RotatingToFront,
         MovingToFront,
         RotatingToFace,
-        MatchRotation
+        MatchRotation,
+        Dock
     }
     const station = game.localBubble.ships.find(s => s.role === ShipRoleEnum.Station)
     if (!station) return null
@@ -180,7 +209,12 @@ export function createDockingComputer(game: Game, resources: Resources) {
             }
         }
         else if (stage === DockingStageEnum.MatchRotation) {
-            game.player.roll = -station.roll
+            if (matchRotation(game, station)) {
+                stage = DockingStageEnum.Dock
+            }
+            //game.player.roll = -station.roll
+        }
+        else if (stage == DockingStageEnum.Dock) {
             game.player.speed = game.player.ship.maxSpeed/8
         }
     }

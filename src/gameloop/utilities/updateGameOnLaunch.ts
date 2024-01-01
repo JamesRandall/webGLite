@@ -12,6 +12,10 @@ export function updateGameOnLaunch(game:Game, resources:Resources) {
     spawnSpaceStation(game, resources)
     positionSun(game)
     launchPlayer(game.player)
+
+    // Add the below in if you want to leave aarker for space station roof orientation
+    //const cobra = resources.ships.getCobraMk3([1000,1000,1000],[0,0,-1])
+    //game.localBubble.ships.push(cobra)
 }
 
 function calculateSpaceStationRotationSpeed(player: Player) {
