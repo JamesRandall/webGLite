@@ -3,6 +3,7 @@ import {ControlState, getEmptyControlState} from "../controls/controlState";
 import {Position, StarSystem} from "./starSystem";
 import {Resources} from "../resources/resources";
 import {vec2} from "gl-matrix";
+import {Game} from "./game";
 
 enum MissileTargettingStatusEnum {
     Normal,
@@ -59,6 +60,7 @@ export interface Player {
     combatRating: CombatRatingEnum
     isDocked: boolean
     isInSafeArea: boolean
+    dockingComputerFlightExecuter: ((game:Game,timeDelta:number) => void) | null
     fuel: number
     energyBankLevel: number[]
     cabinTemperature: number
@@ -91,6 +93,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         combatRating: CombatRatingEnum.Harmless,
         isDocked: true,
         isInSafeArea: true,
+        dockingComputerFlightExecuter: null,
         fuel: cobra.maxFuel, // 70 is a full tank, goes 7 lightyears
         energyBankLevel: [cobra.maxEnergyBankLevel[0]-1,cobra.maxEnergyBankLevel[1],cobra.maxEnergyBankLevel[2],cobra.maxEnergyBankLevel[3]],
         cabinTemperature: 10,

@@ -35,4 +35,5 @@ export interface Game {
     currentScene: SceneEnum
     launching: LaunchingData | null
     hyperspace: HyperspaceData | null
+    diagnostics: string[]
 }

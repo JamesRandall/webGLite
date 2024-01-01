@@ -3,20 +3,38 @@ import {Game} from "../model/game";
 import {move} from "./utilities/transforms";
 import {vec2, vec3} from "gl-matrix";
 import {getNearestSystemToCursor} from "./utilities/map";
+import {createDockingComputer} from "./utilities/dockingComputer";
+import {Resources} from "../resources/resources";
 
-export function applyControlState(game: Game, timeDelta: number) {
+export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
     const player = game.player
     if (!player.isDocked) {
-        applyRoll(player, timeDelta)
-        applyPitch(player, timeDelta)
-        applyAcceleration(player, timeDelta)
-        applyJump(game)
-        applyHyperspace(game)
+        if (!applyDockingComputer(game, resources, timeDelta)) {
+            applyRoll(player, timeDelta)
+            applyPitch(player, timeDelta)
+            applyAcceleration(player, timeDelta)
+            applyJump(game)
+            applyHyperspace(game)
+        }
     }
 
     if (game.hyperspace === null) {
         applyCursors(player, timeDelta)
     }
+}
+
+function applyDockingComputer(game: Game, resources: Resources, timeDelta: number) {
+    if (game.player.dockingComputerFlightExecuter === null && game.player.controlState.dockingOn && !game.player.previousControlState.dockingOn) {
+        game.player.dockingComputerFlightExecuter = createDockingComputer(game, resources)
+    }
+    else if (game.player.dockingComputerFlightExecuter !== null && game.player.controlState.dockingOff) {
+        game.player.dockingComputerFlightExecuter = null
+    }
+    if (!game.player.dockingComputerFlightExecuter) { return false }
+
+    game.player.dockingComputerFlightExecuter(game, timeDelta)
+
+    return true
 }
 
 function applyHyperspace(game: Game) {

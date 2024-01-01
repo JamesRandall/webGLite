@@ -71,5 +71,11 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
             const xPos = 38/2 - hyperspaceText.length/2
             draw2d.text.draw(hyperspaceText, [xPos,21.5])
         }
+
+        game.diagnostics
+            .map((item,index) => ({item,index}))
+            .forEach(({item, index}) => {
+                draw2d.text.draw(item, [1,index+1])
+            })
     }
 }

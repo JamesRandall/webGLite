@@ -10,4 +10,8 @@ export function flightLoop(game: Game, timeDelta:number) {
     })
     updateOrbitalBodies(game, timeDelta)
     updateStardust(game, timeDelta)
+
+
+    //TODO: REMOVE THIS
+    //if (game.player.controlState.dockingOn) game.player.roll = 0
 }

@@ -24,6 +24,8 @@ export function bindKeys(controlState: ControlState) {
             case "ArrowDown": controlState.cursorDown = newState; break;
             case "h": controlState.hyperspace = newState; break;
             case "Shift": controlState.shiftPressed = newState; break;
+            case "c": controlState.dockingOn = newState; break;
+            case "p": controlState.dockingOff = newState; break;
             default: handled = false
         }
         if (handled) {

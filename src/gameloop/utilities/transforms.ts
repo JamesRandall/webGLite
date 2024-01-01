@@ -3,6 +3,14 @@ import {PositionedObject} from "../../model/localBubble";
 import {ShipInstance} from "../../model/ShipInstance";
 import {Player} from "../../model/player";
 
+export function degreesToRadians(value: number) {
+    return value*Math.PI/180
+}
+
+export function radiansToDegrees(value:number) {
+    return value*(180/Math.PI)
+}
+
 export function rotateOrientationVectorsByPitchAndRoll(object: PositionedObject, roll:number, pitch:number) {
     vec3.rotateZ(object.noseOrientation, object.noseOrientation, [0,0,0], roll)
     vec3.rotateZ(object.roofOrientation, object.roofOrientation, [0,0,0], roll)

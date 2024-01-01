@@ -67,7 +67,7 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
 
             hyperspaceClock = applyHyperspaceCountdown(game, hyperspaceClock, deltaTime)
             applySceneSelection(game)
-            applyControlState(game, deltaTime)
+            applyControlState(game, resources, deltaTime)
 
             // the flight loop runs even if we're looking at another screen in gameplay unless we are docked
             if (!game.player.isDocked) {

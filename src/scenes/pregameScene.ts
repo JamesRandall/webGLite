@@ -73,7 +73,8 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
         launching: null,
         hyperspace: null,
         currentSystem: startingSystem,
-        marketItems: generateMarketItems(startingSystem)
+        marketItems: generateMarketItems(startingSystem),
+        diagnostics: []
     }
 
     const sceneRenderer = createPregameSceneRenderer(gl)
