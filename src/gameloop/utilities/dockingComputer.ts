@@ -65,6 +65,7 @@ function lowPassFilter(rawValue: number, previousFilteredValue: number, alpha: n
 }
 
 
+// TODO: I need a two stage version of this that rolls and then pitches (or pitches and then rolls)
 // TODO: I need to revisit the below and really tidy it up. I went on a bit of a crazy hunt and pulled things all over
 // the place until I realised the issues I were dealing with weren't issues with logic but the precision issues
 // documented within the method.
@@ -110,12 +111,11 @@ function rollAndPitchToFacePosition(targetPosition: [number, number, number] | F
     if (!(facingTowards && rollDotProduct === 0)) {
         const rollDirection = rollDotProduct * pitchAngle >= 0 ? 1 : -1
         if (Math.abs(rollDotProduct) < 0.200) {
-            rollAngle = game.player.ship.maxRollSpeed
+            rollAngle = game.player.ship.maxRollSpeed/2
         }
         else {
-            rollAngle = game.player.ship.maxRollSpeed
+            rollAngle = game.player.ship.maxRollSpeed/2
         }
-        //rollAngle = Math.min(Math.abs(remainingAngle / timeDelta), game.player.ship.maxRollSpeed)
         rollAngle *= rollDirection
     }
 
@@ -129,10 +129,11 @@ function rollAndPitchToFacePosition(targetPosition: [number, number, number] | F
     game.diagnostics.push(`RDP: ${rollDotProduct}`)
     game.diagnostics.push(`FDP: ${facingTowardsDotProduct}`)
     game.diagnostics.push(`PDP: ${pitchDotProduct}`)
+    game.diagnostics.push(`D: ${distance}`)
 
     if (facingTowards &&
     //distance > 100 ? Math.abs(facingTowardsDotProduct) === 1 : Math.abs(pitchAngle) < 0.0002 && Math.abs(rollDotProduct) < 0.1
-        ((distance > 100 && facingTowardsDotProduct === -1) ||
+        ((distance > 100 && facingTowardsDotProduct <= -0.9999) ||
         (distance <= 100 && Math.abs(pitchDotProduct) < 0.05 && Math.abs(rollDotProduct) < 0.05)))
     {
         game.player.pitch = 0

@@ -1,6 +1,7 @@
 import {compileShaderProgram, loadShader} from "../../shader";
 import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec3} from "gl-matrix";
+import {setCommonAttributes, setViewUniformLocations} from "../coregl/programInfo";
 
 const vsSource = `#version 300 es
     in vec4 aVertexPosition;
@@ -94,23 +95,7 @@ const fsSource = `#version 300 es
     }
   `
 
-interface ProgramInfo {
-    program: WebGLProgram,
-    attribLocations: {
-        vertexPosition: number,
-        vertexNormal: number,
-        vertexColor: number
-    },
-    uniformLocations: {
-        projectionMatrix: WebGLUniformLocation,
-        modelViewMatrix: WebGLUniformLocation,
-        normalMatrix: WebGLUniformLocation,
-        lightWorldPosition: WebGLUniformLocation,
-        shininessPosition: WebGLUniformLocation
-    }
-}
-
-function initShaderProgram(gl:WebGLRenderingContext) : ProgramInfo | null {
+function initShaderProgram(gl:WebGLRenderingContext) {
     const shaderProgram = compileShaderProgram(gl, vsSource, fsSource)
     if (!shaderProgram) { return null }
 
@@ -126,64 +111,9 @@ function initShaderProgram(gl:WebGLRenderingContext) : ProgramInfo | null {
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")!,
             normalMatrix: gl.getUniformLocation(shaderProgram, "uNormalMatrix")!,
             lightWorldPosition: gl.getUniformLocation(shaderProgram, "uLightWorldPosition")!,
-            shininessPosition: gl.getUniformLocation(shaderProgram, "uShininess")!
+            shininess: gl.getUniformLocation(shaderProgram, "uShininess")!
         },
     }
-}
-
-function setNormalAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-    const numComponents = 3
-    const type = gl.FLOAT
-    const normalize = false
-    const stride = 0
-    const offset = 0
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normals)
-    gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexNormal,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
-    );
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexNormal)
-}
-
-function setColorAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-    const numComponents = 4
-    const type = gl.FLOAT
-    const normalize = false
-    const stride = 0
-    const offset = 0
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color)
-    gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexColor,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
-    )
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor)
-}
-
-function setPositionAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-    const numComponents = 3; // pull out 2 values per iteration
-    const type = gl.FLOAT; // the data in the buffer is 32bit floats
-    const normalize = false; // don't normalize
-    const stride = 0; // how many bytes to get from one set of values to the next
-    // 0 = use type and numComponents above
-    const offset = 0; // how many bytes inside the buffer to start from
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-    gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexPosition,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
-    );
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
 export function createShipsRenderer(gl:WebGLRenderingContext) {
@@ -211,13 +141,15 @@ export function createShipsRenderer(gl:WebGLRenderingContext) {
         gl.useProgram(programInfo.program);
 
         // Set the shader uniforms
-        gl.uniformMatrix4fv(
-            programInfo.uniformLocations.projectionMatrix,
-            false,
-            projectionMatrix,
-        )
+
         gl.uniform3fv(programInfo.uniformLocations.lightWorldPosition, localBubble.sun.position)
         //gl.uniform3fv(programInfo.uniformLocations.lightWorldPosition, [0,0,0]) // this puts the light at the player
+
+        setViewUniformLocations(gl, programInfo,
+            {
+                projectionMatrix,
+                lightWorldPosition: localBubble.sun.position
+            })
 
         localBubble.ships.forEach(ship => {
             // Firstly we point the ship along the nose orientation
@@ -229,23 +161,15 @@ export function createShipsRenderer(gl:WebGLRenderingContext) {
             mat4.invert(normalMatrix, modelViewMatrix)
             mat4.transpose(normalMatrix, normalMatrix)
 
-            setPositionAttribute(gl, ship.blueprint.model, programInfo)
-            setColorAttribute(gl, ship.blueprint.model, programInfo)
-            setNormalAttribute(gl, ship.blueprint.model, programInfo)
+            setCommonAttributes(gl, ship.blueprint.model, programInfo)
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ship.blueprint.model.indices)
-            // Tell WebGL to use our program when drawing
-            gl.uniformMatrix4fv(
-                programInfo.uniformLocations.modelViewMatrix,
-                false,
-                modelViewMatrix,
+            setViewUniformLocations(gl, programInfo,
+                {
+                    modelViewMatrix,
+                    normalMatrix,
+                    shininess: ship.rendering.shininess
+                }
             )
-            gl.uniformMatrix4fv(
-                programInfo.uniformLocations.normalMatrix,
-                false,
-                normalMatrix,
-            )
-
-            gl.uniform1f(programInfo.uniformLocations.shininessPosition,ship.rendering.shininess)
 
             {
                 const vertexCount = ship.blueprint.model.vertexCount;
