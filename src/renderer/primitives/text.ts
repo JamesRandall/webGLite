@@ -6,6 +6,7 @@ import {compileShaderProgram} from "../../shader";
 import {createSquareModelWithTexture} from "../../resources/models";
 import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec2, vec3, vec4} from "gl-matrix";
+import {setCommonAttributes, setCommonAttributes2D, setViewUniformLocations} from "../coregl/programInfo";
 
 const vsSource = `#version 300 es
     precision highp float;
@@ -49,23 +50,9 @@ void main(void) {
     }
 }
 `
-interface ProgramInfo {
-    program: WebGLProgram
-    attribLocations: {
-        vertexPosition: number
-        vertexColor: number
-        textureCoords: number
-    },
-    uniformLocations: {
-        projectionMatrix: WebGLUniformLocation
-        modelViewMatrix: WebGLUniformLocation
-        characterOffset: WebGLUniformLocation
-        sampler: WebGLUniformLocation
-        color: WebGLUniformLocation
-    }
-}
 
-function initShaderProgram(gl:WebGLRenderingContext) : ProgramInfo | null {
+
+function initShaderProgram(gl:WebGLRenderingContext) {
     const shaderProgram = compileShaderProgram(gl, vsSource, fsSource)
     if (!shaderProgram) { return null }
 
@@ -80,65 +67,10 @@ function initShaderProgram(gl:WebGLRenderingContext) : ProgramInfo | null {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!,
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")!,
             characterOffset: gl.getUniformLocation(shaderProgram, "uCharacterOffset")!,
-            sampler: gl.getUniformLocation(shaderProgram, "uSampler")!,
+            textureSampler: gl.getUniformLocation(shaderProgram, "uSampler")!,
             color: gl.getUniformLocation(shaderProgram, "uColor")!
         },
     }
-}
-
-function setColorAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-    const numComponents = 4
-    const type = gl.FLOAT
-    const normalize = false
-    const stride = 0
-    const offset = 0
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color)
-    gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexColor,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
-    )
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor)
-}
-
-function setPositionAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-    const numComponents = 3; // pull out 2 values per iteration
-    const type = gl.FLOAT; // the data in the buffer is 32bit floats
-    const normalize = false; // don't normalize
-    const stride = 0; // how many bytes to get from one set of values to the next
-    // 0 = use type and numComponents above
-    const offset = 0; // how many bytes inside the buffer to start from
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-    gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexPosition,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
-    );
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
-}
-
-function setTextureAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-    const num = 2 // every coordinate composed of 2 values
-    const type = gl.FLOAT // the data in the buffer is 32-bit float
-    const normalize = false // don't normalize
-    const stride = 0 // how many bytes to get from one set to the next
-    const offset = 0 // how many bytes inside the buffer to start from
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoords)
-    gl.vertexAttribPointer(
-        programInfo.attribLocations.textureCoords,
-        num,
-        type,
-        normalize,
-        stride,
-        offset,
-    );
-    gl.enableVertexAttribArray(programInfo.attribLocations.textureCoords);
 }
 
 export function createTextRenderer(gl:WebGLRenderingContext, flippedY:boolean) {
@@ -185,28 +117,18 @@ export function createTextRenderer(gl:WebGLRenderingContext, flippedY:boolean) {
     function drawCharacters(text: string, displayPosition: vec3, cw: number, ch: number, color: [number, number, number, number] | Float32Array, spacing: number) {
         Array.from(text).forEach(c => {
             const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), quat.create(), displayPosition, [cw / 2, (ch / 2) * yMultiplier, 1.0])
-            setPositionAttribute(gl, square, programInfo)
-            setColorAttribute(gl, square, programInfo)
-            setTextureAttribute(gl, square, programInfo)
+            setCommonAttributes(gl, square, programInfo)
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, square.indices)
-            // Tell WebGL to use our program when drawing
-            gl.uniformMatrix4fv(
-                programInfo.uniformLocations.modelViewMatrix,
-                false,
+            setViewUniformLocations(gl, programInfo, {
                 modelViewMatrix,
-            )
+                color,
+                textureIndex: 0
+            },
+                square.texture!)
             gl.uniform1f(
                 programInfo.uniformLocations.characterOffset,
                 c.charCodeAt(0) - 32
             )
-            gl.uniform4fv(
-                programInfo.uniformLocations.color,
-                color
-            )
-
-            gl.activeTexture(gl.TEXTURE0)
-            gl.bindTexture(gl.TEXTURE_2D, square.texture)
-            gl.uniform1i(programInfo.uniformLocations.sampler, 0)
 
             {
                 const vertexCount = square.vertexCount

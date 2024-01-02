@@ -1,33 +1,126 @@
 import {Model} from "../../resources/models";
-import {mat4, vec3} from "gl-matrix";
+import {mat4, vec3, vec4} from "gl-matrix";
+
+// TODO - I did a first pass refactor to pull out the common code. However the data types, as structured, allow
+// for error - i.e. you can specify a position buffer without specifiing the attribute location.
+// Reworking of the types can resolve this by grouping together optionallity.
+// That will be step 2.
+
+// TODO: We need to generalise the initShaderProgram that appears everywhere
+
+interface AttributeBuffers {
+    position?: WebGLBuffer,
+    normals?: WebGLBuffer,
+    textureCoords?: WebGLBuffer
+    color?: WebGLBuffer
+}
+
+interface AttributeLocations {
+    vertexPosition?: number,
+    vertexNormal?: number,
+    textureCoords?: number,
+    vertexColor?: number
+}
 
 export function setCommonAttributes(
     gl:WebGLRenderingContext,
-    buffers:{
-        position?: WebGLBuffer,
-        normals?: WebGLBuffer,
-        textureCoords?: WebGLBuffer
-        color?: WebGLBuffer
-    },
+    buffers: AttributeBuffers,
     programInfo:{
-        attribLocations: {
-            vertexPosition?: number,
-            vertexNormal?: number,
-            textureCoords?: number,
-            vertexColor?: number
-        }
-    }) {
+        attribLocations: AttributeLocations
+    })
+{
+    internalSetCommonAttributes(gl, buffers, programInfo, 3)
+}
+
+export function setCommonAttributes2D(
+    gl:WebGLRenderingContext,
+    buffers: AttributeBuffers,
+    programInfo:{
+        attribLocations: AttributeLocations
+    })
+{
+    internalSetCommonAttributes(gl, buffers, programInfo, 2)
+}
+
+function internalSetCommonAttributes(
+    gl:WebGLRenderingContext,
+    buffers:AttributeBuffers,
+    programInfo:{
+        attribLocations: AttributeLocations
+    },
+    positionBufferComponents: number) {
     if (buffers.textureCoords !== undefined && programInfo.attribLocations.textureCoords !== undefined) {
         setTextureAttribute(gl, buffers.textureCoords, programInfo.attribLocations.textureCoords)
     }
     if (buffers.position !== undefined && programInfo.attribLocations.vertexPosition !== undefined) {
-        setPositionAttribute(gl, buffers.position, programInfo.attribLocations.vertexPosition)
+        setPositionAttribute(gl, buffers.position, programInfo.attribLocations.vertexPosition, positionBufferComponents)
     }
     if (buffers.normals !== undefined && programInfo.attribLocations.vertexNormal !== undefined) {
         setNormalAttribute(gl, buffers.normals, programInfo.attribLocations.vertexNormal)
     }
     if (buffers.color !== undefined && programInfo.attribLocations.vertexColor !== undefined) {
         setColorAttribute(gl, buffers.color, programInfo.attribLocations.vertexColor)
+    }
+}
+
+export function setViewUniformLocations(
+    gl:WebGLRenderingContext,
+    programInfo:{
+        uniformLocations: {
+            projectionMatrix?: WebGLUniformLocation,
+            modelViewMatrix?: WebGLUniformLocation,
+            normalMatrix?: WebGLUniformLocation,
+            lightWorldPosition?: WebGLUniformLocation,
+            shininess?: WebGLUniformLocation,
+            textureSampler?: WebGLUniformLocation,
+            color?: WebGLUniformLocation
+        }
+    },
+    uniforms: {
+        projectionMatrix?: mat4,
+        modelViewMatrix?: mat4,
+        normalMatrix?: mat4,
+        lightWorldPosition?: vec3,
+        shininess?: number,
+        textureIndex?: number,
+        color?: vec4
+    },
+    texture?: WebGLTexture
+) {
+    if (uniforms.projectionMatrix !== undefined && programInfo.uniformLocations.projectionMatrix !== undefined) {
+        gl.uniformMatrix4fv(
+            programInfo.uniformLocations.projectionMatrix,
+            false,
+            uniforms.projectionMatrix,
+        )
+    }
+    if (uniforms.modelViewMatrix !== undefined && programInfo.uniformLocations.modelViewMatrix !== undefined) {
+        gl.uniformMatrix4fv(
+            programInfo.uniformLocations.modelViewMatrix,
+            false,
+            uniforms.modelViewMatrix,
+        )
+    }
+    if (uniforms.normalMatrix !== undefined && programInfo.uniformLocations.normalMatrix !== undefined) {
+        gl.uniformMatrix4fv(
+            programInfo.uniformLocations.normalMatrix,
+            false,
+            uniforms.normalMatrix,
+        )
+    }
+    if (uniforms.lightWorldPosition !== undefined && programInfo.uniformLocations.lightWorldPosition !== undefined) {
+        gl.uniform3fv(programInfo.uniformLocations.lightWorldPosition, uniforms.lightWorldPosition)
+    }
+    if (uniforms.shininess !== undefined && programInfo.uniformLocations.shininess !== undefined) {
+        gl.uniform1f(programInfo.uniformLocations.shininess,uniforms.shininess)
+    }
+    if (uniforms.textureIndex !== undefined && programInfo.uniformLocations.textureSampler !== undefined && texture !== undefined) {
+        gl.activeTexture(getGLTexture(gl, uniforms.textureIndex))
+        gl.bindTexture(gl.TEXTURE_2D, texture)
+        gl.uniform1i(programInfo.uniformLocations.textureSampler, uniforms.textureIndex)
+    }
+    if (uniforms.color !== undefined && programInfo.uniformLocations.color !== undefined) {
+        gl.uniform4fv(programInfo.uniformLocations.color, uniforms.color)
     }
 }
 
@@ -67,8 +160,7 @@ function setColorAttribute(gl:WebGLRenderingContext, colorsBuffer:WebGLBuffer, v
     gl.enableVertexAttribArray(vertexColor)
 }
 
-function setPositionAttribute(gl:WebGLRenderingContext, vertexBuffer: WebGLBuffer, vertexPosition:number) {
-    const numComponents = 3; // pull out 2 values per iteration
+function setPositionAttribute(gl:WebGLRenderingContext, vertexBuffer: WebGLBuffer, vertexPosition:number, numComponents: number) {
     const type = gl.FLOAT; // the data in the buffer is 32bit floats
     const normalize = false; // don't normalize
     const stride = 0; // how many bytes to get from one set of values to the next
@@ -106,62 +198,6 @@ function setTextureAttribute(
         offset,
     );
     gl.enableVertexAttribArray(textureCoordsPosition);
-}
-
-export function setViewUniformLocations(
-    gl:WebGLRenderingContext,
-    programInfo:{
-        uniformLocations: {
-            projectionMatrix?: WebGLUniformLocation,
-            modelViewMatrix?: WebGLUniformLocation,
-            normalMatrix?: WebGLUniformLocation,
-            lightWorldPosition?: WebGLUniformLocation,
-            shininess?: WebGLUniformLocation,
-            textureSampler?: WebGLUniformLocation
-        }
-    },
-    uniforms: {
-        projectionMatrix?: mat4,
-        modelViewMatrix?: mat4,
-        normalMatrix?: mat4,
-        lightWorldPosition?: vec3,
-        shininess?: number,
-        textureIndex?: number
-    },
-    texture?: WebGLTexture
-) {
-    if (uniforms.projectionMatrix !== undefined && programInfo.uniformLocations.projectionMatrix !== undefined) {
-        gl.uniformMatrix4fv(
-            programInfo.uniformLocations.projectionMatrix,
-            false,
-            uniforms.projectionMatrix,
-        )
-    }
-    if (uniforms.modelViewMatrix !== undefined && programInfo.uniformLocations.modelViewMatrix !== undefined) {
-        gl.uniformMatrix4fv(
-            programInfo.uniformLocations.modelViewMatrix,
-            false,
-            uniforms.modelViewMatrix,
-        )
-    }
-    if (uniforms.normalMatrix !== undefined && programInfo.uniformLocations.normalMatrix !== undefined) {
-        gl.uniformMatrix4fv(
-            programInfo.uniformLocations.normalMatrix,
-            false,
-            uniforms.normalMatrix,
-        )
-    }
-    if (uniforms.lightWorldPosition !== undefined && programInfo.uniformLocations.lightWorldPosition !== undefined) {
-        gl.uniform3fv(programInfo.uniformLocations.lightWorldPosition, uniforms.lightWorldPosition)
-    }
-    if (uniforms.shininess !== undefined && programInfo.uniformLocations.shininess !== undefined) {
-        gl.uniform1f(programInfo.uniformLocations.shininess,uniforms.shininess)
-    }
-    if (uniforms.textureIndex !== undefined && programInfo.uniformLocations.textureSampler !== undefined && texture !== undefined) {
-        gl.activeTexture(getGLTexture(gl, uniforms.textureIndex))
-        gl.bindTexture(gl.TEXTURE_2D, texture)
-        gl.uniform1i(programInfo.uniformLocations.textureSampler, uniforms.textureIndex)
-    }
 }
 
 function getGLTexture(gl: WebGLRenderingContext, index: number) {

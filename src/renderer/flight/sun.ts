@@ -1,6 +1,7 @@
 import {compileShaderProgram} from "../../shader";
 import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec2} from "gl-matrix";
+import {setCommonAttributes, setViewUniformLocations} from "../coregl/programInfo";
 
 // This handily shows how to get a shadertoy shader in:
 //    https://webglfundamentals.org/webgl/lessons/webgl-shadertoy.html
@@ -283,26 +284,7 @@ void main() {
 }
 `
 
-interface ProgramInfo {
-  program: WebGLProgram,
-  attribLocations: {
-    vertexPosition: number,
-    vertexNormal: number,
-    vertexColor: number,
-    textureCoords: number
-  },
-  uniformLocations: {
-    projectionMatrix: WebGLUniformLocation,
-    modelViewMatrix: WebGLUniformLocation,
-    normalMatrix: WebGLUniformLocation,
-    mouse: WebGLUniformLocation,
-    resolution: WebGLUniformLocation,
-    time: WebGLUniformLocation,
-    sampler: WebGLUniformLocation
-  }
-}
-
-function initShaderProgram(gl:WebGLRenderingContext) : ProgramInfo | null {
+function initShaderProgram(gl:WebGLRenderingContext) {
   const shaderProgram = compileShaderProgram(gl, vsSource, fsSource)
   if (!shaderProgram) { return null }
 
@@ -318,87 +300,12 @@ function initShaderProgram(gl:WebGLRenderingContext) : ProgramInfo | null {
       projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!,
       modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")!,
       normalMatrix: gl.getUniformLocation(shaderProgram, "uNormalMatrix")!,
+      textureSampler: gl.getUniformLocation(shaderProgram, "uSampler")!,
       mouse: gl.getUniformLocation(shaderProgram, "iMouse")!,
       time: gl.getUniformLocation(shaderProgram, "iTime")!,
-      resolution: gl.getUniformLocation(shaderProgram, "iResolution")!,
-      sampler: gl.getUniformLocation(shaderProgram, "uSampler")!
+      resolution: gl.getUniformLocation(shaderProgram, "iResolution")!
     },
   }
-}
-
-function setNormalAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-  const numComponents = 3
-  const type = gl.FLOAT
-  const normalize = false
-  const stride = 0
-  const offset = 0
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normals)
-  gl.vertexAttribPointer(
-      programInfo.attribLocations.vertexNormal,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset,
-  );
-  gl.enableVertexAttribArray(programInfo.attribLocations.vertexNormal)
-}
-
-
-function setTextureAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-  const num = 2 // every coordinate composed of 2 values
-  const type = gl.FLOAT // the data in the buffer is 32-bit float
-  const normalize = false // don't normalize
-  const stride = 0 // how many bytes to get from one set to the next
-  const offset = 0 // how many bytes inside the buffer to start from
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoords)
-  gl.vertexAttribPointer(
-      programInfo.attribLocations.textureCoords,
-      num,
-      type,
-      normalize,
-      stride,
-      offset,
-  );
-  gl.enableVertexAttribArray(programInfo.attribLocations.textureCoords);
-}
-
-
-function setColorAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-  const numComponents = 4
-  const type = gl.FLOAT
-  const normalize = false
-  const stride = 0
-  const offset = 0
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color)
-  gl.vertexAttribPointer(
-      programInfo.attribLocations.vertexColor,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset,
-  )
-  gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor)
-}
-
-function setPositionAttribute(gl:WebGLRenderingContext, buffers:any, programInfo:ProgramInfo) {
-  const numComponents = 3; // pull out 2 values per iteration
-  const type = gl.FLOAT; // the data in the buffer is 32bit floats
-  const normalize = false; // don't normalize
-  const stride = 0; // how many bytes to get from one set of values to the next
-  // 0 = use type and numComponents above
-  const offset = 0; // how many bytes inside the buffer to start from
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-  gl.vertexAttribPointer(
-      programInfo.attribLocations.vertexPosition,
-      numComponents,
-      type,
-      normalize,
-      stride,
-      offset,
-  );
-  gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 }
 
 export function createSunRenderer(gl:WebGLRenderingContext) {
@@ -417,14 +324,7 @@ export function createSunRenderer(gl:WebGLRenderingContext) {
     const projectionMatrix = mat4.create()
     mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar)
 
-    gl.useProgram(programInfo.program);
-
-    // Set the shader uniforms
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.projectionMatrix,
-        false,
-        projectionMatrix,
-    )
+    gl.useProgram(programInfo.program)
 
     const sun = localBubble.sun
     const scale = sun.radius
@@ -438,26 +338,16 @@ export function createSunRenderer(gl:WebGLRenderingContext) {
     const resolution = vec2.fromValues(256.0,256.0)
     const mouse = vec2.fromValues(32,32)
 
-    setPositionAttribute(gl, sun.model, programInfo)
-    setColorAttribute(gl, sun.model, programInfo)
-    setNormalAttribute(gl, sun.model, programInfo)
-    setTextureAttribute(gl, sun.model, programInfo)
+    setCommonAttributes(gl, sun.model, programInfo)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sun.model.indices)
-    // Tell WebGL to use our program when drawing
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.modelViewMatrix,
-        false,
-        modelViewMatrix,
-    )
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.normalMatrix,
-        false,
-        normalMatrix,
-    )
+    setViewUniformLocations(gl, programInfo, {
+      modelViewMatrix,
+      normalMatrix,
+      projectionMatrix,
+      textureIndex: 0
+    },
+        localBubble.sun.model.texture!)
 
-    gl.activeTexture(gl.TEXTURE0)
-    gl.bindTexture(gl.TEXTURE_2D, localBubble.sun.model.texture)
-    gl.uniform1i(programInfo.uniformLocations.sampler, 0)
 
     gl.uniform2fv(programInfo.uniformLocations.mouse, mouse)
     gl.uniform2fv(programInfo.uniformLocations.resolution, resolution)
