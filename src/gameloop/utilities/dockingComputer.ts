@@ -4,7 +4,6 @@ import {vec3} from "gl-matrix";
 import {radiansToDegrees} from "./transforms";
 import {shipScaleFactor} from "../../constants";
 import {Resources} from "../../resources/resources";
-import {Player} from "../../model/player";
 
 function decelerateToZero(game: Game, timeDelta: number) {
     if (game.player.speed > 0) {
@@ -166,7 +165,7 @@ export function createDockingComputer(game: Game, resources: Resources) {
         MatchRotation,
         Dock
     }
-    const station = game.localBubble.ships.find(s => s.role === ShipRoleEnum.Station)
+    const station = game.localBubble.station
     if (!station) return null
 
     let stage = DockingStageEnum.Decelerating

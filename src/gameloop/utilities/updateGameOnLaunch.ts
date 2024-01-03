@@ -26,6 +26,7 @@ function spawnSpaceStation(game:Game, resources:Resources) {
     const station = resources.ships.getCoriolis([0,0,250], [0,0,-1])
     station.roll = calculateSpaceStationRotationSpeed(game.player)
     game.localBubble.ships.push(station)
+    game.localBubble.station = station
 }
 
 function positionPlayerInOrbit(game: Game) {

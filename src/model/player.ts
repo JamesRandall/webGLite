@@ -59,7 +59,6 @@ export interface Player {
     legalStatus: LegalStatusEnum
     combatRating: CombatRatingEnum
     isDocked: boolean
-    isInSafeArea: boolean
     dockingComputerFlightExecuter: ((game:Game,timeDelta:number) => void) | null
     fuel: number
     energyBankLevel: number[]
@@ -92,7 +91,6 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         legalStatus: LegalStatusEnum.Clean,
         combatRating: CombatRatingEnum.Harmless,
         isDocked: true,
-        isInSafeArea: true,
         dockingComputerFlightExecuter: null,
         fuel: cobra.maxFuel, // 70 is a full tank, goes 7 lightyears
         energyBankLevel: [cobra.maxEnergyBankLevel[0]-1,cobra.maxEnergyBankLevel[1],cobra.maxEnergyBankLevel[2],cobra.maxEnergyBankLevel[3]],

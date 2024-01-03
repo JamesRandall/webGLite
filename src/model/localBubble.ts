@@ -25,6 +25,9 @@ export interface LocalBubble {
     planet: OrbitalBody
     clipSpaceRadius: number
     ships: ShipInstance[]
+    // the station will also be in the ship instance array but we ref it here as otherwise we are constantly
+    // looking it up
+    station: ShipInstance | null
     stardust: vec3[]
     sunPlanetLightingDirection: vec3
 }
