@@ -67,7 +67,7 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
             now *= 0.001; // convert to seconds
             deltaTime = now - then
             then = now;
-
+            game.diagnostics = []
             hyperspaceClock = applyHyperspaceCountdown(game, hyperspaceClock, deltaTime)
             applySceneSelection(game)
             applyControlState(game, resources, deltaTime)

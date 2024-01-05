@@ -17,7 +17,7 @@ export function flightLoop(game: Game, timeDelta:number) {
 function handleCollisions(game: Game) {
     game.localBubble.ships.forEach(ship => {
         if (isShipCollidingWithPlayer(ship)) {
-            debugger;
+            game.diagnostics.push(`COLLISION - ${ship.blueprint.name}`)
         }
     })
 }
