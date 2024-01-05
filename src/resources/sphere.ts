@@ -1,5 +1,6 @@
 import {Model} from "./models";
 import {loadTexture} from "./texture";
+import {createBoundingBox, getConstraints, getSizeFromConstraints, toVectorArray} from "../utilities";
 
 class BufferArray {
     items: number[]
@@ -122,6 +123,7 @@ function createBuffers(gl: WebGLRenderingContext, geometry: ModelGeometry) : Mod
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.texcoords.items), gl.STATIC_DRAW)
 
+    const constraints = getConstraints(toVectorArray(geometry.positions.items))
     return {
         position: positionBuffer,
         color: 0,
@@ -129,7 +131,9 @@ function createBuffers(gl: WebGLRenderingContext, geometry: ModelGeometry) : Mod
         normals: normalBuffer,
         vertexCount: geometry.indices.items.length,
         textureCoords: textureCoordBuffer,
-        texture: null
+        texture: null,
+        boundingBox: createBoundingBox(constraints),
+        boundingBoxSize: getSizeFromConstraints(constraints)
     } as Model
 }
 

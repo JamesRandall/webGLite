@@ -1,5 +1,6 @@
 import {vec2, vec3, vec4} from "gl-matrix";
 import {loadTexture} from "./texture";
+import {createBoundingBox, getConstraints, getSizeFromConstraints} from "../utilities";
 
 export interface Model {
     position: WebGLBuffer,
@@ -8,7 +9,9 @@ export interface Model {
     normals: WebGLBuffer,
     textureCoords: WebGLBuffer,
     texture: WebGLTexture | null,
-    vertexCount: number
+    vertexCount: number,
+    boundingBox: vec3[],
+    boundingBoxSize: vec3
 }
 
 const materials:{ [key:string]: number[] } = {
@@ -21,8 +24,6 @@ const materials:{ [key:string]: number[] } = {
     "yellow": [1.0, 1.0, 0.0, 1.0],
     "black": [0.0, 0.0, 0.0, 1.0]
 }
-
-
 
 interface FaceVertex {
     vertexIndex: number
@@ -188,7 +189,6 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
     const indices = faces.flatMap((_,index) => [index*3,index*3+1,index*3+2])
 
     const colors = faces.flatMap((face,index) => {
-
         return face.vertices.flatMap(_ => face.color)
     })
 
@@ -205,6 +205,8 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW)
 
+    let constraints  = getConstraints(vertices)
+
     return {
         position: positionBuffer,
         color: colorBuffer,
@@ -212,7 +214,9 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
         normals: normalBuffer,
         vertexCount: indices.length,
         textureCoords: 0,
-        texture: null
+        texture: null,
+        boundingBox: createBoundingBox(constraints),
+        boundingBoxSize: getSizeFromConstraints(constraints)
     } as Model
 }
 

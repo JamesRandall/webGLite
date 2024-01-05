@@ -11,7 +11,7 @@ export function updateShipInstance(shipInstance: ShipInstance, player: Player, t
     applyAcceleration(shipInstance, timeDelta)
     rotateLocationInSpaceByPlayerPitchAndRoll(shipInstance, player, timeDelta)
     moveShipByPlayerSpeed(shipInstance, player, timeDelta)
-    rotateOrientationVectorsAccordingToPlayerPitchAndRoll(shipInstance, player, timeDelta)
+    rotateAccordingToPlayerPitchAndRoll(shipInstance, player, timeDelta)
     rotateShipByPitchAndRoll(shipInstance, timeDelta)
 }
 
@@ -38,8 +38,12 @@ function moveShipByPlayerSpeed(shipInstance: ShipInstance, player: Player, timeD
     vec3.add(shipInstance.position, shipInstance.position, [0,0,player.speed*timeDelta*playerShipRelativeSpeedFudgeFactor])
 }
 
-function rotateOrientationVectorsAccordingToPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta:number) {
+function rotateAccordingToPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta:number) {
     rotateOrientationVectorsByPitchAndRoll(shipInstance, player.roll*timeDelta, player.pitch*timeDelta)
+    shipInstance.boundingBox.forEach(v => {
+        vec3.rotateZ(v, v, [0,0,0], player.roll*timeDelta)
+        vec3.rotateX(v, v, [0,0,0], player.pitch*timeDelta)
+    })
 }
 
 function rotateShipByPitchAndRoll(shipInstance: ShipInstance, timeDelta:number) {
@@ -59,4 +63,11 @@ function rotateShipByPitchAndRoll(shipInstance: ShipInstance, timeDelta:number) 
     vec3.normalize(shipInstance.noseOrientation,shipInstance.noseOrientation)
     vec3.normalize(shipInstance.roofOrientation,shipInstance.roofOrientation)
     vec3.normalize(shipInstance.rightOrientation,shipInstance.rightOrientation)
+
+    // we also need to rotate our bounding box
+    shipInstance.boundingBox = shipInstance.boundingBox.map(v => {
+        const newVector = vec3.transformMat4(vec3.create(), v, rollRotationMatrix)
+        vec3.transformMat4(newVector, newVector, pitchRotationMatrix)
+        return newVector
+    })
 }

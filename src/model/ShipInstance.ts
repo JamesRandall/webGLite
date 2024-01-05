@@ -1,5 +1,6 @@
 import {ShipBlueprint} from "./shipBlueprint";
 import {PositionedObject} from "./localBubble";
+import {vec3} from "gl-matrix";
 
 export enum ShipRoleEnum {
     Missile,
@@ -22,4 +23,5 @@ export interface ShipInstance extends PositionedObject {
     rendering: {
         shininess: number
     }
+    boundingBox: vec3[]
 }

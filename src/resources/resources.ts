@@ -68,9 +68,12 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation:vec3, r
         speed: 0.0,
         rendering: {
             shininess: 16.0
-        }
+        },
+        boundingBox: [...ship.model.boundingBox]
     } as ShipInstance
 }
+
+
 
 function getRandomShip(ships:ShipBlueprint[]) {
     return ships[Math.floor(Math.random() * ships.length)]
