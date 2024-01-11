@@ -11,6 +11,18 @@ export function radiansToDegrees(value:number) {
     return value*(180/Math.PI)
 }
 
+export function calculateRoll(object: PositionedObject) {
+    const roofNoseDp = vec3.dot(object.roofOrientation, object.noseOrientation)
+    const projectedRoof = vec3.subtract(
+        vec3.create(),
+        object.roofOrientation,
+        vec3.multiply(vec3.create(), object.noseOrientation, [roofNoseDp,roofNoseDp,roofNoseDp])
+    )
+    return Math.acos(
+        vec3.dot(projectedRoof, [0,1,0]) / vec3.length(projectedRoof)
+    )
+}
+
 export function rotateOrientationVectorsByPitchAndRoll(object: PositionedObject, roll:number, pitch:number) {
     vec3.rotateZ(object.noseOrientation, object.noseOrientation, [0,0,0], roll)
     vec3.rotateZ(object.roofOrientation, object.roofOrientation, [0,0,0], roll)

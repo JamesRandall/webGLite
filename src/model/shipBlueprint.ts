@@ -1,6 +1,6 @@
 import {loadModel, Model} from "../resources/models";
 import {vec3} from "gl-matrix";
-import {shipScaleFactor} from "../constants";
+import {shipScaleFactor, stationScaleFactor} from "../constants";
 
 // measured in BBC Elite:
 //   1.6 seconds to react max roll speed
@@ -80,8 +80,8 @@ export async function loadShipSpecifications(gl:WebGLRenderingContext) {
     ships.push({ name: "Cargo", model: await loadModel(gl, "ships/cargo.obj", shipScaleFactor), ...playerDefaults })
     ships.push({ name: "Cobra Mk I", model: await loadModel(gl, "ships/cobra1.obj", shipScaleFactor), ...playerDefaults })
     ships.push({ name: "Constrictor", model: await loadModel(gl, "ships/constric.obj", shipScaleFactor), ...playerDefaults })
-    ships.push({ name: "Coriolis", model: await loadModel(gl, "ships/coriolis.obj", shipScaleFactor*2), ...playerDefaults })
-    ships.push({ name: "Dodo", model: await loadModel(gl, "ships/dodo.obj", shipScaleFactor), ...playerDefaults })
+    ships.push({ name: "Coriolis", model: await loadModel(gl, "ships/coriolis.obj", stationScaleFactor), ...playerDefaults })
+    ships.push({ name: "Dodo", model: await loadModel(gl, "ships/dodo.obj", stationScaleFactor), ...playerDefaults })
     ships.push({ name: "Escape Pod", model: await loadModel(gl, "ships/escape.obj", shipScaleFactor), ...playerDefaults })
     ships.push({ name: "Fer de Lance", model: await loadModel(gl, "ships/ferdelan.obj", shipScaleFactor), ...playerDefaults })
     ships.push({ name: "Gecko", model: await loadModel(gl, "ships/gecko.obj", shipScaleFactor), ...playerDefaults })

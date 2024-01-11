@@ -1,11 +1,15 @@
 import {Game} from "../../model/game";
-import {ShipInstance, ShipRoleEnum} from "../../model/ShipInstance";
 import {vec3} from "gl-matrix";
-import {radiansToDegrees} from "./transforms";
 import {shipScaleFactor} from "../../constants";
-import {Resources} from "../../resources/resources";
 
-function decelerateToZero(game: Game, timeDelta: number) {
+function immediateAllStop(game: Game, _:vec3, timeDelta: number) {
+    game.player.speed = 0
+    game.player.roll = 0
+    game.player.pitch = 0
+    return true
+}
+
+function allStop(game: Game, _:vec3, timeDelta: number) {
     if (game.player.speed > 0) {
         game.player.speed -= game.player.ship.speedAcceleration * timeDelta
         if (game.player.speed <= 0) {
@@ -38,44 +42,50 @@ function decelerateToZero(game: Game, timeDelta: number) {
     return game.player.speed === 0 && game.player.pitch === 0 && game.player.roll === 0
 }
 
-function moveToPosition(game: Game, targetPosition: vec3, timeDelta: number) {
-    const distance = vec3.length(targetPosition)
-    if (distance > 1) {
-        game.player.speed = distance < 5 ? game.player.ship.maxSpeed/4 : game.player.ship.maxSpeed
-        if (distance < 50) {
-            rollAndPitchToFacePosition(targetPosition, game, timeDelta)
-        }
-        else {
-            game.player.pitch = 0
-            game.player.roll = 0
-        }
-    }
-    else {
-        game.player.speed = 0
-        game.player.pitch = 0
-        game.player.roll = 0
-    }
 
-    return game.player.speed === 0
+type FlightPlanPositionProvider = (game:Game) => vec3
+type FlightPlanManeuverStage = (game:Game,context:vec3,timeDelta:number) => boolean
+type FlightPlanActionStage = (game:Game,context:vec3) => void
+type FlightPlanStage = FlightPlanPositionProvider | FlightPlanManeuverStage | FlightPlanActionStage
+
+function isFlightPlanPositionProviderStage(func: Function): func is FlightPlanPositionProvider {
+    return func.length === 1
+}
+function isFlightPlanManeuverStage(func:Function): func is FlightPlanManeuverStage {
+    return func.length === 3
+}
+function isFlightPlanActionStage(func:Function): func is FlightPlanActionStage {
+    return func.length === 2
 }
 
-function lowPassFilter(rawValue: number, previousFilteredValue: number, alpha: number) {
-    return alpha * rawValue + (1-alpha)*previousFilteredValue
+export function executeFlightPlan(game:Game, stages:FlightPlanStage[]) {
+    let currentStageIndex = 0
+    let positionProvider:FlightPlanPositionProvider = (_:Game) => vec3.create()
+
+    return function (game:Game, timeDelta:number) {
+        if (currentStageIndex >= stages.length) return
+        const stage = stages[currentStageIndex]
+        if (isFlightPlanPositionProviderStage(stage)) {
+            positionProvider = stage
+            currentStageIndex++
+        }
+        else if (isFlightPlanManeuverStage(stage)) {
+            const stageIsComplete = stage(game,positionProvider(game),timeDelta)
+            if (stageIsComplete) {
+                currentStageIndex++
+            }
+        }
+        else if (isFlightPlanActionStage(stage)) {
+            stage(game,positionProvider(game))
+            currentStageIndex++
+        }
+    }
 }
 
-
-// TODO: I need a two stage version of this that rolls and then pitches (or pitches and then rolls)
-// TODO: I need to revisit the below and really tidy it up. I went on a bit of a crazy hunt and pulled things all over
-// the place until I realised the issues I were dealing with weren't issues with logic but the precision issues
-// documented within the method.
-// TODO: scope these properly
-let previousPitch = 0
-let previousRoll = 0
-function rollAndPitchToFacePosition(targetPosition: [number, number, number] | Float32Array, game: Game, timeDelta: number) {
+export function pitchToPoint(game:Game, context:vec3, timeDelta:number) {
+    const tolerance = 0.005
     let pitchAngle = 0
-    let rollAngle = 0
-    const distance = vec3.length(targetPosition)
-    const invertedPosition = vec3.multiply(vec3.create(), targetPosition, [-1, -1, -1])
+    const invertedPosition = vec3.multiply(vec3.create(), context, [-1, -1, -1])
     const normalisedTarget = vec3.normalize(vec3.create(), invertedPosition)
 
     /// TODO: generalise this as we'll need it elsewhere
@@ -90,6 +100,44 @@ function rollAndPitchToFacePosition(targetPosition: [number, number, number] | F
         normalisedTarget[1] = 0
     }
 
+    const facingTowardsDotProduct = vec3.dot([0, 0, -1], normalisedTarget)
+    const facingTowards = facingTowardsDotProduct < 0
+
+    const pitchDotProduct = vec3.dot([0, 1, 0], normalisedTarget)
+    const remainingPitchAngle = Math.acos(pitchDotProduct) - Math.PI / 2
+
+    if (facingTowards && Math.abs(pitchDotProduct) < tolerance) {
+        pitchAngle = 0
+    } else if (pitchDotProduct < 0) {
+        pitchAngle = facingTowards ? Math.max(-Math.abs(remainingPitchAngle / timeDelta), -game.player.ship.maxPitchSpeed) : -game.player.ship.maxPitchSpeed
+    } else {
+        pitchAngle = facingTowards ? Math.min(Math.abs(remainingPitchAngle / timeDelta), game.player.ship.maxPitchSpeed) : game.player.ship.maxPitchSpeed
+    }
+
+    game.player.pitch = pitchAngle
+    game.diagnostics.push(`PDP: ${pitchDotProduct}`)
+
+    return facingTowards && Math.abs(pitchDotProduct) < tolerance
+}
+
+export function rollToPoint(game:Game, context:vec3, timeDelta:number) {
+    const tolerance = 0.005
+    let rollAngle = 0
+    let pitchAngle = 0
+    const invertedPosition = vec3.multiply(vec3.create(), context, [-1, -1, -1])
+    const normalisedTarget = vec3.normalize(vec3.create(), invertedPosition)
+
+    /// TODO: generalise this as we'll need it elsewhere
+    // This is quite funny. Everything was working when I was at my desk plugged into 60Hz monitors - game locked to 60fps. But in the afternoon
+    // I retired to the sofa where I was just using my laptop which runs at 120Hz - game locked to 120fps. With this
+    // framerate we end up with precision issues - we end up with normalised vectors that have a length > 1 by
+    // an infinitesimal amount (for example Z will be 1 but X and Y will be 0.0000000000001) but its just enough to
+    // create havoc!
+    // Made me chuckle because the original game has to clean up number inaccuracies too.
+    if (normalisedTarget[2] === 1 || normalisedTarget[2] === -1) {
+        normalisedTarget[0] = 0
+        normalisedTarget[1] = 0
+    }
 
     const facingTowardsDotProduct = vec3.dot([0,0,-1], normalisedTarget)
     const facingTowards = facingTowardsDotProduct < 0
@@ -107,7 +155,10 @@ function rollAndPitchToFacePosition(targetPosition: [number, number, number] | F
 
     const rollDotProduct = vec3.dot([1, 0, 0], normalisedTarget)
     //const remainingAngle = Math.acos(rollDotProduct) //normalisedTarget[1] === 0 ? 0 : Math.atan(normalisedTarget[0] / normalisedTarget[1])
-    if (!(facingTowards && rollDotProduct === 0)) {
+    if (Math.abs(rollDotProduct) < tolerance) {
+        rollAngle = 0
+    }
+    else {
         const rollDirection = rollDotProduct * pitchAngle >= 0 ? 1 : -1
         if (Math.abs(rollDotProduct) < 0.200) {
             rollAngle = game.player.ship.maxRollSpeed/2
@@ -117,105 +168,63 @@ function rollAndPitchToFacePosition(targetPosition: [number, number, number] | F
         }
         rollAngle *= rollDirection
     }
+    game.player.roll = rollAngle
 
-    pitchAngle = lowPassFilter(pitchAngle, previousPitch, 0.1)
-    rollAngle = lowPassFilter(rollAngle, previousRoll, 0.1)
-    previousPitch = pitchAngle
-    previousRoll = rollAngle
-
-    game.diagnostics.push(`PA: ${radiansToDegrees(pitchAngle)}`)
-    game.diagnostics.push(`RA: ${radiansToDegrees(rollAngle)}`)
     game.diagnostics.push(`RDP: ${rollDotProduct}`)
-    game.diagnostics.push(`FDP: ${facingTowardsDotProduct}`)
-    game.diagnostics.push(`PDP: ${pitchDotProduct}`)
-    game.diagnostics.push(`D: ${distance}`)
 
-    if (facingTowards &&
-    //distance > 100 ? Math.abs(facingTowardsDotProduct) === 1 : Math.abs(pitchAngle) < 0.0002 && Math.abs(rollDotProduct) < 0.1
-        ((distance > 100 && facingTowardsDotProduct <= -0.9999) ||
-        (distance <= 100 && Math.abs(pitchDotProduct) < 0.05 && Math.abs(rollDotProduct) < 0.05)))
-    {
+    return Math.abs(rollDotProduct) < tolerance
+}
+
+export function moveToPoint(game:Game, position:vec3, timeDelta:number) {
+    const distance = vec3.length(position)
+    if (distance > 2) {
+        game.player.speed = distance < 5 ? game.player.ship.maxSpeed/4 : game.player.ship.maxSpeed
+        if (distance < 100) {
+            //rollAndPitchToFacePosition(position, game, timeDelta)
+        }
+        else {
+            game.player.pitch = 0
+            game.player.roll = 0
+        }
+    }
+    else {
+        game.player.speed = 0
         game.player.pitch = 0
         game.player.roll = 0
-        return true
     }
 
-    game.player.pitch = pitchAngle
-    game.player.roll = rollAngle
-    return false
+    game.diagnostics.push(`D: ${distance}`)
+
+    return game.player.speed === 0
 }
 
-function matchRotation(game: Game, station: ShipInstance) {
-    const dotProduct = vec3.dot([1,0,0], station.roofOrientation)
-    game.diagnostics.push(`DP: ${dotProduct}`)
-    if (Math.abs(dotProduct) > 0.9) {
-        game.player.roll = -station.roll
-        return true
-    }
-    game.player.roll = station.roll/2
-    return false
-}
+export function createDockingComputer(game:Game) {
+    // the ship seems to be rolling and pitching at the same time but with the logic below it shouldnt
 
-export function createDockingComputer(game: Game, resources: Resources) {
-    enum DockingStageEnum {
-        Decelerating,
-        RotatingToFront,
-        MovingToFront,
-        RotatingToFace,
-        MatchRotation,
-        Dock
-    }
-    const station = game.localBubble.station
-    if (!station) return null
+    const frontDistance = 160*shipScaleFactor*6
+    let station = game.localBubble.station!
 
-    let stage = DockingStageEnum.Decelerating
+    const setToFrontPoint = (_:Game) =>
+        vec3.add(
+            vec3.create(),
+            station.position,
+            vec3.multiply(vec3.create(), station.noseOrientation, [frontDistance,frontDistance,frontDistance]))
+    const setToDockingPort = (_:Game) =>
+        station.position
 
-    // TODO: I need to add a stage in here to deal with going round the station if necessary (rather than through as we
-    // do now!). That said the original game could crash into the station if the docking computer is triggered at
-    // the wrong point.
-    return function (game:Game, timeDelta: number) {
-        const frontDistance = 160*shipScaleFactor*3
-        game.diagnostics = []
-
-        if (stage === DockingStageEnum.Decelerating) {
-            if (decelerateToZero(game,timeDelta)) {
-                stage = DockingStageEnum.RotatingToFront
-            }
-        }
-        else if (stage === DockingStageEnum.RotatingToFront) {
-            const delta = vec3.multiply(vec3.create(), station.noseOrientation, [frontDistance,frontDistance,frontDistance])
-            const targetPosition = vec3.add(vec3.create(), station.position, delta)
-
-            // The below can be useful when debugging the docking computer as it will place a Cobra at the target position
-            //const cobra = resources.ships.getCobraMk3(targetPosition,[0,0,-1])
-            //game.localBubble.ships.push(cobra)
-            if (rollAndPitchToFacePosition(targetPosition, game, timeDelta)) {
-                stage = DockingStageEnum.MovingToFront
-            }
-        }
-        else if (stage === DockingStageEnum.MovingToFront) {
-            const delta = vec3.multiply(vec3.create(), station.noseOrientation, [frontDistance,frontDistance,frontDistance])
-            const targetPosition = vec3.add(vec3.create(), station.position, delta)
-
-            if (moveToPosition(game, targetPosition, timeDelta)) {
-                stage = DockingStageEnum.RotatingToFace
-            }
-        }
-        else if (stage === DockingStageEnum.RotatingToFace) {
-            const delta = vec3.multiply(vec3.create(), station.noseOrientation, [0,0,160*shipScaleFactor])
-            const targetPosition = vec3.add(vec3.create(), station.position, delta)
-            if (rollAndPitchToFacePosition(targetPosition, game, timeDelta)) {
-                stage = DockingStageEnum.MatchRotation
-            }
-        }
-        else if (stage === DockingStageEnum.MatchRotation) {
-            if (matchRotation(game, station)) {
-                stage = DockingStageEnum.Dock
-            }
-            //game.player.roll = -station.roll
-        }
-        else if (stage == DockingStageEnum.Dock) {
-            game.player.speed = game.player.ship.maxSpeed/8
-        }
-    }
+    return executeFlightPlan(game, [
+        allStop,
+        setToFrontPoint,
+        rollToPoint,
+        pitchToPoint,
+        rollToPoint,
+        pitchToPoint,
+        moveToPoint,
+        immediateAllStop,
+        setToDockingPort,
+        rollToPoint,
+        pitchToPoint,
+        rollToPoint,
+        pitchToPoint,
+    ])
 }

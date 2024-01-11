@@ -1,6 +1,7 @@
 import {ShipInstance} from "../../model/ShipInstance";
 import {vec3} from "gl-matrix";
 import {getConstraints} from "../../utilities";
+import {Game} from "../../model/game";
 
 export function isShipCollidingWithPlayer(shipInstance: ShipInstance) {
     const boundingBoxSize = shipInstance.blueprint.model.boundingBoxSize
@@ -32,4 +33,21 @@ export function isShipCollidingWithPlayer(shipInstance: ShipInstance) {
         // it just needs to feel fair
     }
     return false
+}
+
+function isValidDockingApproach(game: Game) {
+    if (game.localBubble.station === null) return false
+    const station = game.localBubble.station
+
+    const dockingPortLocationRelativeToStationCenter =
+        // the docking port is on the surface of the face that the nose orientation intersects (i.e. the nose
+        // orientation points in the direction of the docking port) and is located half the depth of the station
+        // from its center
+        vec3.multiply(vec3.create(), station.noseOrientation, [0,0,station.blueprint.model.boundingBoxSize[2]/2])
+    const dockingPortLocationRelativeToPlayer =
+        vec3.add(vec3.create(), dockingPortLocationRelativeToStationCenter, station.position)
+
+
+    const dotProduct = vec3.dot([1,0,0], station.roofOrientation)
+    return dotProduct > 0.9
 }
