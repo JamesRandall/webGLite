@@ -57,6 +57,7 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
                 playerDetailsRenderer(game)
                 break
 
+            case SceneEnum.Docking:
             case SceneEnum.Launching:
                 launchingRenderer(game)
                 break

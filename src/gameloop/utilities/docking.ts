@@ -1,7 +1,19 @@
-import {Game} from "../../model/game";
-import {vec2, vec3} from "gl-matrix";
+import {Game, SceneEnum} from "../../model/game";
+import {vec2} from "gl-matrix";
 import {stationScaleFactor} from "../../constants";
 import {calculateRoll, radiansToDegrees} from "./transforms";
+import {ShipRoleEnum} from "../../model/ShipInstance";
+
+export function updateGameOnDocked(game:Game) {
+    game.player.isDocked = true
+    game.player.dockingComputerFlightExecuter = null
+    game.player.speed = 0
+    game.player.roll = 0
+    game.player.pitch = 0
+    // remove all ships but the station from the local bubble
+    game.localBubble.ships = game.localBubble.ships.filter(s => s.role === ShipRoleEnum.Station)
+    game.currentScene = SceneEnum.PlayerDetails
+}
 
 export function isValidDocking(game:Game) {
     if (game.localBubble.station === null) return false

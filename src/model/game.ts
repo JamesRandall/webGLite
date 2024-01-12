@@ -11,7 +11,9 @@ export enum SceneEnum {
     Inventory,
     Launching,
     Hyperspace,
-    BuyMarketItems
+    BuyMarketItems,
+    Docking,
+    PlayerExploding
 }
 
 export interface LaunchingData {
