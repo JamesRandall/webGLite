@@ -34,6 +34,7 @@ function drawCompass(width: number, sidePanelWidth: number, draw2d: Primitives, 
     const yPos = (innerCompassRadius - compassHeight / 2) * directionVector[1] * -1 - compassHeight / 2
     const compassColor = directionVector[2] < 0 ? vec4.fromValues(1, 1, 1, 1) : vec4.fromValues(0.5, 0.5, 0.5, 1)
     draw2d.rect([compassCenter[0] + xPos, compassCenter[1] + yPos], [compassWidth, compassHeight], compassColor)
+    return compassCenter
 }
 
 function drawHud(draw2d:Primitives, width: number, height: number, game:Game) {
@@ -172,7 +173,17 @@ function drawHud(draw2d:Primitives, width: number, height: number, game:Game) {
     )
     draw2d.text.drawAtSize('4', [tr+cw/2,barHeight*7], cw , ch ,0, standardBarColor)
 
-    drawCompass(width, sidePanelWidth, draw2d, game);
+    const compassCenter = drawCompass(width, sidePanelWidth, draw2d, game);
+    if (game.localBubble.station !== null && !game.player.isDocked) {
+        const safeZoneW = 30
+        const safeZoneH = 30
+        const safeZone = vec2.fromValues(
+            compassCenter[0] - safeZoneW / 2 + 2,
+            //rightStartBarX - safeZoneW - safeZoneW/2,
+            draw2d.size().height - safeZoneH / 2
+        )
+        draw2d.text.drawAtSize('S', safeZone, safeZoneW, safeZoneH, 0, [1, 1, 1, 1])
+    }
 }
 
 function drawFrame(draw2d:Primitives, width: number, height: number) {
