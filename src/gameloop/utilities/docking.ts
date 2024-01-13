@@ -18,12 +18,19 @@ export function updateGameOnDocked(game:Game) {
 export function isValidDocking(game:Game) {
     if (game.localBubble.station === null) return false
     const station = game.localBubble.station
+    const stationHalfSize = game.localBubble.station.blueprint.model.boundingBoxSize[2]/2
 
     const gatePosition = vec3.add(
         vec3.create(),
         game.localBubble.station.position,
-        vec3.multiply(vec3.create(), game.localBubble.station.noseOrientation, [0,0,game.localBubble.station.blueprint.model.boundingBoxSize[2]/2]))
+        vec3.multiply(
+            vec3.create(),
+            game.localBubble.station.noseOrientation,
+            [stationHalfSize,stationHalfSize,stationHalfSize]
+        )
+    )
     const gateDistance = vec3.length(gatePosition)
+    console.log(`GATE DISTANCE: ${gateDistance}`)
     if (gateDistance < 2) {
         const gateTopLeft = vec2.multiply(vec2.create(), vec2.fromValues(-30, -10), [stationScaleFactor,stationScaleFactor])
         const gateBottomRight = vec2.multiply(vec2.create(), vec2.fromValues(30, 10), [stationScaleFactor,stationScaleFactor])
@@ -31,7 +38,7 @@ export function isValidDocking(game:Game) {
         const roughPitchToStation = Math.asin(game.localBubble.station.position[1] / vec2.length([game.localBubble.station.position[2], game.localBubble.station.position[1]]))
         const roughPitchToStationDegrees = Math.abs(radiansToDegrees(roughPitchToStation))
         //const pitchAngleRadians = calculatePitch(game.localBubble.station)
-        const roughPitchAngleDegrees = radiansToDegrees(roughPitchToStation)
+        console.log(`GATE DISTANCE: ${gateDistance}`)
         if (roughPitchToStationDegrees <= 20) {
             const stationRollRadians = calculateRoll(station)
             const stationRollDegrees = radiansToDegrees(stationRollRadians)

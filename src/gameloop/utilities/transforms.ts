@@ -37,12 +37,13 @@ export function calculatePitch(object: PositionedObject) {
 export function rotateOrientationVectorsByPitchAndRoll(object: PositionedObject, roll:number, pitch:number) {
     vec3.rotateZ(object.noseOrientation, object.noseOrientation, [0,0,0], roll)
     vec3.rotateZ(object.roofOrientation, object.roofOrientation, [0,0,0], roll)
-    //vec3.rotateZ(shipInstance.rightOrientation, shipInstance.rightOrientation, [0,0,0], player.roll * timeDelta)
+    vec3.rotateZ(object.rightOrientation, object.rightOrientation, [0,0,0], roll)
     vec3.rotateX(object.noseOrientation, object.noseOrientation, [0,0,0], pitch)
     vec3.rotateX(object.roofOrientation, object.roofOrientation, [0,0,0], pitch)
-    //vec3.rotateX(shipInstance.rightOrientation, shipInstance.rightOrientation, [0,0,0], player.pitch * timeDelta)
+    vec3.rotateX(object.rightOrientation, object.rightOrientation, [0,0,0], pitch)
     vec3.normalize(object.noseOrientation,object.noseOrientation)
     vec3.normalize(object.roofOrientation,object.roofOrientation)
+    vec3.normalize(object.rightOrientation, object.rightOrientation)
 }
 
 export function rotateLocationInSpaceByPitchAndRoll(object: PositionedObject, roll:number, pitch:number) {
@@ -54,10 +55,18 @@ export function move(object:PositionedObject, delta:vec3) {
     vec3.add(object.position, object.position, delta)
 }
 
-export function calculateRotation(object:PositionedObject) {
+export function calculateRotationForShip(object:PositionedObject) {
     const noseAngle = Math.acos(vec3.dot(object.noseOrientation, [0,0,-1]) / (vec3.length(object.noseOrientation) * vec3.length([0,0,-1])))
     const roofAngle = Math.acos(vec3.dot(object.roofOrientation, [0,1,0]) / (vec3.length(object.roofOrientation) * vec3.length([0,1,0])))
     const sideAngle = Math.acos(vec3.dot(object.rightOrientation, [1,0,0]) / (vec3.length(object.rightOrientation) * vec3.length([1,0,0])))
+
+    return [noseAngle,roofAngle,sideAngle]
+}
+
+export function calculateRotation(noseOrientation:vec3, roofOrientation:vec3, sideOrientation:vec3) {
+    const noseAngle = Math.acos(vec3.dot(noseOrientation, [0,0,-1]) / (vec3.length(noseOrientation) * vec3.length([0,0,-1])))
+    const roofAngle = Math.acos(vec3.dot(roofOrientation, [0,1,0]) / (vec3.length(roofOrientation) * vec3.length([0,1,0])))
+    const sideAngle = Math.acos(vec3.dot(sideOrientation, [1,0,0]) / (vec3.length(sideOrientation) * vec3.length([1,0,0])))
 
     return [noseAngle,roofAngle,sideAngle]
 }

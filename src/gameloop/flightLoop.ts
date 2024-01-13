@@ -5,6 +5,7 @@ import {Game, SceneEnum} from "../model/game";
 import {isShipCollidingWithPlayer} from "./utilities/collisions";
 import {ShipRoleEnum} from "../model/ShipInstance";
 import {isValidDocking} from "./utilities/docking";
+import {stationDistance} from "./utilities/diagnostics";
 
 export function flightLoop(game: Game, timeDelta:number) {
     game.localBubble.ships.forEach(ship => {
@@ -19,6 +20,9 @@ export function flightLoop(game: Game, timeDelta:number) {
 
     // Another useful docking diagnostic - shows the nose, roll and pitch angles between the player and the station
     //stationAngles(game)
+
+    // And another
+    stationDistance(game)
 }
 
 function handleCollisions(game: Game) {

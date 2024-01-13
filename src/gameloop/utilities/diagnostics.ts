@@ -11,10 +11,11 @@ export function stationAngles(game:Game) {
         game.diagnostics.push(`N: ${noseAngle}`)
         game.diagnostics.push(`R: ${roofAngle}`)
         game.diagnostics.push(`S: ${sideAngle}`)
+        const gateDistance = game.localBubble.station.blueprint.model.boundingBoxSize[2]/2
         const gatePosition = vec3.add(
             vec3.create(),
             game.localBubble.station.position,
-            vec3.multiply(vec3.create(), game.localBubble.station.noseOrientation, [0,0,game.localBubble.station.blueprint.model.boundingBoxSize[2]/2]))
+            vec3.multiply(vec3.create(), game.localBubble.station.noseOrientation, [gateDistance,gateDistance,gateDistance]))
         const distance = vec3.length(gatePosition)
         game.diagnostics.push(`D: ${distance}`)
     }
@@ -31,12 +32,21 @@ export function stationPitchAndRoll(game:Game) {
         )
         const roughPitchAngleDegrees = radiansToDegrees(roughPitchToStation)
         game.diagnostics.push(`SP: ${roughPitchAngleDegrees}`)
+        const gateDistance = game.localBubble.station.blueprint.model.boundingBoxSize[2]/2
         const gatePosition = vec3.add(
             vec3.create(),
             game.localBubble.station.position,
-            vec3.multiply(vec3.create(), game.localBubble.station.noseOrientation, [0,0,30])
-        )
+            vec3.multiply(vec3.create(), game.localBubble.station.noseOrientation, [gateDistance,gateDistance,gateDistance]))
         const distance = vec3.length(gatePosition)
         game.diagnostics.push(`D: ${distance}`)
     }
+}
+
+export function stationDistance(game:Game) {
+    if (game.localBubble.station !== null) {
+        const distance = vec3.length(game.localBubble.station.position)
+        game.diagnostics.push(`D: ${distance}`)
+    }
+    const planetDistance = vec3.length(game.localBubble.planet.position)
+    game.diagnostics.push(`PD: ${planetDistance}`)
 }

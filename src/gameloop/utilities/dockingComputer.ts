@@ -74,9 +74,16 @@ function isFlightPlanActionStage(func:Function): func is FlightPlanActionStage {
 export function executeFlightPlan(game:Game, stages:FlightPlanStage[]) {
     let currentStageIndex = 0
     let positionProvider:FlightPlanPositionProvider = (_:Game) => vec3.create()
+    let previousStageIndex = -1
 
     return function (game:Game, timeDelta:number) {
         if (currentStageIndex >= stages.length) return
+
+        if (previousStageIndex != currentStageIndex) {
+            console.log(stages[currentStageIndex].name)
+            previousStageIndex = currentStageIndex
+        }
+
         const stage = stages[currentStageIndex]
         if (isFlightPlanPositionProviderStage(stage)) {
             positionProvider = stage
@@ -96,7 +103,7 @@ export function executeFlightPlan(game:Game, stages:FlightPlanStage[]) {
 }
 
 export function pitchToPoint(game:Game, context:vec3, timeDelta:number) {
-    const tolerance = 0.005
+    const tolerance = 0.00125
     let pitchAngle = 0
     const invertedPosition = vec3.multiply(vec3.create(), context, [-1, -1, -1])
     const normalisedTarget = vec3.normalize(vec3.create(), invertedPosition)
@@ -134,7 +141,7 @@ export function pitchToPoint(game:Game, context:vec3, timeDelta:number) {
 }
 
 export function rollToPoint(game:Game, context:vec3, timeDelta:number) {
-    const tolerance = 0.005
+    const tolerance = 0.002
     let rollAngle = 0
     let pitchAngle = 0
     const invertedPosition = vec3.multiply(vec3.create(), context, [-1, -1, -1])
@@ -193,6 +200,8 @@ export function moveToPoint(game:Game, position:vec3, timeDelta:number) {
     if (distance > 2) {
         game.player.speed = distance < 5 ? game.player.ship.maxSpeed/4 : game.player.ship.maxSpeed
         if (distance < 100) {
+            //rollToPoint(game, position, timeDelta)
+            //pitchToPoint(game, position, timeDelta)
             //rollAndPitchToFacePosition(position, game, timeDelta)
         }
         else {
@@ -235,8 +244,15 @@ export function createDockingComputer(game:Game) {
             vec3.create(),
             station.position,
             vec3.multiply(vec3.create(), station.noseOrientation, [frontDistance,frontDistance,frontDistance]))
-    const setToDockingPort = (_:Game) =>
-        station.position
+    const setToDockingPort = (_:Game) => {
+        //station.position
+        const gateDistance = station.blueprint.model.boundingBoxSize[2] / 2
+        const gatePosition = vec3.add(
+            vec3.create(),
+            station.position,
+            vec3.multiply(vec3.create(), station.noseOrientation, [gateDistance, gateDistance, gateDistance]))
+        return gatePosition
+    }
 
     return executeFlightPlan(game, [
         allStop,
