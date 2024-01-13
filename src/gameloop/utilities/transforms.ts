@@ -11,6 +11,7 @@ export function radiansToDegrees(value:number) {
     return value*(180/Math.PI)
 }
 
+// Calculates the roll of an object based on its orientation vectors
 export function calculateRoll(object: PositionedObject) {
     const roofNoseDp = vec3.dot(object.roofOrientation, object.noseOrientation)
     const projectedRoof = vec3.subtract(
@@ -21,6 +22,16 @@ export function calculateRoll(object: PositionedObject) {
     return Math.acos(
         vec3.dot(projectedRoof, [0,1,0]) / vec3.length(projectedRoof)
     )
+}
+
+export function calculatePitch(object: PositionedObject) {
+    const noseRoofDp = vec3.dot(object.noseOrientation, object.roofOrientation)
+    const projectedNose = vec3.subtract(
+        vec3.create(),
+        object.noseOrientation,
+        vec3.multiply(vec3.create(), object.roofOrientation, [noseRoofDp,noseRoofDp,noseRoofDp])
+    )
+    return Math.asin(vec3.dot(projectedNose,object.roofOrientation) / vec3.length(projectedNose))
 }
 
 export function rotateOrientationVectorsByPitchAndRoll(object: PositionedObject, roll:number, pitch:number) {
@@ -41,4 +52,12 @@ export function rotateLocationInSpaceByPitchAndRoll(object: PositionedObject, ro
 
 export function move(object:PositionedObject, delta:vec3) {
     vec3.add(object.position, object.position, delta)
+}
+
+export function calculateRotation(object:PositionedObject) {
+    const noseAngle = Math.acos(vec3.dot(object.noseOrientation, [0,0,-1]) / (vec3.length(object.noseOrientation) * vec3.length([0,0,-1])))
+    const roofAngle = Math.acos(vec3.dot(object.roofOrientation, [0,1,0]) / (vec3.length(object.roofOrientation) * vec3.length([0,1,0])))
+    const sideAngle = Math.acos(vec3.dot(object.rightOrientation, [1,0,0]) / (vec3.length(object.rightOrientation) * vec3.length([1,0,0])))
+
+    return [noseAngle,roofAngle,sideAngle]
 }

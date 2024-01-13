@@ -85,19 +85,19 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
             }
             if (game.currentScene === SceneEnum.Launching) {
                 if (launchingLoop === null) {
-                    launchingLoop = createLaunchingLoop(game, resources)
+                    launchingLoop = createLaunchingLoop(game, resources, () => launchingLoop = null)
                 }
                 launchingLoop!(deltaTime)
             }
             else if (game.currentScene === SceneEnum.Hyperspace) {
                 if (hyperspaceLoop === null) {
-                    hyperspaceLoop = createHyperspaceLoop(game, resources)
+                    hyperspaceLoop = createHyperspaceLoop(game, resources, () => hyperspaceLoop = null)
                 }
                 hyperspaceLoop!(deltaTime)
             }
             else if (game.currentScene === SceneEnum.Docking) {
                 if (dockingLoop === null) {
-                    dockingLoop = createDockingLoop(game, resources)
+                    dockingLoop = createDockingLoop(game, resources, () => dockingLoop = null)
                 }
                 dockingLoop!(deltaTime)
             }

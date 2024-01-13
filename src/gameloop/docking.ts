@@ -5,7 +5,7 @@ import {Resources} from "../resources/resources";
 import {updateGameOnLaunch} from "./utilities/updateGameOnLaunch";
 import {updateGameOnDocked} from "./utilities/docking";
 
-export function createDockingLoop(game: Game, resources: Resources) {
+export function createDockingLoop(game: Game, resources: Resources, onDocked:() => void) {
     let now = 0
     let outboundMultiplier = 1
     let inboundOffset = 0
@@ -17,6 +17,8 @@ export function createDockingLoop(game: Game, resources: Resources) {
         1/2.0,
         1
     ]
+    game.launching = null
+    game.player.dockingComputerFlightExecuter= null
 
     // A bit rough and ready but an approximation of the launch tunnel from the original
     return function updateDocking(deltaTime:number) {
@@ -45,6 +47,7 @@ export function createDockingLoop(game: Game, resources: Resources) {
                 }
                 else {
                     updateGameOnDocked(game)
+                    onDocked()
                 }
             }
         }

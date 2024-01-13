@@ -1,12 +1,25 @@
 import {Game} from "../../model/game";
 import {vec3} from "gl-matrix";
 import {shipScaleFactor} from "../../constants";
+import {ShipInstance} from "../../model/ShipInstance";
 
 function immediateAllStop(game: Game, _:vec3, timeDelta: number) {
     game.player.speed = 0
     game.player.roll = 0
     game.player.pitch = 0
     return true
+}
+
+function accelerateToOneThird(game: Game, _:vec3, timeDelta: number) {
+    const oneThirdSpeed = game.player.ship.maxSpeed / 3
+    if (game.player.speed < oneThirdSpeed) {
+        game.player.speed += game.player.ship.speedAcceleration * timeDelta
+    }
+    if (game.player.speed >= oneThirdSpeed) {
+        game.player.speed = oneThirdSpeed
+        return true
+    }
+    return false
 }
 
 function allStop(game: Game, _:vec3, timeDelta: number) {
@@ -115,7 +128,7 @@ export function pitchToPoint(game:Game, context:vec3, timeDelta:number) {
     }
 
     game.player.pitch = pitchAngle
-    game.diagnostics.push(`PDP: ${pitchDotProduct}`)
+    //game.diagnostics.push(`PDP: ${pitchDotProduct}`)
 
     return facingTowards && Math.abs(pitchDotProduct) < tolerance
 }
@@ -198,11 +211,24 @@ export function moveToPoint(game:Game, position:vec3, timeDelta:number) {
     return game.player.speed === 0
 }
 
+function matchRotation(game: Game, ship: ShipInstance) {
+    const dotProduct = vec3.dot([1,0,0], ship.roofOrientation)
+    game.diagnostics.push(`DP: ${dotProduct}`)
+    if (Math.abs(dotProduct) > 0.99) {
+        game.player.roll = -ship.roll
+        return true
+    }
+    game.player.roll = ship.roll/2
+    return false
+}
+
 export function createDockingComputer(game:Game) {
     // the ship seems to be rolling and pitching at the same time but with the logic below it shouldnt
 
     const frontDistance = 160*shipScaleFactor*6
     let station = game.localBubble.station!
+
+    const matchRotationToStation = (game:Game) => matchRotation(game, station)
 
     const setToFrontPoint = (_:Game) =>
         vec3.add(
@@ -226,5 +252,7 @@ export function createDockingComputer(game:Game) {
         pitchToPoint,
         rollToPoint,
         pitchToPoint,
+        matchRotationToStation,
+        accelerateToOneThird
     ])
 }

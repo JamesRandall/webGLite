@@ -4,7 +4,7 @@ import {LocalBubble} from "../model/localBubble";
 import {Resources} from "../resources/resources";
 import {updateGameOnLaunch} from "./utilities/updateGameOnLaunch";
 
-export function createLaunchingLoop(game: Game, resources: Resources) {
+export function createLaunchingLoop(game: Game, resources: Resources, onLaunched: () => void) {
     let now = 0
     let outboundMultiplier = 1
     let inboundOffset = 0
@@ -16,6 +16,7 @@ export function createLaunchingLoop(game: Game, resources: Resources) {
         1/2.0,
         1
     ]
+    game.launching = null
 
     // A bit rough and ready but an approximation of the launch tunnel from the original
     return function updateLaunching(deltaTime:number) {
@@ -46,6 +47,7 @@ export function createLaunchingLoop(game: Game, resources: Resources) {
                     // we've finished launching so update the local bubble and set the scene to the front view
                     updateGameOnLaunch(game, resources)
                     game.currentScene = SceneEnum.Front
+                    onLaunched()
                 }
             }
         }

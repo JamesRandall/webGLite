@@ -5,7 +5,7 @@ import {Resources} from "../resources/resources";
 import {updateGameOnLaunch} from "./utilities/updateGameOnLaunch";
 import {updateGameOnHyperspace} from "./utilities/updateGameOnHyperspace";
 
-export function createHyperspaceLoop(game: Game, resources: Resources) {
+export function createHyperspaceLoop(game: Game, resources: Resources, onComplete: () => void) {
     let now = 0
     let rotationTime = 0
     let outboundMultiplier = 1
@@ -57,6 +57,7 @@ export function createHyperspaceLoop(game: Game, resources: Resources) {
                     // we've finished launching so update the local bubble and set the scene to the front view
                     updateGameOnHyperspace(game, resources)
                     game.currentScene = SceneEnum.Front
+                    onComplete()
                 }
             }
         }
