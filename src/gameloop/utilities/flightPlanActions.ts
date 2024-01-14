@@ -40,51 +40,31 @@ export function rollToPoint(game:Game, context:vec3, timeDelta:number) {
     const rollDotProduct = vec3.dot([1, 0, 0], normalisedTarget)
     const absRollDotProduct = Math.abs(rollDotProduct)
     const rollAngleRemainingRadians = Math.abs(Math.acos(rollDotProduct) - Math.PI/2)
-    game.diagnostics.push(`RA: ${radiansToDegrees(rollAngleRemainingRadians)}`)
     const rollDirection = rollDotProduct * pitchAngle >= 0 ? 1 : -1
-    //const remainingAngle = Math.acos(rollDotProduct) //normalisedTarget[1] === 0 ? 0 : Math.atan(normalisedTarget[0] / normalisedTarget[1])
-    if ((rollAngleRemainingRadians / timeDelta) < (game.player.ship.maxRollSpeed/4)) {
-        rollAngle = rollAngleRemainingRadians / timeDelta * rollDirection
-    }
-    else if (absRollDotProduct < tolerance) {
+    if (absRollDotProduct < tolerance) {
         rollAngle = 0
     }
     else {
-        //game.diagnostics.push(`RRA: ${Math.round(radiansToDegrees(remainingRollAngle))}`)
-        if (absRollDotProduct < 0.100) {
-            rollAngle = game.player.ship.maxRollSpeed/4
-        }
-        if (absRollDotProduct < 0.200) {
-            rollAngle = game.player.ship.maxRollSpeed/2
-        }
-        else {
-            rollAngle = game.player.ship.maxRollSpeed
-        }
+        rollAngle = Math.min(rollAngleRemainingRadians / timeDelta,game.player.ship.maxRollSpeed)
         rollAngle *= rollDirection
     }
     game.player.roll = rollAngle
-
-    //game.diagnostics.push(`RDP: ${rollDotProduct}`)
-
-    //return absRollDotProduct < tolerance
-    return absRollDotProduct <= 0.00001 || rollAngle === 0
+    return rollAngle === 0
 }
 
 export function moveToPoint(game:Game, position:vec3, timeDelta:number) {
+    // TODO: Because this relies on the orientation set at the start of this stage over long distances
+    // it is not very accurate. We need to come back and make this refine its trajectory as it goes
     const distance = vec3.length(position)
     if (distance > 2) {
         game.player.speed = distance < 5 ? game.player.ship.maxSpeed/4 : game.player.ship.maxSpeed
-        if (distance < 100) {
-            //rollToPoint(game, position, timeDelta)
-            //pitchToPoint(game, position, timeDelta)
-            //rollAndPitchToFacePosition(position, game, timeDelta)
-        }
-        else {
-            game.player.pitch = 0
-            game.player.roll = 0
-        }
+        // This resolves the above inaccuracy but results in very "rolling" approach. I've not had it fail
+        // but it looks weird to the player
+        //rollToPoint(game, position, timeDelta)
+        //pitchToPoint(game,position,timeDelta)
     }
     else {
+        console.log(`DONE MOVE: ${distance}`)
         game.player.speed = 0
         game.player.pitch = 0
         game.player.roll = 0
