@@ -1,6 +1,6 @@
 import {Game, SceneEnum} from "../../model/game";
 import {vec2, vec3} from "gl-matrix";
-import {stationScaleFactor} from "../../constants";
+import {dockingRollToleranceDegrees, stationScaleFactor} from "../../constants";
 import {calculateRoll, radiansToDegrees} from "./transforms";
 import {ShipRoleEnum} from "../../model/ShipInstance";
 
@@ -43,7 +43,7 @@ export function isValidDocking(game:Game) {
             const stationRollRadians = calculateRoll(station)
             const stationRollDegrees = radiansToDegrees(stationRollRadians)
 
-            if (stationRollDegrees >= 70 && stationRollDegrees <= 110) {
+            if (stationRollDegrees >= (90-dockingRollToleranceDegrees) && stationRollDegrees <= (90+dockingRollToleranceDegrees)) {
                 // we've collided and so we're basically sat on the surface so if we adjust the player position to be relative
                 // to the station position (ignoring Z as we're on the surface of the station) and rotate the position by the
                 // stations roll then we can check the player against the horizontal gate

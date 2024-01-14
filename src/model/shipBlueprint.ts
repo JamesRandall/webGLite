@@ -11,8 +11,8 @@ import {shipScaleFactor, stationScaleFactor} from "../constants";
 //   10.6 seconds to complete 360 degrees of pitch at max pitch speed
 
 const maxRollSpeed = (2.0 * Math.PI) / 3.5
-const rollAcceleration = maxRollSpeed /1.6
-const rollDeceleration = maxRollSpeed/9.5
+const rollAcceleration = maxRollSpeed / 2
+const rollDeceleration = maxRollSpeed / 7.0
 const maxPitchSpeed = (2.0 * Math.PI) / 10.6
 const pitchAcceleration = maxPitchSpeed // / 1.0
 const pitchDeceleration = maxPitchSpeed / 7.0

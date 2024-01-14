@@ -5,6 +5,7 @@ import {Resources} from "../resources/resources";
 import {updateGameOnLaunch} from "./utilities/updateGameOnLaunch";
 import {updateGameOnDocked} from "./utilities/docking";
 
+// this is currently exactly the same as launching but I plan on altering it
 export function createDockingLoop(game: Game, resources: Resources, onDocked:() => void) {
     let now = 0
     let outboundMultiplier = 1
@@ -16,7 +17,7 @@ export function createDockingLoop(game: Game, resources: Resources, onDocked:() 
         1/4.0,
         1/2.0,
         1
-    ]
+    ].reverse()
     game.launching = null
     game.player.dockingComputerFlightExecuter= null
 

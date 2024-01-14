@@ -25,7 +25,7 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
 
 function applyDockingComputer(game: Game, resources: Resources, timeDelta: number) {
     if (game.player.dockingComputerFlightExecuter === null && game.player.controlState.dockingOn && !game.player.previousControlState.dockingOn) {
-        game.player.dockingComputerFlightExecuter = createDockingComputer(game, resources)
+        game.player.dockingComputerFlightExecuter = createDockingComputer(game)
     }
     else if (game.player.dockingComputerFlightExecuter !== null && game.player.controlState.dockingOff) {
         game.player.dockingComputerFlightExecuter = null
@@ -111,7 +111,7 @@ function applyRoll(player: Player, timeDelta: number) {
                 player.roll = player.ship.maxRollSpeed
             }
         }
-    } else if (player.roll > 0) {
+    } else if (player.roll > 0 && !player.disableDamping) {
         player.roll -= player.ship.rollDeceleration * timeDelta
         if (player.roll < 0) {
             player.roll = 0
@@ -128,7 +128,7 @@ function applyRoll(player: Player, timeDelta: number) {
                 player.roll = -player.ship.maxRollSpeed
             }
         }
-    } else if (player.roll < 0) {
+    } else if (player.roll < 0 && !player.disableDamping) {
         player.roll += player.ship.rollDeceleration * timeDelta
         if (player.roll > 0) {
             player.roll = 0
@@ -147,7 +147,7 @@ function applyPitch(player: Player, timeDelta: number) {
                 player.pitch = player.ship.maxPitchSpeed
             }
         }
-    } else if (player.pitch > 0) {
+    } else if (player.pitch > 0 && !player.disableDamping) {
         player.pitch -= player.ship.pitchDeceleration * timeDelta
         if (player.pitch < 0) {
             player.pitch = 0
@@ -164,7 +164,7 @@ function applyPitch(player: Player, timeDelta: number) {
                 player.pitch = -player.ship.maxPitchSpeed
             }
         }
-    } else if (player.pitch < 0) {
+    } else if (player.pitch < 0 && !player.disableDamping) {
         player.pitch += player.ship.pitchDeceleration * timeDelta
         if (player.pitch > 0) {
             player.pitch = 0

@@ -26,7 +26,7 @@ function drawCompass(width: number, sidePanelWidth: number, draw2d: Primitives, 
     draw2d.circle(compassCenter, compassRadius, frameColor)
     draw2d.circle(compassCenter, compassRadius - frameWidth, [0, 0, 0, 1])
     // TODO: fish out the space station
-    const compassPointsTowards = game.localBubble.station !== null ? game.localBubble.station.position : game.localBubble.planet.position
+    const compassPointsTowards = game.player.isInSafeZone && game.localBubble.station !== null ? game.localBubble.station.position : game.localBubble.planet.position
     const directionVector = vec3.normalize(vec3.create(), compassPointsTowards)
     const compassWidth = 8.0
     const compassHeight = 6.0
@@ -174,7 +174,7 @@ function drawHud(draw2d:Primitives, width: number, height: number, game:Game) {
     draw2d.text.drawAtSize('4', [tr+cw/2,barHeight*7], cw , ch ,0, standardBarColor)
 
     const compassCenter = drawCompass(width, sidePanelWidth, draw2d, game);
-    if (game.localBubble.station !== null && !game.player.isDocked) {
+    if (game.player.isInSafeZone && !game.player.isDocked) {
         const safeZoneW = 30
         const safeZoneH = 30
         const safeZone = vec2.fromValues(

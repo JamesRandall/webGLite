@@ -5,12 +5,14 @@ import {Game, SceneEnum} from "../model/game";
 import {isShipCollidingWithPlayer} from "./utilities/collisions";
 import {ShipRoleEnum} from "../model/ShipInstance";
 import {isValidDocking} from "./utilities/docking";
+import {vec3} from "gl-matrix";
 import {stationDistance} from "./utilities/diagnostics";
 
 export function flightLoop(game: Game, timeDelta:number) {
     game.localBubble.ships.forEach(ship => {
         updateShipInstance(ship, game.player, timeDelta)
     })
+    updateStationAndSafeZone(game)
     updateOrbitalBodies(game, timeDelta)
     updateStardust(game, timeDelta)
     handleCollisions(game)
@@ -23,6 +25,17 @@ export function flightLoop(game: Game, timeDelta:number) {
 
     // And another
     stationDistance(game)
+}
+
+function updateStationAndSafeZone(game:Game) {
+    if (game.localBubble.station !== null) {
+        const distance = vec3.length(game.localBubble.station.position)
+        game.player.isInSafeZone = distance < game.localBubble.planet.radius
+        if (distance > game.localBubble.planet.radius * 2) {
+            game.localBubble.ships = game.localBubble.ships.filter(s => s.role !== ShipRoleEnum.Station)
+            game.localBubble.station = null
+        }
+    }
 }
 
 function handleCollisions(game: Game) {

@@ -74,7 +74,9 @@ export interface Player {
     equipment: PlayerEquipment
     selectedSystem: StarSystem // the system the player has selected in the star charts
     scannerCursor: vec2
-    cargoHoldContents: number[]
+    cargoHoldContents: number[],
+    isInSafeZone: boolean,
+    disableDamping: boolean
 }
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem) : Player {
@@ -116,7 +118,9 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         },
         cargoHoldContents: [],
         selectedSystem: currentSystem,
-        scannerCursor: vec2.copy(vec2.create(), currentSystem.galacticPosition)
+        scannerCursor: vec2.copy(vec2.create(), currentSystem.galacticPosition),
+        isInSafeZone: false,
+        disableDamping: true
     }
 }
 
