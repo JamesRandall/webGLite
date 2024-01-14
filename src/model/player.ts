@@ -120,7 +120,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         selectedSystem: currentSystem,
         scannerCursor: vec2.copy(vec2.create(), currentSystem.galacticPosition),
         isInSafeZone: false,
-        disableDamping: true
+        disableDamping: false
     }
 }
 

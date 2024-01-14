@@ -38,17 +38,27 @@ export function rollToPoint(game:Game, context:vec3, timeDelta:number) {
     }
 
     const rollDotProduct = vec3.dot([1, 0, 0], normalisedTarget)
+    const absRollDotProduct = Math.abs(rollDotProduct)
+    const rollAngleRemainingRadians = Math.abs(Math.acos(rollDotProduct) - Math.PI/2)
+    game.diagnostics.push(`RA: ${radiansToDegrees(rollAngleRemainingRadians)}`)
+    const rollDirection = rollDotProduct * pitchAngle >= 0 ? 1 : -1
     //const remainingAngle = Math.acos(rollDotProduct) //normalisedTarget[1] === 0 ? 0 : Math.atan(normalisedTarget[0] / normalisedTarget[1])
-    if (Math.abs(rollDotProduct) < tolerance) {
+    if ((rollAngleRemainingRadians / timeDelta) < (game.player.ship.maxRollSpeed/4)) {
+        rollAngle = rollAngleRemainingRadians / timeDelta * rollDirection
+    }
+    else if (absRollDotProduct < tolerance) {
         rollAngle = 0
     }
     else {
-        const rollDirection = rollDotProduct * pitchAngle >= 0 ? 1 : -1
-        if (Math.abs(rollDotProduct) < 0.200) {
+        //game.diagnostics.push(`RRA: ${Math.round(radiansToDegrees(remainingRollAngle))}`)
+        if (absRollDotProduct < 0.100) {
+            rollAngle = game.player.ship.maxRollSpeed/4
+        }
+        if (absRollDotProduct < 0.200) {
             rollAngle = game.player.ship.maxRollSpeed/2
         }
         else {
-            rollAngle = game.player.ship.maxRollSpeed/2
+            rollAngle = game.player.ship.maxRollSpeed
         }
         rollAngle *= rollDirection
     }
@@ -56,7 +66,8 @@ export function rollToPoint(game:Game, context:vec3, timeDelta:number) {
 
     //game.diagnostics.push(`RDP: ${rollDotProduct}`)
 
-    return Math.abs(rollDotProduct) < tolerance
+    //return absRollDotProduct < tolerance
+    return absRollDotProduct <= 0.00001 || rollAngle === 0
 }
 
 export function moveToPoint(game:Game, position:vec3, timeDelta:number) {
@@ -88,12 +99,12 @@ export function matchRotation(game: Game, ship: ShipInstance) {
     const stationRollRadians = calculateRoll(ship)
     const stationRollDegrees = radiansToDegrees(stationRollRadians)
 
-    game.diagnostics.push(`SRD: ${stationRollDegrees}`)
+    //game.diagnostics.push(`SRD: ${stationRollDegrees}`)
     if (stationRollDegrees >= (90-dockingRollToleranceDegrees/2) && stationRollDegrees <= (90+dockingRollToleranceDegrees/2)) {
         game.player.roll = -ship.roll
         return true
     }
-    game.player.roll = -ship.roll/2
+    game.player.roll = ship.roll/2
     return false
 }
 

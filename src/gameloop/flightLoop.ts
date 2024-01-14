@@ -24,7 +24,7 @@ export function flightLoop(game: Game, timeDelta:number) {
     //stationAngles(game)
 
     // And another
-    stationDistance(game)
+    //stationDistance(game)
 }
 
 function updateStationAndSafeZone(game:Game) {
@@ -41,7 +41,7 @@ function updateStationAndSafeZone(game:Game) {
 function handleCollisions(game: Game) {
     game.localBubble.ships.forEach(ship => {
         if (isShipCollidingWithPlayer(ship)) {
-            game.diagnostics.push(`COLLISION - ${ship.blueprint.name}`)
+            console.log(`COLLISION - ${ship.blueprint.name}`)
             if (ship.role === ShipRoleEnum.Station) {
                 if (isValidDocking(game)) {
                     game.currentScene = SceneEnum.Docking
