@@ -36,3 +36,4 @@ export const stationScaleFactor = shipScaleFactor * 4.0
 export const scannerRadialWorldRange = vec3.divide(vec3.create(),vec3.fromValues(0x3300, 0x3300, 0x3300),[8,8,8])
 export const worldSize = 8388607 // max value of a signed 24-bit number
 export const dockingRollToleranceDegrees = 20
+export const planetScaleFactor = 0.75

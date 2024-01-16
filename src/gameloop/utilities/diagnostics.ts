@@ -1,10 +1,10 @@
 import {Game} from "../../model/game";
 import {vec2, vec3} from "gl-matrix";
-import {calculateRoll, calculateRotation, radiansToDegrees} from "./transforms";
+import {calculateRoll, calculateRotationForShip, radiansToDegrees} from "./transforms";
 
 export function stationAngles(game:Game) {
     if (game.localBubble.station !== null) {
-        const [noseAngleRadians, roofAngleRadians, sideAngleRadians] = calculateRotation(game.localBubble.station)
+        const [noseAngleRadians, roofAngleRadians, sideAngleRadians] = calculateRotationForShip(game.localBubble.station)
         const noseAngle = radiansToDegrees(noseAngleRadians)
         const roofAngle = radiansToDegrees(roofAngleRadians)
         const sideAngle = radiansToDegrees(sideAngleRadians)

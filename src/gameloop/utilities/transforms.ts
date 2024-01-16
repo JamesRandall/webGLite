@@ -1,4 +1,4 @@
-import {vec3} from "gl-matrix";
+import {mat4, vec3} from "gl-matrix";
 import {PositionedObject} from "../../model/localBubble";
 import {ShipInstance} from "../../model/ShipInstance";
 import {Player} from "../../model/player";
@@ -49,6 +49,25 @@ export function rotateOrientationVectorsByPitchAndRoll(object: PositionedObject,
 export function rotateLocationInSpaceByPitchAndRoll(object: PositionedObject, roll:number, pitch:number) {
     vec3.rotateZ(object.position, object.position, [0,0,0], roll)
     vec3.rotateX(object.position, object.position, [0,0,0], pitch)
+}
+
+export function rotateVectorByOrientation(
+    position: vec3,
+    noseOrientation:vec3,
+    roofOrientation:vec3,
+    sideOrientation:vec3
+) {
+    const matrix = mat4.fromValues(
+        sideOrientation[0], roofOrientation[0], noseOrientation[0], 0,
+        sideOrientation[1], roofOrientation[1], noseOrientation[1], 0,
+        sideOrientation[2], roofOrientation[2], noseOrientation[2], 0,
+        0, 0, 0, 1
+    )
+    return vec3.transformMat4(vec3.create(), position, matrix)
+}
+
+export function reverseVector(vector: vec3) {
+    return vec3.fromValues(vector[0]*-1, vector[1]*-1, vector[2]*-1)
 }
 
 export function move(object:PositionedObject, delta:vec3) {

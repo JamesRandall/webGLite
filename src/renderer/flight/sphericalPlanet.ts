@@ -4,6 +4,7 @@ import {mat4, quat, vec3} from "gl-matrix";
 import {createSphere} from "../../resources/sphere";
 import {Resources} from "../../resources/resources";
 import {setCommonAttributes, setViewUniformLocations} from "../coregl/programInfo";
+import {planetScaleFactor} from "../../constants";
 
 const vsSource = `#version 300 es
     in vec4 aVertexPosition;
@@ -149,7 +150,8 @@ export function createSphericalPlanetRenderer(gl: WebGLRenderingContext, resourc
         const targetToMatrix = mat4.targetTo(mat4.create(), [0, 0, 0], planet.noseOrientation, planet.roofOrientation)
         const targetToQuat = mat4.getRotation(quat.create(), targetToMatrix)
         const viewPosition = planet.position
-        const scale = vec3.fromValues(planet.radius, planet.radius, planet.radius)
+        const scaledRadius = planet.radius * planetScaleFactor
+        const scale = vec3.fromValues(scaledRadius, scaledRadius, scaledRadius)
         const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), targetToQuat, viewPosition, scale)
         const normalMatrix = mat4.create()
         mat4.invert(normalMatrix, modelViewMatrix)

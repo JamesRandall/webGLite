@@ -1,8 +1,8 @@
 import {ShipInstance} from "../../model/ShipInstance";
-import {vec2, vec3} from "gl-matrix";
+import {mat3, mat4, quat, vec2, vec3, vec4} from "gl-matrix";
 import {getConstraints} from "../../utilities";
 import {Game} from "../../model/game";
-import {calculateRotation} from "./transforms";
+import {calculateRotation, reverseVector, rotateVectorByOrientation} from "./transforms";
 
 export function isInRotatedBox(
     position: vec3,
@@ -10,36 +10,26 @@ export function isInRotatedBox(
     roofOrientation:vec3,
     sideOrientation:vec3,
     boxSize:vec3) {
-    // if we're inside the bounding box then do the final check - does the actual rotated bounding box of the
-    // ship contain the position of the player
-    // we figure this out by first calcualting the players position relative to the ship (this is the inverse
-    // of the position of the ship), then we rotate that point by the inverse of the rotation of the ship.
+    // we figure this out by first calcualting the players position relative to the ship (this is the negative
+    // of the position of the ship), then we rotate that point by the rotation of the ship.
     // Now we have a position that is in the same co-ordinate system as the un-rotated bounding box of the ship
     // and we can check to see if that overlaps the position
     //
     // TODO: If we do this I'm not sure its worth maintaining the axis aligned bounding boxes in realtime...
     // we should probably just set them to the maximum possible extent when we load the model.
-    //
-    // TODO: I'm not convinced this is correct - need to do some unit tests
-
-    const [noseAngleRadians, roofAngleRadians, sideAngleRadians] =
-        calculateRotation(noseOrientation, roofOrientation, sideOrientation)
-    const rotatedPlayerPosition = vec3.copy(vec3.create(), position)
-    vec3.rotateZ(rotatedPlayerPosition, rotatedPlayerPosition, [0,0,0], -noseAngleRadians)
-    vec3.rotateY(rotatedPlayerPosition, rotatedPlayerPosition, [0,0,0], -roofAngleRadians)
-    vec3.rotateX(rotatedPlayerPosition, rotatedPlayerPosition, [0,0,0], -sideAngleRadians)
-    const isInShipBox =
-        rotatedPlayerPosition[0] >= -(boxSize[0]/2) &&
-        rotatedPlayerPosition[0] <= (boxSize[0]/2) &&
-        rotatedPlayerPosition[1] >= -(boxSize[1]/2) &&
-        rotatedPlayerPosition[1] <= (boxSize[1]/2) &&
-        rotatedPlayerPosition[2] >= -(boxSize[2]/2) &&
-        rotatedPlayerPosition[2] <= (boxSize[2]/2)
-    //if (isInShipBox) {
-    //    console.log(`RPP: ${rotatedPlayerPosition}`)
-    //    console.log(`BS: ${shipInstance.blueprint.model.boundingBoxSize}`)
-    //}
-    return isInShipBox
+    const rotatedPosition = rotateVectorByOrientation(
+        reverseVector(position),
+        (noseOrientation),
+        (roofOrientation),
+        (sideOrientation)
+    )
+    //console.log(rotatedPosition)
+    return rotatedPosition[0] >= -(boxSize[0]/2) &&
+        rotatedPosition[0] <= (boxSize[0]/2) &&
+        rotatedPosition[1] >= -(boxSize[1]/2) &&
+        rotatedPosition[1] <= (boxSize[1]/2) &&
+        rotatedPosition[2] >= -(boxSize[2]/2) &&
+        rotatedPosition[2] <= (boxSize[2]/2)
 }
 
 export function isShipCollidingWithPlayer(shipInstance: ShipInstance) {
