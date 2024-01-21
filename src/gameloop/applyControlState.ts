@@ -5,6 +5,8 @@ import {vec2, vec3} from "gl-matrix";
 import {getNearestSystemToCursor} from "./utilities/map";
 import {createDockingComputer} from "./utilities/dockingComputer";
 import {Resources} from "../resources/resources";
+import {ShipInstance} from "../model/ShipInstance";
+import {scannerRadialWorldRange} from "../constants";
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
     const player = game.player
@@ -58,13 +60,34 @@ function applyHyperspace(game: Game) {
     }
 }
 
-function applyJump(game: Game) {
-    if (game.player.controlState.jump) {
-        const distance = vec3.length(game.localBubble.planet.position)
-        move(game.localBubble.planet, [0, 0, (distance / 2)])
-        move(game.localBubble.sun, [0, 0, (distance / 2)])
-        game.player.controlState.jump = false
+function shipsOnEdgeOfScannerRange(ships: ShipInstance[]) {
+    for(var shipIndex = 0; shipIndex < ships.length; shipIndex++) {
+        const ship = ships[shipIndex]
+        const normalisedPosition = vec3.divide(vec3.create(), ship.position, scannerRadialWorldRange)
+        //const scannerRelativeDistance = vec3.length(normalisedPosition)
+        if (Math.abs(normalisedPosition[0]) < 1.2 &&
+            Math.abs(normalisedPosition[1]) < 1.2 &&
+            Math.abs(normalisedPosition[2]) < 1.2) {
+            return true
+        }
     }
+    return false
+}
+
+function applyJump(game: Game) {
+    game.player.isJumping =
+        game.player.controlState.jump && !shipsOnEdgeOfScannerRange(game.localBubble.ships)
+
+    /*if (game.player.controlState.jump) {
+        const distance = vec3.length(game.localBubble.planet.position)
+        const translation = vec3.fromValues(0, 0, (distance / 2))
+        move(game.localBubble.planet, translation)
+        move(game.localBubble.sun, translation)
+        game.localBubble.ships.forEach(ship => {
+            move(ship, translation)
+        })
+        game.player.controlState.jump = false
+    }*/
 }
 
 function applyCursors(player: Player, timeDelta: number) {

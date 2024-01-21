@@ -76,7 +76,8 @@ export interface Player {
     scannerCursor: vec2
     cargoHoldContents: number[],
     isInSafeZone: boolean,
-    disableDamping: boolean
+    disableDamping: boolean,
+    isJumping: boolean
 }
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem) : Player {
@@ -120,7 +121,8 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
         selectedSystem: currentSystem,
         scannerCursor: vec2.copy(vec2.create(), currentSystem.galacticPosition),
         isInSafeZone: false,
-        disableDamping: false
+        disableDamping: false,
+        isJumping: false
     }
 }
 

@@ -2,7 +2,12 @@ import {Game} from "../../model/game";
 import {Resources} from "../../resources/resources";
 import {Player} from "../../model/player";
 import {vec3} from "gl-matrix";
-import {move, rotateLocationInSpaceByPitchAndRoll, rotateOrientationVectorsByPitchAndRoll} from "./transforms";
+import {
+    calculateSpaceStationRotationSpeed,
+    move,
+    rotateLocationInSpaceByPitchAndRoll,
+    rotateOrientationVectorsByPitchAndRoll
+} from "./transforms";
 import {worldSize} from "../../constants";
 
 export function updateGameOnLaunch(game:Game, resources:Resources) {
@@ -18,9 +23,7 @@ export function updateGameOnLaunch(game:Game, resources:Resources) {
     //game.localBubble.ships.push(cobra)
 }
 
-function calculateSpaceStationRotationSpeed(player: Player) {
-    return -player.ship.maxRollSpeed/4
-}
+
 
 function spawnSpaceStation(game:Game, resources:Resources) {
     const station = resources.ships.getCoriolis([0,0,0], [0,0,-1])

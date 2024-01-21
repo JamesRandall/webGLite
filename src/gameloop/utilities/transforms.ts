@@ -2,6 +2,8 @@ import {mat4, vec3} from "gl-matrix";
 import {PositionedObject} from "../../model/localBubble";
 import {ShipInstance} from "../../model/ShipInstance";
 import {Player} from "../../model/player";
+import {Game} from "../../model/game";
+import {playerShipRelativeSpeedFudgeFactor, scannerRadialWorldRange} from "../../constants";
 
 export function degreesToRadians(value: number) {
     return value*Math.PI/180
@@ -64,6 +66,21 @@ export function rotateVectorByOrientation(
         0, 0, 0, 1
     )
     return vec3.transformMat4(vec3.create(), position, matrix)
+}
+
+export function calculatePlayerVelocity(player:Player, timeDelta: number) {
+    const velocity = player.isJumping ?
+        player.ship.maxSpeed*timeDelta*playerShipRelativeSpeedFudgeFactor*32 :
+        player.speed*timeDelta*playerShipRelativeSpeedFudgeFactor
+    return vec3.fromValues(0,0,velocity)
+}
+
+export function calculateSpaceStationRotationSpeed(player: Player) {
+    return -player.ship.maxRollSpeed/4 // if we start allowing ships to be bought we need to base this on the Cobra
+}
+
+export function calculateSpaceStationPlanetDistance(game: Game) {
+    return game.localBubble.planet.radius * 2
 }
 
 export function reverseVector(vector: vec3) {

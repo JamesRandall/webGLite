@@ -2,7 +2,7 @@ import {Player} from "../model/player";
 import {mat4, vec3} from "gl-matrix";
 import {OrbitalBody} from "../model/localBubble";
 import {Game} from "../model/game";
-import {rotateOrientationVectorsByPitchAndRoll} from "./utilities/transforms";
+import {calculatePlayerVelocity, rotateOrientationVectorsByPitchAndRoll} from "./utilities/transforms";
 import {playerOrbitalBodyRelativeSpeedFudgeFactor} from "../constants";
 import {ShipInstance} from "../model/ShipInstance";
 
@@ -19,8 +19,8 @@ export function updateOrbitalBodies(game: Game, timeDelta: number) {
 }
 
 function moveBodyByPlayerSpeed(body: OrbitalBody, player: Player, timeDelta:number) {
-
-    vec3.add(body.position, body.position,[0,0,player.speed*timeDelta*playerOrbitalBodyRelativeSpeedFudgeFactor])
+    const velocity = calculatePlayerVelocity(player, timeDelta)
+    vec3.add(body.position, body.position,velocity)
 }
 
 function rotateLocationInSpaceByPlayerPitchAndRoll(body: OrbitalBody, player: Player, timeDelta:number) {

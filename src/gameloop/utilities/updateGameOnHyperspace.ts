@@ -1,7 +1,14 @@
 import {Game} from "../../model/game";
 import {Resources} from "../../resources/resources";
 import {vec2, vec3} from "gl-matrix";
-import {move, rotateLocationInSpaceByPitchAndRoll, rotateOrientationVectorsByPitchAndRoll} from "./transforms";
+import {
+    calculateSpaceStationPlanetDistance,
+    calculateSpaceStationRotationSpeed,
+    degreesToRadians,
+    move,
+    rotateLocationInSpaceByPitchAndRoll,
+    rotateOrientationVectorsByPitchAndRoll
+} from "./transforms";
 import {worldSize} from "../../constants";
 import {generateMarketItems} from "../../proceduralGeneration/marketItems";
 
@@ -15,6 +22,7 @@ export function updateGameOnHyperspace(game:Game, resources:Resources) {
 
     positionPlayerAwayFromPlanet(game)
     positionSun(game)
+    spawnStationInOrbit(game, resources)
     game.marketItems = generateMarketItems(game.currentSystem)
 }
 
@@ -22,7 +30,6 @@ export function updateGameOnHyperspace(game:Game, resources:Resources) {
 
 function positionPlayerAwayFromPlanet(game:Game) {
     const planet = game.localBubble.planet
-    const player = game.player
     planet.radius = game.currentSystem.averageRadius
 
     // create a random directional vector for the planet then move it to a random distance suitable for hyperspace
@@ -43,6 +50,26 @@ function positionPlayerAwayFromPlanet(game:Game) {
     planet.pitch = 0.01
     planet.roll = 0.02
     planet.surfaceTextureIndex = game.currentSystem.surfaceTextureIndex
+}
+
+function spawnStationInOrbit(game: Game, resources: Resources) {
+    const distance = calculateSpaceStationPlanetDistance(game)
+
+    // 1. Position the station a random direction away from the planet but on the player side of the planet
+    const randomDirection =
+        vec3.normalize(vec3.create(), vec3.fromValues(Math.random()*2 - 1, Math.random() * 2 - 1, Math.random()))
+    const translation = vec3.multiply(vec3.create(), randomDirection, [distance,distance,distance])
+    const position = vec3.add(vec3.create(), game.localBubble.planet.position, translation)
+    const station = resources.ships.getCoriolis([0,0,0], [0,0,-1])
+    station.position = position
+    station.roll = calculateSpaceStationRotationSpeed(game.player)
+    // 2. Orient the station so that the gate is facing the planet
+    station.noseOrientation = vec3.multiply(vec3.create(), randomDirection, [-1,-1,-1])
+    station.roofOrientation = vec3.rotateX(vec3.create(), station.noseOrientation, [0,0,0], degreesToRadians(-90))
+    station.rightOrientation = vec3.rotateY(vec3.create(), station.noseOrientation, [0,0,0], degreesToRadians(90))
+
+    game.localBubble.ships.push(station)
+    game.localBubble.station = station
 }
 
 function positionSun(game:Game) {

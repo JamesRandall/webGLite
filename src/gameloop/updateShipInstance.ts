@@ -2,7 +2,11 @@ import {Player} from "../model/player";
 import {mat4, quat, vec3} from "gl-matrix";
 import {playerShipRelativeSpeedFudgeFactor } from "../constants";
 import {ShipInstance} from "../model/ShipInstance";
-import {rotateLocationInSpaceByPitchAndRoll, rotateOrientationVectorsByPitchAndRoll} from "./utilities/transforms";
+import {
+    calculatePlayerVelocity,
+    rotateLocationInSpaceByPitchAndRoll,
+    rotateOrientationVectorsByPitchAndRoll
+} from "./utilities/transforms";
 
 // Based on this game loop: https://www.bbcelite.com/deep_dives/program_flow_of_the_ship-moving_routine.html
 export function updateShipInstance(shipInstance: ShipInstance, player: Player, timeDelta: number) {
@@ -34,8 +38,8 @@ function rotateLocationInSpaceByPlayerPitchAndRoll(shipInstance: ShipInstance, p
 function moveShipByPlayerSpeed(shipInstance: ShipInstance, player: Player, timeDelta:number) {
     // I want to specify the velocities in the units given in the Elite manual but want the in game velocity to be
     // accurate to the original - this fudge factor lands us in about the right ballpark
-
-    vec3.add(shipInstance.position, shipInstance.position, [0,0,player.speed*timeDelta*playerShipRelativeSpeedFudgeFactor])
+    const velocity = calculatePlayerVelocity(player, timeDelta)
+    vec3.add(shipInstance.position, shipInstance.position, velocity)
 }
 
 function rotateAccordingToPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta:number) {

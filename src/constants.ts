@@ -30,7 +30,7 @@ variable.
 
 // Based on the above and the Elite world size (
 export const playerOrbitalBodyRelativeSpeedFudgeFactor = 2
-export const playerShipRelativeSpeedFudgeFactor = 2
+export const playerShipRelativeSpeedFudgeFactor = 4
 export const shipScaleFactor = 0.1
 export const stationScaleFactor = shipScaleFactor * 4.0
 export const scannerRadialWorldRange = vec3.divide(vec3.create(),vec3.fromValues(0x3300, 0x3300, 0x3300),[8,8,8])
