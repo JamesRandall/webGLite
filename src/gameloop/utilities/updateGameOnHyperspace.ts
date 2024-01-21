@@ -57,7 +57,7 @@ function spawnStationInOrbit(game: Game, resources: Resources) {
 
     // 1. Position the station a random direction away from the planet but on the player side of the planet
     const randomDirection =
-        vec3.normalize(vec3.create(), vec3.fromValues(Math.random()*2 - 1, Math.random() * 2 - 1, Math.random()))
+        vec3.normalize(vec3.create(), vec3.fromValues(Math.random()*2 - 1, Math.random() * 2 - 1, -Math.random()))
     const translation = vec3.multiply(vec3.create(), randomDirection, [distance,distance,distance])
     const position = vec3.add(vec3.create(), game.localBubble.planet.position, translation)
     const station = resources.ships.getCoriolis([0,0,0], [0,0,-1])

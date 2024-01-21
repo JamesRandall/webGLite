@@ -3,7 +3,7 @@ import {PositionedObject} from "../../model/localBubble";
 import {ShipInstance} from "../../model/ShipInstance";
 import {Player} from "../../model/player";
 import {Game} from "../../model/game";
-import {playerShipRelativeSpeedFudgeFactor, scannerRadialWorldRange} from "../../constants";
+import {jumpSpeedMultiplier, playerShipRelativeSpeedFudgeFactor, scannerRadialWorldRange} from "../../constants";
 
 export function degreesToRadians(value: number) {
     return value*Math.PI/180
@@ -70,7 +70,7 @@ export function rotateVectorByOrientation(
 
 export function calculatePlayerVelocity(player:Player, timeDelta: number) {
     const velocity = player.isJumping ?
-        player.ship.maxSpeed*timeDelta*playerShipRelativeSpeedFudgeFactor*32 :
+        player.ship.maxSpeed*timeDelta*playerShipRelativeSpeedFudgeFactor*jumpSpeedMultiplier :
         player.speed*timeDelta*playerShipRelativeSpeedFudgeFactor
     return vec3.fromValues(0,0,velocity)
 }

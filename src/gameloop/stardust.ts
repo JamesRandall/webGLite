@@ -1,6 +1,6 @@
 import {vec2, vec3} from "gl-matrix";
-import {LocalBubble} from "../model/localBubble";
 import {Game} from "../model/game";
+import {stardustJumpSpeedMultiplier} from "../constants";
 
 const maxStars = 128
 const timeFromBackToFront = 3.0 // at top speed, so we'd divide this by the players max speed * their actual speed
@@ -31,7 +31,7 @@ export function updateStardust(game:Game, timeDelta: number) {
     //const speedUnit = localBubble.player.speed > 0.0 ? 1.0/localBubble.player.speed/2.0 : 0.0005
     game.localBubble.stardust = game.localBubble.stardust.map(sd => {
         const z = sd[2]
-        const playerSpeed = Math.max(game.player.speed / game.player.ship.maxSpeed,0.02)
+        const playerSpeed = Math.max(game.player.speed / game.player.ship.maxSpeed,0.02) * (game.player.isJumping ? stardustJumpSpeedMultiplier : 1)
         const speed = ((1-z)*distancePerSecondAtBack*10+distancePerSecondAtBack)*timeDelta*playerSpeed
         let newZ = sd[2] - speed
         if (newZ <= 0.0) {
