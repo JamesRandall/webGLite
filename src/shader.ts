@@ -1,3 +1,5 @@
+import {ShaderSource} from "./resources/resources";
+
 export function loadShader(gl:WebGLRenderingContext, type:number, source:string) {
     const shader = gl.createShader(type)!
     gl.shaderSource(shader, source)
@@ -17,6 +19,26 @@ export function loadShader(gl:WebGLRenderingContext, type:number, source:string)
 export function compileShaderProgram(gl:WebGLRenderingContext, vsSource:string, fsSource:string) {
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)!
     const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource)!
+
+    const shaderProgram = gl.createProgram()!
+    gl.attachShader(shaderProgram, vertexShader)
+    gl.attachShader(shaderProgram, fragmentShader)
+    gl.linkProgram(shaderProgram)
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        alert(
+            `Unable to initialize the shader program: ${gl.getProgramInfoLog(
+                shaderProgram,
+            )}`,
+        )
+        return null
+    }
+    return shaderProgram
+}
+
+export function compileShaderProgram2(gl:WebGLRenderingContext, source: ShaderSource) {
+    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, source.vert)!
+    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, source.frag)!
 
     const shaderProgram = gl.createProgram()!
     gl.attachShader(shaderProgram, vertexShader)

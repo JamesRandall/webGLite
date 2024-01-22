@@ -1,16 +1,23 @@
 import {createShipsRenderer} from "../flight/ships";
 import {createPrimitiveRenderer} from "../primitives/primitives";
 import {Game} from "../../model/game";
-import {drawFrame, setupGl} from "../common";
+import {createProjectionMatrix, drawFrame, setupGl} from "../common";
+import {Resources} from "../../resources/resources";
 
-export function createPregameSceneRenderer(gl:WebGLRenderingContext) {
-    const shipRenderer = createShipsRenderer(gl)
-    const draw2d = createPrimitiveRenderer(gl)
+export function createPregameSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
+    const shipRenderer = createShipsRenderer(gl, resources)
+    const draw2d = createPrimitiveRenderer(gl, false, resources)
+
+    const canvas = gl.canvas as HTMLCanvasElement
+    const viewportWidth = canvas.clientWidth
+    const viewportHeight = canvas.clientHeight
 
     return (game:Game, timeDelta:number) => {
+        const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
+
         setupGl(gl)
 
-        shipRenderer(game.localBubble)
+        shipRenderer(projectionMatrix, game.localBubble)
 
         gl.disable(gl.DEPTH_TEST)
         drawFrame(draw2d)

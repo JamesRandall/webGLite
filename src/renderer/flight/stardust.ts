@@ -2,33 +2,9 @@
 //  https://webglfundamentals.org/webgl/lessons/webgl-points-lines-triangles.html
 
 import {LocalBubble} from "../../model/localBubble";
-import {compileShaderProgram} from "../../shader";
+import {compileShaderProgram, compileShaderProgram2} from "../../shader";
 import {mat4} from "gl-matrix";
-
-const vsSource = `#version 300 es
-in vec3 position;
-
-uniform mat4 uProjectionMatrix;
-uniform highp float uDepth;
-
-out vec4 vColor;
- 
-void main() {
-    vColor = vec4(1.0-position.z, 1.0-position.z, 1.0-position.z, 1.0);
-    gl_PointSize = 4.0 * (1.0 - position.z); //size * ( 300.0 / length( mvPosition.xyz ) );
-    gl_Position = uProjectionMatrix * vec4(position.xy,-uDepth,1.0);
-}`
-
-const fsSource = `#version 300 es
-in lowp vec4 vColor;
-
-out lowp vec4 outputColor;
-uniform highp float uDepth;
-
-void main(void) {
-  outputColor = vColor;
-  gl_FragDepth = uDepth;
-}`
+import {Resources} from "../../resources/resources";
 
 interface ProgramInfo {
     program: WebGLProgram
@@ -41,8 +17,8 @@ interface ProgramInfo {
     }
 }
 
-function initShaderProgram(gl:WebGLRenderingContext) {
-    const shaderProgram = compileShaderProgram(gl, vsSource, fsSource)
+function initShaderProgram(gl:WebGLRenderingContext, resources: Resources) {
+    const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.stardust)
     if (!shaderProgram) { return null }
 
     return {
@@ -76,8 +52,8 @@ function setPositionAttribute(gl:WebGLRenderingContext, buffer: WebGLBuffer, pro
     gl.enableVertexAttribArray(programInfo.attribLocations.position);
 }
 
-export function createStardustRenderer(gl:WebGLRenderingContext) {
-    const programInfo = initShaderProgram(gl)!
+export function createStardustRenderer(gl:WebGLRenderingContext, resources: Resources) {
+    const programInfo = initShaderProgram(gl, resources)!
 
 
     return function (localBubble:LocalBubble) {

@@ -3,7 +3,10 @@ import {vec3} from "gl-matrix";
 import {ShipInstance, ShipRoleEnum} from "../model/ShipInstance";
 import {loadTexture} from "./texture";
 
-
+export interface ShaderSource {
+    frag: string
+    vert: string
+}
 
 export interface Resources {
     ships: {
@@ -16,6 +19,23 @@ export interface Resources {
     },
     textures: {
         planets: WebGLTexture[]
+    },
+    shaderSource: {
+        stardust: ShaderSource
+        ship: ShaderSource
+        planet: ShaderSource
+        sun: ShaderSource
+        uColor: ShaderSource
+        text: ShaderSource
+    }
+}
+
+async function loadShaderSource(name: string) {
+    const fragResponse = await fetch(`shaders/${name}.frag`)
+    const vertResponse = await fetch(`shaders/${name}.vert`)
+    return {
+        frag: await fragResponse.text(),
+        vert: await vertResponse.text()
     }
 }
 
@@ -45,6 +65,14 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
                 "./haumea.png",
                 "./makemake.png"
             ].map(t => loadTexture(gl, t)!)
+        },
+        shaderSource: {
+            stardust: await loadShaderSource('stardust'),
+            ship: await loadShaderSource('ship'),
+            planet: await loadShaderSource('planet'),
+            sun: await loadShaderSource('sun'),
+            uColor: await loadShaderSource('uColor'),
+            text: await loadShaderSource('text')
         }
     }
 }

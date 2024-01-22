@@ -14,17 +14,17 @@ import {Resources} from "../../resources/resources";
 import {createBuyMarketItemsRenderer} from "../screens/buyMarketItems";
 
 export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
-    const draw2d = createPrimitiveRenderer(gl)
+    const draw2d = createPrimitiveRenderer(gl, false, resources)
 
-    const shipRenderer = createShipsRenderer(gl)
-    const stardustRenderer = createStardustRenderer(gl)
-    const sunRenderer = createSunRenderer(gl)
+    const shipRenderer = createShipsRenderer(gl, resources)
+    const stardustRenderer = createStardustRenderer(gl, resources)
+    const sunRenderer = createSunRenderer(gl, resources)
     const planetRenderer = createSphericalPlanetRenderer(gl, resources)
     const localChartRenderer = createLocalChartRenderer(draw2d)
     const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)
     const playerDetailsRenderer = createPlayerDetailsRenderer(draw2d)
-    const launchingRenderer = createLaunchingRenderer(gl)
-    const hyperspaceRenderer = createHyperspaceRenderer(gl)
+    const launchingRenderer = createLaunchingRenderer(gl, resources)
+    const hyperspaceRenderer = createHyperspaceRenderer(gl, resources)
     const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
     let flashOn = true
     let flashOnTime = 0

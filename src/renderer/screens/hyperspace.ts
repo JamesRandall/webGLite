@@ -4,9 +4,10 @@ import {frameColor, frameWidth} from "../../constants";
 import {CombatRatingEnum, LaserTypeEnum, LegalStatusEnum} from "../../model/player";
 import {createPolygonRenderer} from "../primitives/polygon";
 import {vec2, vec4} from "gl-matrix";
+import {Resources} from "../../resources/resources";
 
-export function createHyperspaceRenderer(gl: WebGLRenderingContext) {
-    const octRenderer = createPolygonRenderer(gl, 8)
+export function createHyperspaceRenderer(gl: WebGLRenderingContext, resources: Resources) {
+    const octRenderer = createPolygonRenderer(gl, 8, resources)
     const centerX = gl.canvas.width/2
     const centerY = gl.canvas.height/2
     const maxRadius = Math.max(centerX,centerY) * 1.2

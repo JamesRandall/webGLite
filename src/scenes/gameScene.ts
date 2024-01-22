@@ -87,6 +87,6 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     bindKeys(game.player.controlState)
     bindMouse(game.player.controlState)
     const sceneRenderer = createSceneRenderer(gl, resources)
-    const dashboardRenderer = createDashboardRenderer(dashboardGl)
+    const dashboardRenderer = createDashboardRenderer(dashboardGl, resources)
     return createGameLoop(resources, game, sceneRenderer, dashboardRenderer)
 }

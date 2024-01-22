@@ -1,32 +1,11 @@
-import {compileShaderProgram} from "../../shader";
+import {compileShaderProgram, compileShaderProgram2} from "../../shader";
 import {createSquareModelWithTexture} from "../../resources/models";
 import {mat4, quat, vec2, vec4} from "gl-matrix";
 import {setCommonAttributes2D, setViewUniformLocations} from "../coregl/programInfo";
+import {Resources} from "../../resources/resources";
 
-const vsSource = `#version 300 es
-    precision highp float;
-    in vec4 aVertexPosition;
-    
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    
-    void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    }
-  `
-const fsSource = `#version 300 es
-precision highp float;
-
-uniform vec4 uColor;
-out vec4 outputColor;
-
-void main(void) {
-    outputColor = uColor;
-}
-`
-
-function initShaderProgram(gl:WebGLRenderingContext)  {
-    const shaderProgram = compileShaderProgram(gl, vsSource, fsSource)
+function initShaderProgram(gl:WebGLRenderingContext, resources: Resources)  {
+    const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.uColor)
     if (!shaderProgram) { return null }
 
     return {
@@ -60,8 +39,8 @@ function createVertexBuffer(gl:WebGLRenderingContext) {
     return { buffer: vertexBuffer, vertCount: vertices.length/2 }
 }
 
-export function createRectRenderer(gl:WebGLRenderingContext) {
-    const programInfo = initShaderProgram(gl)!
+export function createRectRenderer(gl:WebGLRenderingContext, resources: Resources) {
+    const programInfo = initShaderProgram(gl, resources)!
     const vertices = createVertexBuffer(gl)
     const projectionMatrix = mat4.create()
     mat4.ortho(projectionMatrix, 0, gl.canvas.width, gl.canvas.height, 0, -1.0, 1.0)

@@ -1,4 +1,4 @@
-import {compileShaderProgram} from "../../shader";
+import {compileShaderProgram, compileShaderProgram2} from "../../shader";
 import {LocalBubble} from "../../model/localBubble";
 import {mat4, quat, vec3} from "gl-matrix";
 import {createSphere} from "../../resources/sphere";
@@ -6,91 +6,8 @@ import {Resources} from "../../resources/resources";
 import {setCommonAttributes, setViewUniformLocations} from "../coregl/programInfo";
 import {planetScaleFactor} from "../../constants";
 
-const vsSource = `#version 300 es
-    in vec4 aVertexPosition;
-    in vec3 aVertexNormal;
-    in vec2 aTextureCoord;
-
-    uniform mat4 uNormalMatrix;
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    // point light
-    
-    out lowp vec4 vColor;
-    out highp vec3 vNormal;
-    out highp vec3 vVertex;
-    out highp vec2 vTextureCoord;
-    
-    uniform vec3 uLightWorldPosition;
-
-    void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      vVertex = vec3(uModelViewMatrix*aVertexPosition);
-      vTextureCoord = aTextureCoord;
-      highp vec3 transformedNormal = mat3(uNormalMatrix) * aVertexNormal;
-      vNormal = transformedNormal;
-    }
-  `
-const fsSource = `#version 300 es
-    precision highp int;
-    precision highp float;
-    
-    in highp vec3 vNormal;
-    in highp vec3 vVertex;
-    in highp vec2 vTextureCoord;
-    
-    out lowp vec4 outputColor;
-    
-    uniform highp float uShininess;
-    uniform vec3 uLightWorldPosition;
-    uniform sampler2D uSampler;
-
-    void main(void) {
-        vec4 tex = texture(uSampler, vTextureCoord);
-        vec4 aColor = tex;
-        
-        vec3 to_light;
-          vec3 vertex_normal;
-          vec3 reflection;
-          vec3 to_camera;
-          float cos_angle;
-          vec3 diffuse_color;
-          vec3 specular_color;
-          vec3 ambient_color;
-          vec3 color;
-    
-        vec3 lightColor = vec3(1.0,1.0,1.0);
-        ambient_color = vec3(0.1,0.1,0.1) * aColor.rgb;
-        to_light = uLightWorldPosition - vVertex;
-        to_light = normalize(to_light);
-        
-        vertex_normal = normalize(vNormal);
-        cos_angle = dot(vertex_normal, to_light);
-        cos_angle = clamp(cos_angle, 0.0, 1.0);
-        diffuse_color = vec3(aColor) * cos_angle;
-        reflection = vec3(0.0,0.0,0.0); //2.0 * dot(vertex_normal,to_light) * vertex_normal - to_light;
-        to_camera = -1.0 * vVertex;
-        reflection = normalize( reflection );
-          to_camera = normalize( to_camera );
-          cos_angle = dot(reflection, to_camera);
-          cos_angle = clamp(cos_angle, 0.0, 1.0);
-          cos_angle = pow(cos_angle, uShininess);
-    
-        if (cos_angle > 0.0) {
-    specular_color = lightColor * cos_angle;
-    diffuse_color = diffuse_color * (1.0 - cos_angle);
-  } else {
-    specular_color = vec3(0.0, 0.0, 0.0);
-  }
-
-  color = ambient_color + diffuse_color + specular_color;
-   
-  outputColor = vec4(color,aColor.a);
-}
-  `
-
-function initShaderProgram(gl: WebGLRenderingContext) {
-    const shaderProgram = compileShaderProgram(gl, vsSource, fsSource)
+function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
+    const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.planet)
     if (!shaderProgram) {
         return null
     }
@@ -114,7 +31,7 @@ function initShaderProgram(gl: WebGLRenderingContext) {
 }
 
 export function createSphericalPlanetRenderer(gl: WebGLRenderingContext, resources: Resources) {
-    const programInfo = initShaderProgram(gl)!
+    const programInfo = initShaderProgram(gl, resources)!
 
     const sphere = createSphere(gl, {
         radius: 1,

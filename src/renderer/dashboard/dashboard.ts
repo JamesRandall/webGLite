@@ -4,6 +4,7 @@ import {createPrimitiveRenderer, Primitives} from "../primitives/primitives";
 import {mat4, vec2, vec3, vec4} from "gl-matrix";
 import {createScannerBackgroundRenderer} from "./scannerBackground";
 import {createScannerShipRenderer} from "./scannerShips";
+import {Resources} from "../../resources/resources";
 
 function setup(gl: WebGLRenderingContext) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -195,7 +196,7 @@ function drawFrame(draw2d:Primitives, width: number, height: number) {
     draw2d.rect([width-width/5 - frameWidth,0], [frameWidth,height], frameColor)
 }
 
-export function createDashboardRenderer(gl:WebGLRenderingContext) {
+export function createDashboardRenderer(gl:WebGLRenderingContext, resources: Resources) {
 
     const width = gl.canvas.width
     const height = gl.canvas.height
@@ -220,7 +221,7 @@ export function createDashboardRenderer(gl:WebGLRenderingContext) {
     mat4.multiply(projectionMatrix, cameraMatrix, projectionMatrix)
     mat4.multiply(projectionMatrix, perspectiveMatrix, projectionMatrix)
 
-    const draw2d = createPrimitiveRenderer(gl,true)
+    const draw2d = createPrimitiveRenderer(gl,true, resources)
     const scannerBackgroundRenderer = createScannerBackgroundRenderer(gl, projectionMatrix, scannerScale)
     const scannerShipRenderer = createScannerShipRenderer(gl, projectionMatrix, scannerScale)
 

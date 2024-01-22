@@ -3,6 +3,7 @@ import {createCircleRenderer} from "./circle";
 import {createTextRenderer} from "./text";
 import {vec2, vec4} from "gl-matrix";
 import {Size} from "../../model/geometry";
+import {Resources} from "../../resources/resources";
 
 export interface Primitives {
     rect: (position: vec2, size: vec2, color: vec4) => void
@@ -17,11 +18,11 @@ export interface Primitives {
     size: () => Size
 }
 
-export function createPrimitiveRenderer(gl: WebGLRenderingContext, flippedY: boolean = false) : Primitives {
+export function createPrimitiveRenderer(gl: WebGLRenderingContext, flippedY: boolean, resources: Resources) : Primitives {
     return {
-        rect: createRectRenderer(gl),
-        circle: createCircleRenderer(gl),
-        text: createTextRenderer(gl, flippedY),
+        rect: createRectRenderer(gl, resources),
+        circle: createCircleRenderer(gl, resources),
+        text: createTextRenderer(gl, flippedY, resources),
         size: () => ({width: gl.canvas.width, height: gl.canvas.height})
     }
 }
