@@ -39,13 +39,13 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
     let flashOn = true
     let flashOnTime = 0
 
+    // This sets up a frame buffer that will render to a texture and attaches a depth buffer to it
     const frameBufferTexture = createFrameBufferTexture(gl, viewportWidth, viewportHeight)!
     const frameBuffer = gl.createFramebuffer()
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameBufferTexture, 0)
     const depthBuffer = gl.createRenderbuffer();
     gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
-    // make a depth buffer and the same size as the targetTexture
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, viewportWidth, viewportHeight);
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
 

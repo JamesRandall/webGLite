@@ -79,7 +79,7 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
     }
 
     const sceneRenderer = createPregameSceneRenderer(gl, resources)
-    const dashboardRenderer = createDashboardRenderer(dashboardGl, resources)
+    const dashboardRenderer = createDashboardRenderer(dashboardGl, resources, dashboardGl.canvas.width, dashboardGl.canvas.height)
     return createPregameLoop(game, gl, dashboardGl, resources, sceneRenderer, dashboardRenderer)
 }
 

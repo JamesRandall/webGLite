@@ -16,9 +16,8 @@ export function createPregameSceneRenderer(gl:WebGLRenderingContext, resources: 
         const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
 
         setupGl(gl)
-
+        gl.enable(gl.DEPTH_TEST)
         shipRenderer(projectionMatrix, game.localBubble)
-
         gl.disable(gl.DEPTH_TEST)
         drawFrame(draw2d)
         draw2d.text.draw("---- webGLite ----", [10,1])
