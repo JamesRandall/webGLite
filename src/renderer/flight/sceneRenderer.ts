@@ -5,7 +5,7 @@ import {createPrimitiveRenderer} from "../primitives/primitives";
 import {Game, SceneEnum} from "../../model/game";
 import {createLocalChartRenderer} from "../screens/localChart";
 import {createSystemDetailsRenderer} from "../screens/systemDetails";
-import {drawFrame, setupGl} from "../common";
+import {createFrameBufferTexture, createProjectionMatrix, drawFrame, setupGl} from "../common";
 import {createPlayerDetailsRenderer} from "../screens/playerDetails";
 import {createLaunchingRenderer} from "../screens/launching";
 import {createHyperspaceRenderer} from "../screens/hyperspace";
@@ -29,7 +29,15 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
     let flashOn = true
     let flashOnTime = 0
 
+    const canvas = gl.canvas as HTMLCanvasElement
+    const viewportWidth = canvas.clientWidth
+    const viewportHeight = canvas.clientHeight
+
+    const frameBufferTexture = createFrameBufferTexture(gl, viewportWidth, viewportHeight)
+
     return (game:Game, timeDelta:number) => {
+        const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
+
         flashOnTime += timeDelta
         if (flashOnTime > 1.5) {
             flashOnTime = 0
@@ -39,9 +47,9 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
 
         switch(game.currentScene) {
             case SceneEnum.Front:
-                shipRenderer(game.localBubble)
-                sunRenderer(game.localBubble,timeDelta)
-                planetRenderer(game.localBubble,timeDelta)
+                shipRenderer(projectionMatrix, game.localBubble)
+                sunRenderer(projectionMatrix, game.localBubble, timeDelta)
+                planetRenderer(projectionMatrix, game.localBubble,timeDelta)
                 stardustRenderer(game.localBubble)
                 break
 

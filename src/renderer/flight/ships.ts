@@ -119,24 +119,13 @@ function initShaderProgram(gl:WebGLRenderingContext) {
 export function createShipsRenderer(gl:WebGLRenderingContext) {
     const programInfo = initShaderProgram(gl)!
 
-    return function (localBubble: LocalBubble) {
+    return function (projectionMatrix: mat4, localBubble: LocalBubble) {
         // Create a perspective matrix, a special matrix that is
         // used to simulate the distortion of perspective in a camera.
         // Our field of view is 45 degrees, with a width/height
         // ratio that matches the display size of the canvas
         // and we only want to see objects between 0.1 units
         // and 100 units away from the camera.
-
-        const canvas = gl.canvas as HTMLCanvasElement
-        const fieldOfView = (45 * Math.PI) / 180 // in radians
-        const aspect = canvas.clientWidth / canvas.clientHeight
-        const zNear = 0.1
-        const zFar = localBubble.clipSpaceRadius
-        const projectionMatrix = mat4.create()
-
-        // note: glmatrix.js always has the first argument
-        // as the destination to receive the result.
-        mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar)
 
         gl.useProgram(programInfo.program);
 

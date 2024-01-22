@@ -313,16 +313,8 @@ export function createSunRenderer(gl:WebGLRenderingContext) {
 
   let time = 0.0
 
-  return function (localBubble: LocalBubble, timeDelta: number) {
+  return function (projectionMatrix: mat4, localBubble: LocalBubble, timeDelta: number) {
     time += timeDelta
-
-    const canvas = gl.canvas as HTMLCanvasElement
-    const fieldOfView = (45 * Math.PI) / 180 // in radians
-    const aspect = canvas.clientWidth / canvas.clientHeight
-    const zNear = 0.1
-    const zFar = localBubble.clipSpaceRadius*1.2
-    const projectionMatrix = mat4.create()
-    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar)
 
     gl.useProgram(programInfo.program)
 
