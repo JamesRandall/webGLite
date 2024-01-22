@@ -196,17 +196,14 @@ function drawFrame(draw2d:Primitives, width: number, height: number) {
     draw2d.rect([width-width/5 - frameWidth,0], [frameWidth,height], frameColor)
 }
 
-export function createDashboardRenderer(gl:WebGLRenderingContext, resources: Resources) {
+export function createDashboardRenderer(gl:WebGLRenderingContext, resources: Resources, width: number, height: number) {
 
-    const width = gl.canvas.width
-    const height = gl.canvas.height
     // this is the co-ordinate space for the scanner, the model for the scanner is 2 units wide and deep
     // (its a square -1,-1,0 at the top left, 1,1,0 at the bottom right)
     const scannerScale = vec3.fromValues(2.7,1,1)
 
-    const canvas = gl.canvas as HTMLCanvasElement
     const fieldOfView = (45 * Math.PI) / 180 // in radians
-    const aspect = canvas.clientWidth / canvas.clientHeight
+    const aspect = width / height
     const zNear = 0.1
     const zFar = 512.0
     const perspectiveMatrix = mat4.create()
@@ -221,7 +218,7 @@ export function createDashboardRenderer(gl:WebGLRenderingContext, resources: Res
     mat4.multiply(projectionMatrix, cameraMatrix, projectionMatrix)
     mat4.multiply(projectionMatrix, perspectiveMatrix, projectionMatrix)
 
-    const draw2d = createPrimitiveRenderer(gl,true, resources)
+    const draw2d = createPrimitiveRenderer(gl,true, resources, width, height)
     const scannerBackgroundRenderer = createScannerBackgroundRenderer(gl, projectionMatrix, scannerScale)
     const scannerShipRenderer = createScannerShipRenderer(gl, projectionMatrix, scannerScale)
 

@@ -20,12 +20,12 @@ export interface Primitives {
     size: () => Size
 }
 
-export function createPrimitiveRenderer(gl: WebGLRenderingContext, flippedY: boolean, resources: Resources) : Primitives {
+export function createPrimitiveRenderer(gl: WebGLRenderingContext, flippedY: boolean, resources: Resources, width:number, height: number) : Primitives {
     return {
-        rect: createRectRenderer(gl, resources),
-        texturedRect: createTexturedRectRenderer(gl, gl.canvas.width, gl.canvas.height, resources),
-        circle: createCircleRenderer(gl, resources),
-        text: createTextRenderer(gl, flippedY, resources),
-        size: () => ({width: gl.canvas.width, height: gl.canvas.height})
+        rect: createRectRenderer(gl, width, height, resources),
+        texturedRect: createTexturedRectRenderer(gl, width, height, resources),
+        circle: createCircleRenderer(gl, width, height, resources),
+        text: createTextRenderer(gl, width, height, flippedY, resources),
+        size: () => ({width: width, height: height})
     }
 }

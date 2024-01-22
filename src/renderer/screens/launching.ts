@@ -6,8 +6,8 @@ import {createPolygonRenderer} from "../primitives/polygon";
 import {vec2, vec4} from "gl-matrix";
 import {Resources} from "../../resources/resources";
 
-export function createLaunchingRenderer(gl: WebGLRenderingContext, resources: Resources) {
-    const octRenderer = createPolygonRenderer(gl, 8, resources)
+export function createLaunchingRenderer(gl: WebGLRenderingContext, width: number, height: number, resources: Resources) {
+    const octRenderer = createPolygonRenderer(gl, width, height, 8, resources)
     const centerX = gl.canvas.width/2
     const centerY = gl.canvas.height/2
     const maxRadius = Math.max(centerX,centerY) * 1.2

@@ -38,11 +38,11 @@ function createVertexBuffer(gl:WebGLRenderingContext) {
     return { buffer: vertexBuffer, vertCount: vertices.length/2 }
 }
 
-export function createCircleRenderer(gl:WebGLRenderingContext, resources: Resources) {
+export function createCircleRenderer(gl:WebGLRenderingContext, width:number, height: number, resources: Resources) {
     const programInfo = initShaderProgram(gl, resources)!
     const vertices = createVertexBuffer(gl)
     const projectionMatrix = mat4.create()
-    mat4.ortho(projectionMatrix, 0, gl.canvas.width, gl.canvas.height, 0, -1.0, 1.0)
+    mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
 
     return function (position: vec2, radius: number, color: vec4) {
         const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), quat.create(), [position[0], position[1],0.0], [radius, radius, 1.0])

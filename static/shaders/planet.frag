@@ -1,5 +1,5 @@
 #version 300 es
-    precision highp int;
+precision highp int;
 precision highp float;
 
 in highp vec3 vNormal;

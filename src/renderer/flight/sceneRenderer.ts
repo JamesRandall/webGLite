@@ -20,7 +20,11 @@ import {Resources} from "../../resources/resources";
 import {createBuyMarketItemsRenderer} from "../screens/buyMarketItems";
 
 export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
-    const draw2d = createPrimitiveRenderer(gl, false, resources)
+    const canvas = gl.canvas as HTMLCanvasElement
+    const viewportWidth = canvas.clientWidth
+    const viewportHeight = canvas.clientHeight
+
+    const draw2d = createPrimitiveRenderer(gl, false, resources, viewportWidth, viewportHeight)
 
     const shipRenderer = createShipsRenderer(gl, resources)
     const stardustRenderer = createStardustRenderer(gl, resources)
@@ -29,23 +33,25 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
     const localChartRenderer = createLocalChartRenderer(draw2d)
     const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)
     const playerDetailsRenderer = createPlayerDetailsRenderer(draw2d)
-    const launchingRenderer = createLaunchingRenderer(gl, resources)
-    const hyperspaceRenderer = createHyperspaceRenderer(gl, resources)
+    const launchingRenderer = createLaunchingRenderer(gl, viewportWidth, viewportHeight, resources)
+    const hyperspaceRenderer = createHyperspaceRenderer(gl, viewportWidth, viewportHeight, resources)
     const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
     let flashOn = true
     let flashOnTime = 0
-
-    const canvas = gl.canvas as HTMLCanvasElement
-    const viewportWidth = canvas.clientWidth
-    const viewportHeight = canvas.clientHeight
 
     const frameBufferTexture = createFrameBufferTexture(gl, viewportWidth, viewportHeight)!
     const frameBuffer = gl.createFramebuffer()
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameBufferTexture, 0)
+    const depthBuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+    // make a depth buffer and the same size as the targetTexture
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, viewportWidth, viewportHeight);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
 
     return (game:Game, timeDelta:number) => {
         bindBufferAndSetViewport(gl, frameBuffer, viewportWidth, viewportHeight)
+        setupGl(gl)
 
         const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
 
@@ -54,14 +60,17 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
             flashOnTime = 0
             flashOn = !flashOn
         }
-        setupGl(gl)
 
         switch(game.currentScene) {
             case SceneEnum.Front:
+                gl.enable(gl.CULL_FACE)
+                gl.enable(gl.DEPTH_TEST)
                 shipRenderer(projectionMatrix, game.localBubble)
                 sunRenderer(projectionMatrix, game.localBubble, timeDelta)
                 planetRenderer(projectionMatrix, game.localBubble,timeDelta)
                 stardustRenderer(game.localBubble)
+                gl.disable(gl.CULL_FACE)
+                gl.disable(gl.DEPTH_TEST)
                 break
 
             case SceneEnum.LocalMap:
@@ -91,6 +100,7 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
         }
 
         gl.disable(gl.DEPTH_TEST)
+
         drawFrame(draw2d)
         if (game.hyperspace !== null && game.hyperspace.countdown > 0) {
             draw2d.text.draw(game.hyperspace.countdown.toString(), [0.5,0.5])

@@ -38,11 +38,11 @@ function createVertexBuffer(gl:WebGLRenderingContext, points:number) {
     return { buffer: vertexBuffer, vertCount: vertices.length/2 }
 }
 
-export function createPolygonRenderer(gl:WebGLRenderingContext, points:number, resources: Resources) {
+export function createPolygonRenderer(gl:WebGLRenderingContext, width:number, height: number, points:number, resources: Resources) {
     const programInfo = initShaderProgram(gl, resources)!
     const vertices = createVertexBuffer(gl,points)
     const projectionMatrix = mat4.create()
-    mat4.ortho(projectionMatrix, 0, gl.canvas.width, gl.canvas.height, 0, -1.0, 1.0)
+    mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
 
     return function (position: vec2, radius: number, color: vec4, rotation:number=0) {
         const rotationQuat = quat.rotateZ(quat.create(), quat.create(), rotation)

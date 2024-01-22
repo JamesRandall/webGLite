@@ -5,12 +5,12 @@ import {createProjectionMatrix, drawFrame, setupGl} from "../common";
 import {Resources} from "../../resources/resources";
 
 export function createPregameSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
-    const shipRenderer = createShipsRenderer(gl, resources)
-    const draw2d = createPrimitiveRenderer(gl, false, resources)
-
     const canvas = gl.canvas as HTMLCanvasElement
     const viewportWidth = canvas.clientWidth
     const viewportHeight = canvas.clientHeight
+
+    const shipRenderer = createShipsRenderer(gl, resources)
+    const draw2d = createPrimitiveRenderer(gl, false, resources, viewportWidth, viewportHeight)
 
     return (game:Game, timeDelta:number) => {
         const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)

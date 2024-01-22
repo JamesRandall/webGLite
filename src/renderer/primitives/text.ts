@@ -31,12 +31,12 @@ function initShaderProgram(gl:WebGLRenderingContext, resources: Resources) {
     }
 }
 
-export function createTextRenderer(gl:WebGLRenderingContext, flippedY:boolean, resources: Resources) {
+export function createTextRenderer(gl:WebGLRenderingContext, width:number, height: number, flippedY:boolean, resources: Resources) {
     const programInfo = initShaderProgram(gl, resources)!
     const square = createSquareModelWithTexture(gl, "/font.png", false, true)
     const projectionMatrix = mat4.create()
-    mat4.ortho(projectionMatrix, 0, gl.canvas.width, gl.canvas.height, 0, -1.0, 1.0)
-    const characterWidth = gl.canvas.width / 40.0
+    mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
+    const characterWidth = width / 40.0
     const characterHeight = characterWidth * 1.2
     const spacing = 1.0
     const yMultiplier = flippedY ? -1 : 1
