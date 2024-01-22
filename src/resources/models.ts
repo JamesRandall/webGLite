@@ -220,7 +220,7 @@ export async function loadModel(gl:WebGLRenderingContext, path: string, scale:nu
     } as Model
 }
 
-export function createSquareModel(gl:WebGLRenderingContext, color: vec4, customPositions: number[] | null = null) {
+export function createSquareModel(gl:WebGLRenderingContext, color: vec4, customPositions: number[] | null = null, flippedTexCoords: boolean = false) {
     const positions =
         customPositions === null ?
             [
@@ -237,7 +237,8 @@ export function createSquareModel(gl:WebGLRenderingContext, color: vec4, customP
         0.0, 0.0, 1.0
     ]
     const indices = [0, 1, 2, 0, 2, 3]
-    const textureCoords = [ 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0 ]
+    const textureCoords =
+        flippedTexCoords ? [ 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0 ] : [ 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0 ]
 
     const colors = [
         color[0], color[1], color[2], color[3],
@@ -332,5 +333,66 @@ export function createSquareModelWithTexture(gl:WebGLRenderingContext, texture: 
         vertexCount: indices.length,
         textureCoords: textureCoordBuffer,
         texture: glTexture
+    } as Model
+}
+
+export function createSquareModelWithLoadedTexture(gl:WebGLRenderingContext, texture: WebGLTexture, flipY: boolean = true, topLeftBased = false, smoothScaling:boolean=false) {
+    const positions =
+        !topLeftBased ?
+            [
+                -1.0, -1.0, 0.0,
+                1.0, -1.0, 0.0,
+                1.0, 1.0, 0.0,
+                -1.0, 1.0, 0.0
+            ]
+            :
+            [
+                0, 0, 0,
+                2, 0, 0,
+                2, 2, 0,
+                0, 2, 0
+            ]
+    const normals = [
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0
+    ]
+    const indices = [0, 1, 2, 0, 2, 3]
+    const textureCoords = [ 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0 ]
+
+    const color = [1.0,1.0,1.0,1.0]
+    const colors = [
+        color[0], color[1], color[2], color[3],
+        color[0], color[1], color[2], color[3],
+        color[0], color[1], color[2], color[3],
+        color[0], color[1], color[2], color[3]
+    ]
+
+    const positionBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+    const normalBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW)
+    const indexBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
+    const colorBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW)
+    const textureCoordBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW)
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+
+    return {
+        position: positionBuffer,
+        color: colorBuffer,
+        indices: indexBuffer,
+        normals: normalBuffer,
+        vertexCount: indices.length,
+        textureCoords: textureCoordBuffer,
+        texture: texture
     } as Model
 }

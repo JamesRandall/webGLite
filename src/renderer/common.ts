@@ -1,6 +1,10 @@
 import {Primitives} from "./primitives/primitives";
 import {frameColor, frameWidth} from "../constants";
-import {mat4} from "gl-matrix";
+import {mat4, quat, vec2, vec4} from "gl-matrix";
+import {compileShaderProgram2} from "../shader";
+import {Resources} from "../resources/resources";
+import {setCommonAttributes2D, setViewUniformLocations} from "./coregl/programInfo";
+import {createSquareModelWithLoadedTexture, createSquareModelWithTexture} from "../resources/models";
 
 export function setupGl(gl: WebGLRenderingContext) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -21,7 +25,7 @@ export function drawFrame(draw2d: Primitives) {
     draw2d.rect([sz.width-frameWidth,0], [frameWidth, sz.height], frameColor)
 }
 
-export function bindBufferAndSetViewport(gl: WebGLRenderingContext, frameBuffer: WebGLFramebuffer, width: number, height: number) {
+export function bindBufferAndSetViewport(gl: WebGLRenderingContext, frameBuffer: WebGLFramebuffer | null, width: number, height: number) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
     gl.viewport(0, 0, width, height)
 }

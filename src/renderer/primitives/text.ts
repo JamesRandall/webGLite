@@ -9,11 +9,6 @@ import {mat4, quat, vec2, vec3, vec4} from "gl-matrix";
 import {setCommonAttributes, setCommonAttributes2D, setViewUniformLocations} from "../coregl/programInfo";
 import {Resources} from "../../resources/resources";
 
-const vsSource = `
-  `
-const fsSource = `
-`
-
 
 function initShaderProgram(gl:WebGLRenderingContext, resources: Resources) {
     const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.text)

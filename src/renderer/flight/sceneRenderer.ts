@@ -5,7 +5,13 @@ import {createPrimitiveRenderer} from "../primitives/primitives";
 import {Game, SceneEnum} from "../../model/game";
 import {createLocalChartRenderer} from "../screens/localChart";
 import {createSystemDetailsRenderer} from "../screens/systemDetails";
-import {createFrameBufferTexture, createProjectionMatrix, drawFrame, setupGl} from "../common";
+import {
+    bindBufferAndSetViewport,
+    createFrameBufferTexture,
+    createProjectionMatrix,
+    drawFrame,
+    setupGl
+} from "../common";
 import {createPlayerDetailsRenderer} from "../screens/playerDetails";
 import {createLaunchingRenderer} from "../screens/launching";
 import {createHyperspaceRenderer} from "../screens/hyperspace";
@@ -33,9 +39,14 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
     const viewportWidth = canvas.clientWidth
     const viewportHeight = canvas.clientHeight
 
-    const frameBufferTexture = createFrameBufferTexture(gl, viewportWidth, viewportHeight)
+    const frameBufferTexture = createFrameBufferTexture(gl, viewportWidth, viewportHeight)!
+    const frameBuffer = gl.createFramebuffer()
+    gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameBufferTexture, 0)
 
     return (game:Game, timeDelta:number) => {
+        bindBufferAndSetViewport(gl, frameBuffer, viewportWidth, viewportHeight)
+
         const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
 
         flashOnTime += timeDelta
@@ -96,5 +107,8 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
             .forEach(({item, index}) => {
                 draw2d.text.draw(item, [1,index+1])
             })
+
+        bindBufferAndSetViewport(gl, null, viewportWidth, viewportHeight)
+        draw2d.texturedRect([0,0], [viewportWidth, viewportHeight], frameBufferTexture)
     }
 }
