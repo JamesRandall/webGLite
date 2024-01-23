@@ -39,3 +39,10 @@ export const scannerRadialWorldRange = vec3.divide(vec3.create(),vec3.fromValues
 export const worldSize = 8388607 // max value of a signed 24-bit number
 export const dockingRollToleranceDegrees = 20
 export const planetScaleFactor = 0.75
+
+export const dimensions = {
+    width: 800,
+    mainViewHeight: 560,
+    dashboardHeight: 200,
+    totalHeight: 760
+}

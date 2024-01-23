@@ -33,7 +33,7 @@ function initShaderProgram(gl:WebGLRenderingContext, resources: Resources) {
 
 export function createTextRenderer(gl:WebGLRenderingContext, width:number, height: number, flippedY:boolean, resources: Resources) {
     const programInfo = initShaderProgram(gl, resources)!
-    const square = createSquareModelWithTexture(gl, "/font.png", false, true)
+    const square = createSquareModelWithTexture(gl, "/font.png", flippedY, true)
     const projectionMatrix = mat4.create()
     mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
     const characterWidth = width / 40.0
@@ -77,11 +77,12 @@ export function createTextRenderer(gl:WebGLRenderingContext, width:number, heigh
             const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), quat.create(), displayPosition, [cw / 2, (ch / 2) * yMultiplier, 1.0])
             setCommonAttributes(gl, square, programInfo)
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, square.indices)
-            setViewUniformLocations(gl, programInfo, {
-                modelViewMatrix,
-                color,
-                textureIndex: 0
-            },
+            setViewUniformLocations(gl, programInfo,
+                {
+                    modelViewMatrix,
+                    color,
+                    textureIndex: 0
+                },
                 square.texture!)
             gl.uniform1f(
                 programInfo.uniformLocations.characterOffset,

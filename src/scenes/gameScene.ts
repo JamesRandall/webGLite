@@ -11,11 +11,12 @@ import {createDashboardRenderer} from "../renderer/dashboard/dashboard";
 import {Resources} from "../resources/resources";
 import {ShipInstance} from "../model/ShipInstance";
 import {vec3} from "gl-matrix";
-import {worldSize} from "../constants";
+import {dimensions, worldSize} from "../constants";
 import {generateMarketItems} from "../proceduralGeneration/marketItems";
 import {bindMouse} from "../controls/bindMouse";
+import {createRootRenderer} from "./rootRenderer";
 
-export function createGameScene(resources: Resources, gl: WebGLRenderingContext, dashboardGl: WebGLRenderingContext) {
+export function createGameScene(resources: Resources, gl: WebGLRenderingContext) {
     //const clipSpaceRadius = 2048
     const clipSpaceRadius = worldSize
 
@@ -87,6 +88,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     bindKeys(game.player.controlState)
     bindMouse(game.player.controlState)
     const sceneRenderer = createSceneRenderer(gl, resources)
-    const dashboardRenderer = createDashboardRenderer(dashboardGl, resources, dashboardGl.canvas.width, dashboardGl.canvas.height)
-    return createGameLoop(resources, game, sceneRenderer, dashboardRenderer)
+    const dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
+    const rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
+    return createGameLoop(resources, game, rootRenderer)
 }

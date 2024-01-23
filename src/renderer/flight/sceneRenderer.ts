@@ -18,11 +18,12 @@ import {createHyperspaceRenderer} from "../screens/hyperspace";
 import {createSphericalPlanetRenderer} from "./sphericalPlanet";
 import {Resources} from "../../resources/resources";
 import {createBuyMarketItemsRenderer} from "../screens/buyMarketItems";
+import {dimensions} from "../../constants";
 
 export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
-    const canvas = gl.canvas as HTMLCanvasElement
-    const viewportWidth = canvas.clientWidth
-    const viewportHeight = canvas.clientHeight
+
+    const viewportWidth = dimensions.width
+    const viewportHeight = dimensions.mainViewHeight
 
     const draw2d = createPrimitiveRenderer(gl, false, resources, viewportWidth, viewportHeight)
 
@@ -39,20 +40,9 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
     let flashOn = true
     let flashOnTime = 0
 
-    // This sets up a frame buffer that will render to a texture and attaches a depth buffer to it
-    const frameBufferTexture = createFrameBufferTexture(gl, viewportWidth, viewportHeight)!
-    const frameBuffer = gl.createFramebuffer()
-    gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameBufferTexture, 0)
-    const depthBuffer = gl.createRenderbuffer();
-    gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, viewportWidth, viewportHeight);
-    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+
 
     return (game:Game, timeDelta:number) => {
-        bindBufferAndSetViewport(gl, frameBuffer, viewportWidth, viewportHeight)
-        setupGl(gl)
-
         const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
 
         flashOnTime += timeDelta
@@ -117,8 +107,5 @@ export function createSceneRenderer(gl:WebGLRenderingContext, resources: Resourc
             .forEach(({item, index}) => {
                 draw2d.text.draw(item, [1,index+1])
             })
-
-        bindBufferAndSetViewport(gl, null, viewportWidth, viewportHeight)
-        draw2d.texturedRect([0,0], [viewportWidth, viewportHeight], frameBufferTexture)
     }
 }

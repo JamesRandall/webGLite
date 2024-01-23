@@ -1,7 +1,7 @@
 import {Game, SceneEnum} from "../model/game";
 import {Size} from "../model/geometry";
 import {flightLoop} from "./flightLoop";
-import {Scene} from "../scenes/scene";
+import {RendererFunc, Scene} from "../scenes/scene";
 import {createLaunchingLoop} from "./launching";
 import {applyControlState} from "./applyControlState";
 import {Resources} from "../resources/resources";
@@ -62,7 +62,7 @@ function shouldRunFlightLoop(game:Game) {
         game.currentScene != SceneEnum.Docking
 }
 
-export function createGameLoop(resources: Resources, game: Game, drawScene: (game: Game, timeDelta: number) => void, drawDashboard: (game: Game) => void) {
+export function createGameLoop(resources: Resources, game: Game, renderer: RendererFunc) {
     let then = 0;
     let deltaTime = 0
     let launchingLoop: ((deltaTime: number) => void) | null = null
@@ -102,8 +102,7 @@ export function createGameLoop(resources: Resources, game: Game, drawScene: (gam
                 dockingLoop!(deltaTime)
             }
 
-            drawScene(game, deltaTime)
-            drawDashboard(game)
+            renderer(game, deltaTime)
             game.player.previousControlState = {...game.player.controlState}
             return null
         }

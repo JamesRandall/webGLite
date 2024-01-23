@@ -3,7 +3,7 @@ import {Game} from "../../model/game";
 import {createSquareModel, Model} from "../../resources/models";
 import {compileShaderProgram} from "../../shader";
 import {scannerRadialWorldRange} from "../../constants";
-
+// TODO: We need to rework this to use the shared style
 const vsSource = `#version 300 es
     precision highp float;
     in vec4 aVertexPosition;
@@ -137,12 +137,13 @@ export function createScannerShipRenderer(gl:WebGLRenderingContext, projectionMa
                 projectionMatrix,
             )
             gl.uniform4f(programInfo.uniformLocations.color, 0.0, 1.0, 0.0, 1.0)
-
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, verticalLineModel.indices)
             {
-                const vertexCount = verticalLineModel.vertexCount;
-                const type = gl.UNSIGNED_SHORT;
-                const offset = 0;
-                gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+
+                const vertexCount = verticalLineModel.vertexCount
+                const type = gl.UNSIGNED_SHORT
+                const offset = 0
+                gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
             }
 
             setPositionAttribute(gl, lineCapModel, programInfo)
@@ -151,6 +152,7 @@ export function createScannerShipRenderer(gl:WebGLRenderingContext, projectionMa
                 false,
                 lineCapModelViewMatrix,
             )
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lineCapModel.indices)
             {
                 const vertexCount = lineCapModel.vertexCount;
                 const type = gl.UNSIGNED_SHORT;

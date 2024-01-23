@@ -28,6 +28,7 @@ export interface Resources {
         uColor: ShaderSource
         text: ShaderSource
         simpleTexture: ShaderSource
+        crt: ShaderSource
     }
 }
 
@@ -74,7 +75,8 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
             sun: await loadShaderSource('sun'),
             uColor: await loadShaderSource('uColor'),
             text: await loadShaderSource('text'),
-            simpleTexture: await loadShaderSource('simpleTexture')
+            simpleTexture: await loadShaderSource('simpleTexture'),
+            crt: await loadShaderSource('crt')
         }
     }
 }

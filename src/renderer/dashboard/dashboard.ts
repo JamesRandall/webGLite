@@ -219,13 +219,10 @@ export function createDashboardRenderer(gl:WebGLRenderingContext, resources: Res
     mat4.multiply(projectionMatrix, perspectiveMatrix, projectionMatrix)
 
     const draw2d = createPrimitiveRenderer(gl,true, resources, width, height)
-    const scannerBackgroundRenderer = createScannerBackgroundRenderer(gl, projectionMatrix, scannerScale)
+    const scannerBackgroundRenderer = createScannerBackgroundRenderer(gl, resources, projectionMatrix, scannerScale)
     const scannerShipRenderer = createScannerShipRenderer(gl, projectionMatrix, scannerScale)
 
-    return (game:Game) => {
-
-        setup(gl)
-
+    return (game:Game, _:number) => {
         gl.disable(gl.DEPTH_TEST)
         scannerBackgroundRenderer()
         scannerShipRenderer(game)

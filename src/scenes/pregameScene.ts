@@ -1,6 +1,6 @@
 import {Resources} from "../resources/resources";
 import {vec3} from "gl-matrix";
-import {scannerRadialWorldRange} from "../constants";
+import {dimensions, scannerRadialWorldRange} from "../constants";
 import {LocalBubble} from "../model/localBubble";
 import {createSquareModel, createSquareModelWithTexture} from "../resources/models";
 import {createStardust} from "../gameloop/stardust";
@@ -9,16 +9,17 @@ import {createDashboardRenderer} from "../renderer/dashboard/dashboard";
 import {generateGalaxy} from "../proceduralGeneration/starSystems";
 import {Game, SceneEnum} from "../model/game";
 import {getStartingPlayer} from "../model/player";
-import {Scene} from "./scene";
+import {RendererFunc, Scene} from "./scene";
 import {Size} from "../model/geometry";
 import {updateShipInstance} from "../gameloop/updateShipInstance";
 import {createGameScene} from "./gameScene";
 import {generateMarketItems} from "../proceduralGeneration/marketItems";
+import {createRootRenderer} from "./rootRenderer";
 
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
 
-export function createPregameScene(resources: Resources, gl: WebGLRenderingContext, dashboardGl: WebGLRenderingContext) {
+export function createPregameScene(resources: Resources, gl: WebGLRenderingContext) {
     const clipSpaceRadius = 512
     const startingShip = 0
 
@@ -79,11 +80,12 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
     }
 
     const sceneRenderer = createPregameSceneRenderer(gl, resources)
-    const dashboardRenderer = createDashboardRenderer(dashboardGl, resources, dashboardGl.canvas.width, dashboardGl.canvas.height)
-    return createPregameLoop(game, gl, dashboardGl, resources, sceneRenderer, dashboardRenderer)
+    const dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
+    const rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
+    return createPregameLoop(game, gl, resources, rootRenderer)
 }
 
-function createPregameLoop(game: Game, gl:WebGLRenderingContext, dashboardGl: WebGLRenderingContext, resources:Resources, drawScene: (game: Game, timeDelta: number) => void, drawDashboard: (game: Game) => void) {
+function createPregameLoop(game: Game, gl:WebGLRenderingContext, resources:Resources, renderer: RendererFunc) {
     const timeToStay = 6.0
     let then = 0;
     let deltaTime = 0
@@ -143,7 +145,7 @@ function createPregameLoop(game: Game, gl:WebGLRenderingContext, dashboardGl: We
         update: (now: number, viewportExtent: Size) => {
             if (startGame) {
                 window.removeEventListener("keydown", keyDown)
-                return createGameScene(resources, gl, dashboardGl)
+                return createGameScene(resources, gl)
             }
 
             now *= 0.001; // convert to seconds
@@ -171,8 +173,7 @@ function createPregameLoop(game: Game, gl:WebGLRenderingContext, dashboardGl: We
                 isMovingOut = true
             }
 
-            drawScene(game, deltaTime)
-            drawDashboard(game)
+            renderer(game, deltaTime)
             return null
         }
     }
