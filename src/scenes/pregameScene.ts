@@ -9,12 +9,12 @@ import {createDashboardRenderer} from "../renderer/dashboard/dashboard";
 import {generateGalaxy} from "../proceduralGeneration/starSystems";
 import {Game, SceneEnum} from "../model/game";
 import {getStartingPlayer} from "../model/player";
-import {RendererFunc, Scene} from "./scene";
+import {RendererEffectFunc, Scene} from "./scene";
 import {Size} from "../model/geometry";
 import {updateShipInstance} from "../gameloop/updateShipInstance";
 import {createGameScene} from "./gameScene";
 import {generateMarketItems} from "../proceduralGeneration/marketItems";
-import {createRootRenderer} from "./rootRenderer";
+import {createRootRenderer, RenderEffect} from "./rootRenderer";
 
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
@@ -85,7 +85,7 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
     return createPregameLoop(game, gl, resources, rootRenderer)
 }
 
-function createPregameLoop(game: Game, gl:WebGLRenderingContext, resources:Resources, renderer: RendererFunc) {
+function createPregameLoop(game: Game, gl:WebGLRenderingContext, resources:Resources, renderer: RendererEffectFunc) {
     const timeToStay = 6.0
     let then = 0;
     let deltaTime = 0
@@ -173,7 +173,7 @@ function createPregameLoop(game: Game, gl:WebGLRenderingContext, resources:Resou
                 isMovingOut = true
             }
 
-            renderer(game, deltaTime)
+            renderer(game, deltaTime, RenderEffect.CRT)
             return null
         }
     }

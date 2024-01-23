@@ -325,7 +325,6 @@ export function createSquareModelWithTexture(gl:WebGLRenderingContext, texture: 
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW)
     const glTexture = loadTexture(gl,texture,smoothScaling)
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
 
     return {
         position: positionBuffer,
@@ -386,7 +385,6 @@ export function createSquareModelWithLoadedTexture(gl:WebGLRenderingContext, tex
     const textureCoordBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW)
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
 
     return {
         position: positionBuffer,

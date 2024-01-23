@@ -89,6 +89,7 @@ export function createTextRenderer(gl:WebGLRenderingContext, width:number, heigh
                 c.charCodeAt(0) - 32
             )
 
+
             {
                 const vertexCount = square.vertexCount
                 const type = gl.UNSIGNED_SHORT

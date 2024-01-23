@@ -1,12 +1,13 @@
 import {Game, SceneEnum} from "../model/game";
 import {Size} from "../model/geometry";
 import {flightLoop} from "./flightLoop";
-import {RendererFunc, Scene} from "../scenes/scene";
+import {RendererEffectFunc, Scene} from "../scenes/scene";
 import {createLaunchingLoop} from "./launching";
 import {applyControlState} from "./applyControlState";
 import {Resources} from "../resources/resources";
 import {createHyperspaceLoop} from "./hyperspace";
 import {createDockingLoop} from "./docking";
+import {RenderEffect} from "../scenes/rootRenderer";
 
 function applySceneSelection(game: Game) {
     if (game.player.controlState.sceneSelection === null) { return; }
@@ -62,7 +63,7 @@ function shouldRunFlightLoop(game:Game) {
         game.currentScene != SceneEnum.Docking
 }
 
-export function createGameLoop(resources: Resources, game: Game, renderer: RendererFunc) {
+export function createGameLoop(resources: Resources, game: Game, renderer: RendererEffectFunc) {
     let then = 0;
     let deltaTime = 0
     let launchingLoop: ((deltaTime: number) => void) | null = null
@@ -102,7 +103,7 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
                 dockingLoop!(deltaTime)
             }
 
-            renderer(game, deltaTime)
+            renderer(game, deltaTime, RenderEffect.CRT)
             game.player.previousControlState = {...game.player.controlState}
             return null
         }
