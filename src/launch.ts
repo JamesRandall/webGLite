@@ -1,6 +1,8 @@
 import {createGameScene} from "./scenes/gameScene";
 import {loadResources} from "./resources/resources";
 import {createPregameScene} from "./scenes/pregameScene";
+import {RenderEffect} from "./scenes/rootRenderer";
+
 require("./extensions.ts")
 
 async function mount(viewCanvas: HTMLCanvasElement, dashboardCanvas: HTMLCanvasElement) {
@@ -16,7 +18,7 @@ async function mount(viewCanvas: HTMLCanvasElement, dashboardCanvas: HTMLCanvasE
     //let scene = createGameScene(resources, gl, dashboardGl)
     let scene =
         new URLSearchParams(window.location.search).get("skipStart") !== null ?
-            createGameScene(resources, gl) : createPregameScene(resources, gl)
+            createGameScene(resources, gl, RenderEffect.None) : createPregameScene(resources, gl)
     function render(now:number) {
         scene = scene.update(now, viewportExtent) ?? scene;
         requestAnimationFrame(render);

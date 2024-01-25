@@ -103,7 +103,7 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
                 dockingLoop!(deltaTime)
             }
 
-            renderer(game, deltaTime, RenderEffect.CRT)
+            renderer(game, deltaTime, game.renderEffect)
             game.player.previousControlState = {...game.player.controlState}
             return null
         }

@@ -14,7 +14,7 @@ import {Size} from "../model/geometry";
 import {updateShipInstance} from "../gameloop/updateShipInstance";
 import {createGameScene} from "./gameScene";
 import {generateMarketItems} from "../proceduralGeneration/marketItems";
-import {createRootRenderer, RenderEffect} from "./rootRenderer";
+import {createRootRenderer, nextEffect, previousEffect, RenderEffect} from "./rootRenderer";
 
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
@@ -76,7 +76,8 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
         hyperspace: null,
         currentSystem: startingSystem,
         marketItems: generateMarketItems(startingSystem),
-        diagnostics: []
+        diagnostics: [],
+        renderEffect: RenderEffect.None
     }
 
     const sceneRenderer = createPregameSceneRenderer(gl, resources)
@@ -132,6 +133,12 @@ function createPregameLoop(game: Game, gl:WebGLRenderingContext, resources:Resou
         else if (e.key === " ") {
             startGame = true
         }
+        else if (e.key === "]") {
+            game.renderEffect = nextEffect(game.renderEffect)
+        }
+        else if (e.key === "[") {
+            game.renderEffect = previousEffect(game.renderEffect)
+        }
         if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
             game.localBubble.ships[0].position = existingPosition
             game.localBubble.ships[0].roll = existingRoll
@@ -145,7 +152,7 @@ function createPregameLoop(game: Game, gl:WebGLRenderingContext, resources:Resou
         update: (now: number, viewportExtent: Size) => {
             if (startGame) {
                 window.removeEventListener("keydown", keyDown)
-                return createGameScene(resources, gl)
+                return createGameScene(resources, gl, game.renderEffect)
             }
 
             now *= 0.001; // convert to seconds
@@ -173,7 +180,7 @@ function createPregameLoop(game: Game, gl:WebGLRenderingContext, resources:Resou
                 isMovingOut = true
             }
 
-            renderer(game, deltaTime, RenderEffect.CRT)
+            renderer(game, deltaTime, game.renderEffect)
             return null
         }
     }

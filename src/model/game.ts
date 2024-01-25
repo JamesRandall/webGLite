@@ -2,6 +2,7 @@ import {Player} from "./player";
 import {StarSystem} from "./starSystem";
 import {LocalBubble} from "./localBubble";
 import {MarketItem} from "../proceduralGeneration/marketItems";
+import {RenderEffect} from "../scenes/rootRenderer";
 
 export enum SceneEnum {
     Front,
@@ -38,4 +39,5 @@ export interface Game {
     launching: LaunchingData | null
     hyperspace: HyperspaceData | null
     diagnostics: string[]
+    renderEffect: RenderEffect
 }

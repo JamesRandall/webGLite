@@ -11,7 +11,34 @@ import {setCommonAttributes, setViewUniformLocations} from "../renderer/coregl/p
 
 export enum RenderEffect {
     None,
-    CRT
+    CRT,
+    AmberCRT,
+    GreenCRT,
+    VCR
+}
+
+const allRenderEffects = [
+    RenderEffect.None,
+    RenderEffect.CRT,
+    RenderEffect.AmberCRT,
+    RenderEffect.GreenCRT,
+    RenderEffect.VCR
+]
+
+export function nextEffect(currentEffect: RenderEffect) {
+    const index = allRenderEffects.indexOf(currentEffect)
+    if (index + 1 >= allRenderEffects.length) {
+        return allRenderEffects[0]
+    }
+    return allRenderEffects[index+1]
+}
+
+export function previousEffect(currentEffect: RenderEffect) {
+    const index = allRenderEffects.indexOf(currentEffect)
+    if (index - 1 < 0) {
+        return allRenderEffects[allRenderEffects.length - 1]
+    }
+    return allRenderEffects[index - 1]
 }
 
 function initShaderProgram(gl:WebGLRenderingContext, shaderSource:ShaderSource)  {
@@ -28,13 +55,14 @@ function initShaderProgram(gl:WebGLRenderingContext, shaderSource:ShaderSource) 
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!,
             modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")!,
             textureSampler: gl.getUniformLocation(shaderProgram, "uSampler")!,
+            texture2Sampler: gl.getUniformLocation(shaderProgram, "uNoise")!,
             resolution: gl.getUniformLocation(shaderProgram, "iResolution")!,
             time: gl.getUniformLocation(shaderProgram, "iTime")!,
         },
     }
 }
 
-function createRenderer(gl:WebGLRenderingContext, width:number, height: number, source: ShaderSource) {
+function createRenderer(gl:WebGLRenderingContext, width:number, height: number, source: ShaderSource, noise: WebGLTexture) {
     const programInfo = initShaderProgram(gl, source)!
     const square = createSquareModel(gl, [1.0,0.0,0.0,1.0], null, true)
     const projectionMatrix = mat4.create()
@@ -52,9 +80,11 @@ function createRenderer(gl:WebGLRenderingContext, width:number, height: number, 
         setViewUniformLocations(gl, programInfo, {
                 projectionMatrix,
                 modelViewMatrix,
-                textureIndex: 0
+                textureIndex: 0,
+                time
             },
-            texture)
+            texture,
+            noise)
         gl.uniform2fv(programInfo.uniformLocations.resolution, resolution)
 
         const vertexCount = square.vertexCount
@@ -82,8 +112,11 @@ export function createRootRenderer(
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
 
     var effects = new Map([
-        [RenderEffect.None, createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.simpleTexture)],
-        [RenderEffect.CRT, createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.crt)]
+        [RenderEffect.None, createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.simpleTexture, resources.textures.noise)],
+        [RenderEffect.CRT, createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.crt, resources.textures.noise)],
+        [RenderEffect.AmberCRT, createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.amberCrt, resources.textures.noise)],
+        [RenderEffect.GreenCRT, createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.greenCrt, resources.textures.noise)],
+        [RenderEffect.VCR, createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.vcr, resources.textures.noise)]
     ])
     let time = 0.0
 

@@ -18,7 +18,8 @@ export interface Resources {
         getCoriolis: (position: vec3, noseOrientation: vec3) => ShipInstance
     },
     textures: {
-        planets: WebGLTexture[]
+        planets: WebGLTexture[],
+        noise: WebGLTexture
     },
     shaderSource: {
         stardust: ShaderSource
@@ -29,6 +30,9 @@ export interface Resources {
         text: ShaderSource
         simpleTexture: ShaderSource
         crt: ShaderSource
+        amberCrt: ShaderSource
+        greenCrt: ShaderSource
+        vcr: ShaderSource
     }
 }
 
@@ -66,7 +70,8 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
                 "./eris.png",
                 "./haumea.png",
                 "./makemake.png"
-            ].map(t => loadTexture(gl, t)!)
+            ].map(t => loadTexture(gl, t)!),
+            noise: await loadTexture(gl, "noise.png")!
         },
         shaderSource: {
             stardust: await loadShaderSource('stardust'),
@@ -76,7 +81,10 @@ export async function loadResources(gl:WebGLRenderingContext) : Promise<Resource
             uColor: await loadShaderSource('uColor'),
             text: await loadShaderSource('text'),
             simpleTexture: await loadShaderSource('simpleTexture'),
-            crt: await loadShaderSource('crt')
+            crt: await loadShaderSource('crt'),
+            amberCrt: await loadShaderSource('ambercrt'),
+            greenCrt: await loadShaderSource('greencrt'),
+            vcr: await loadShaderSource('vcr')
         }
     }
 }

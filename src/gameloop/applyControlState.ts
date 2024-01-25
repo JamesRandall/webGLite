@@ -7,6 +7,7 @@ import {createDockingComputer} from "./utilities/dockingComputer";
 import {Resources} from "../resources/resources";
 import {ShipInstance} from "../model/ShipInstance";
 import {scannerRadialWorldRange} from "../constants";
+import {nextEffect, previousEffect} from "../scenes/rootRenderer";
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
     const player = game.player
@@ -19,9 +20,18 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
             applyHyperspace(game)
         }
     }
-
     if (game.hyperspace === null) {
         applyCursors(player, timeDelta)
+    }
+    applyEffects(game)
+}
+
+function applyEffects(game: Game) {
+    if (game.player.controlState.nextEffectPressed && !game.player.previousControlState.nextEffectPressed) {
+        game.renderEffect = nextEffect(game.renderEffect)
+    }
+    else if (game.player.controlState.previousEffectPressed && !game.player.previousControlState.previousEffectPressed) {
+        game.renderEffect = previousEffect(game.renderEffect)
     }
 }
 

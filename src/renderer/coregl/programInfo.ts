@@ -73,7 +73,9 @@ export function setViewUniformLocations(
             lightWorldPosition?: WebGLUniformLocation,
             shininess?: WebGLUniformLocation,
             textureSampler?: WebGLUniformLocation,
-            color?: WebGLUniformLocation
+            texture2Sampler?: WebGLUniformLocation,
+            color?: WebGLUniformLocation,
+            time?: WebGLUniformLocation
         }
     },
     uniforms: {
@@ -83,9 +85,11 @@ export function setViewUniformLocations(
         lightWorldPosition?: vec3,
         shininess?: number,
         textureIndex?: number,
-        color?: vec4
+        color?: vec4,
+        time?: number
     },
-    texture?: WebGLTexture
+    texture?: WebGLTexture,
+    texture2?: WebGLTexture
 ) {
     if (uniforms.projectionMatrix !== undefined && programInfo.uniformLocations.projectionMatrix !== undefined) {
         gl.uniformMatrix4fv(
@@ -119,8 +123,16 @@ export function setViewUniformLocations(
         gl.bindTexture(gl.TEXTURE_2D, texture)
         gl.uniform1i(programInfo.uniformLocations.textureSampler, uniforms.textureIndex)
     }
+    if (uniforms.textureIndex !== undefined && programInfo.uniformLocations.texture2Sampler !== undefined && texture2 !== undefined) {
+        gl.activeTexture(getGLTexture(gl, uniforms.textureIndex+1))
+        gl.bindTexture(gl.TEXTURE_2D, texture2)
+        gl.uniform1i(programInfo.uniformLocations.texture2Sampler, uniforms.textureIndex+1)
+    }
     if (uniforms.color !== undefined && programInfo.uniformLocations.color !== undefined) {
         gl.uniform4fv(programInfo.uniformLocations.color, uniforms.color)
+    }
+    if (uniforms.time !== undefined && programInfo.uniformLocations.time !== undefined) {
+        gl.uniform1f(programInfo.uniformLocations.time, uniforms.time)
     }
 }
 

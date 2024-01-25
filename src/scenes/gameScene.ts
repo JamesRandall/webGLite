@@ -14,9 +14,9 @@ import {vec3} from "gl-matrix";
 import {dimensions, worldSize} from "../constants";
 import {generateMarketItems} from "../proceduralGeneration/marketItems";
 import {bindMouse} from "../controls/bindMouse";
-import {createRootRenderer} from "./rootRenderer";
+import {createRootRenderer, RenderEffect} from "./rootRenderer";
 
-export function createGameScene(resources: Resources, gl: WebGLRenderingContext) {
+export function createGameScene(resources: Resources, gl: WebGLRenderingContext, renderEffect: RenderEffect) {
     //const clipSpaceRadius = 2048
     const clipSpaceRadius = worldSize
 
@@ -81,7 +81,8 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext)
         hyperspace: null,
         currentSystem: startingSystem,
         marketItems: generateMarketItems(startingSystem),
-        diagnostics: []
+        diagnostics: [],
+        renderEffect: renderEffect
     }
     game.player.cargoHoldContents = game.marketItems.map(() => 0)
 

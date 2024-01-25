@@ -21,6 +21,8 @@ export interface ControlState {
     mousePosition: vec2
     mouseDown: boolean
     shiftPressed: boolean
+    nextEffectPressed: boolean
+    previousEffectPressed: boolean
 }
 
 export function getEmptyControlState() {
@@ -42,6 +44,8 @@ export function getEmptyControlState() {
         hyperspace: false,
         mousePosition: vec2.fromValues(-1,-1),
         mouseDown: false,
-        shiftPressed: false
+        shiftPressed: false,
+        nextEffectPressed: false,
+        previousEffectPressed: false
     }
 }
