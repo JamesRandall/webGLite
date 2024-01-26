@@ -14,7 +14,7 @@ import {vec3} from "gl-matrix";
 import {dimensions, worldSize} from "../constants";
 import {generateMarketItems} from "../proceduralGeneration/marketItems";
 import {bindMouse} from "../controls/bindMouse";
-import {createRootRenderer, RenderEffect} from "./rootRenderer";
+import {createRootRenderer, RenderEffect} from "../renderer/rootRenderer";
 
 export function createGameScene(resources: Resources, gl: WebGLRenderingContext, renderEffect: RenderEffect) {
     //const clipSpaceRadius = 2048

@@ -2,7 +2,7 @@ import {Player} from "./player";
 import {StarSystem} from "./starSystem";
 import {LocalBubble} from "./localBubble";
 import {MarketItem} from "../proceduralGeneration/marketItems";
-import {RenderEffect} from "../scenes/rootRenderer";
+import {RenderEffect} from "../renderer/rootRenderer";
 
 export enum SceneEnum {
     Front,

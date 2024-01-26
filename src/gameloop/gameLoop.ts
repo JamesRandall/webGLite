@@ -7,7 +7,7 @@ import {applyControlState} from "./applyControlState";
 import {Resources} from "../resources/resources";
 import {createHyperspaceLoop} from "./hyperspace";
 import {createDockingLoop} from "./docking";
-import {RenderEffect} from "../scenes/rootRenderer";
+import {RenderEffect} from "../renderer/rootRenderer";
 
 function applySceneSelection(game: Game) {
     if (game.player.controlState.sceneSelection === null) { return; }

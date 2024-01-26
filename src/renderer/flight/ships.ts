@@ -26,7 +26,7 @@ function initShaderProgram(gl:WebGLRenderingContext, resources: Resources) {
     }
 }
 
-export function createShipsRenderer(gl:WebGLRenderingContext, resources: Resources) {
+export function createShipsRenderer(gl:WebGLRenderingContext, resources: Resources, usePreGameScaleFactor: boolean = false) {
     const programInfo = initShaderProgram(gl, resources)!
 
     return function (projectionMatrix: mat4, localBubble: LocalBubble) {
@@ -55,7 +55,9 @@ export function createShipsRenderer(gl:WebGLRenderingContext, resources: Resourc
             const targetToMatrix = mat4.targetTo(mat4.create(), [0,0,0], ship.noseOrientation, ship.roofOrientation)
             const targetToQuat = mat4.getRotation(quat.create(), targetToMatrix)
             const viewPosition = ship.position
-            const modelViewMatrix = mat4.fromRotationTranslation(mat4.create(), targetToQuat, viewPosition)
+            const modelViewMatrix = usePreGameScaleFactor
+                ? mat4.fromRotationTranslationScale(mat4.create(), targetToQuat, viewPosition, [ship.blueprint.pregameScale,ship.blueprint.pregameScale,ship.blueprint.pregameScale])
+                : mat4.fromRotationTranslation(mat4.create(), targetToQuat, viewPosition)
             const normalMatrix = mat4.create()
             mat4.invert(normalMatrix, modelViewMatrix)
             mat4.transpose(normalMatrix, normalMatrix)

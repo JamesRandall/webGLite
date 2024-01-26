@@ -1,7 +1,7 @@
 import {createGameScene} from "./scenes/gameScene";
 import {loadResources} from "./resources/resources";
 import {createPregameScene} from "./scenes/pregameScene";
-import {RenderEffect} from "./scenes/rootRenderer";
+import {RenderEffect} from "./renderer/rootRenderer";
 
 require("./extensions.ts")
 

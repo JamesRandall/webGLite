@@ -6,9 +6,7 @@ import {Resources} from "../../resources/resources";
 import {dimensions} from "../../constants";
 
 export function createPregameSceneRenderer(gl:WebGLRenderingContext, resources: Resources) {
-    const canvas = gl.canvas as HTMLCanvasElement
-
-    const shipRenderer = createShipsRenderer(gl, resources)
+    const shipRenderer = createShipsRenderer(gl, resources, true)
     const draw2d = createPrimitiveRenderer(gl, false, resources, dimensions.width, dimensions.mainViewHeight)
 
     return (game:Game, timeDelta:number) => {

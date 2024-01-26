@@ -1,13 +1,13 @@
-import {RendererFunc} from "./scene";
-import {bindBufferAndSetViewport, createFrameBufferTexture, setupGl} from "../renderer/common";
+import {RendererFunc} from "../scenes/scene";
+import {bindBufferAndSetViewport, createFrameBufferTexture, setupGl} from "./common";
 import {dimensions} from "../constants";
 import {Game} from "../model/game";
-import {createPrimitiveRenderer} from "../renderer/primitives/primitives";
+import {createPrimitiveRenderer} from "./primitives/primitives";
 import {Resources, ShaderSource} from "../resources/resources";
 import {compileShaderProgram2} from "../shader";
 import {createSquareModel} from "../resources/models";
 import {mat4, quat, vec2} from "gl-matrix";
-import {setCommonAttributes, setViewUniformLocations} from "../renderer/coregl/programInfo";
+import {setCommonAttributes, setViewUniformLocations} from "./coregl/programInfo";
 
 export enum RenderEffect {
     None,

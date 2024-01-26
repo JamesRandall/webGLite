@@ -7,7 +7,7 @@ import {createDockingComputer} from "./utilities/dockingComputer";
 import {Resources} from "../resources/resources";
 import {ShipInstance} from "../model/ShipInstance";
 import {scannerRadialWorldRange} from "../constants";
-import {nextEffect, previousEffect} from "../scenes/rootRenderer";
+import {nextEffect, previousEffect} from "../renderer/rootRenderer";
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
     const player = game.player

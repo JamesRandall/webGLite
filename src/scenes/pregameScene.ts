@@ -14,7 +14,7 @@ import {Size} from "../model/geometry";
 import {updateShipInstance} from "../gameloop/updateShipInstance";
 import {createGameScene} from "./gameScene";
 import {generateMarketItems} from "../proceduralGeneration/marketItems";
-import {createRootRenderer, nextEffect, previousEffect, RenderEffect} from "./rootRenderer";
+import {createRootRenderer, nextEffect, previousEffect, RenderEffect} from "../renderer/rootRenderer";
 
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0

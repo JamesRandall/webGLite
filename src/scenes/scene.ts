@@ -1,6 +1,6 @@
 import {Size} from "../model/geometry";
 import {Game} from "../model/game";
-import {RenderEffect} from "./rootRenderer";
+import {RenderEffect} from "../renderer/rootRenderer";
 
 export interface Scene {
     update: ((now: number, viewportExtent: Size) => Scene | null)
