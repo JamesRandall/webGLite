@@ -39,15 +39,17 @@ function applyEffects(game: Game) {
 
 function applyDockingComputer(game: Game, resources: Resources, timeDelta: number) {
   if (
-    game.player.dockingComputerFlightExecuter === null &&
     game.player.equipment.dockingComputer &&
     game.player.controlState.dockingOn &&
     !game.player.previousControlState.dockingOn
   ) {
-    game.player.dockingComputerFlightExecuter = createDockingComputer(game)
-  } else if (game.player.dockingComputerFlightExecuter !== null && game.player.controlState.dockingOff) {
-    game.player.dockingComputerFlightExecuter = null
+    if (game.player.dockingComputerFlightExecuter === null) {
+      game.player.dockingComputerFlightExecuter = createDockingComputer(game)
+    } else {
+      game.player.dockingComputerFlightExecuter = null
+    }
   }
+
   if (!game.player.dockingComputerFlightExecuter) {
     return false
   }

@@ -15,7 +15,6 @@ export interface ControlState {
   cursorUp: boolean
   cursorDown: boolean
   dockingOn: boolean
-  dockingOff: boolean
   jump: boolean
   hyperspace: boolean
   mousePosition: vec2
@@ -39,7 +38,6 @@ export function getEmptyControlState() {
     cursorUp: false,
     cursorDown: false,
     dockingOn: false,
-    dockingOff: false,
     jump: false,
     hyperspace: false,
     mousePosition: vec2.fromValues(-1, -1),

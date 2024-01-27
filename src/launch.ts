@@ -14,7 +14,7 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
   }
   let showHelpText = true
   window.addEventListener("keydown", (ev) => {
-    if (ev.key.toLowerCase() === "h") {
+    if (ev.key.toLowerCase() === "q") {
       showHelpText = !showHelpText
     }
   })

@@ -44,7 +44,7 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
       pitch: 0.0,
       roll: 0.0,
       surfaceTextureIndex: 0,
-      model: createSquareModelWithTexture(gl, "/starmask.png"),
+      model: createSquareModelWithTexture(gl, "starmask.png"),
     },
     planet: {
       position: [0, 0, -clipSpaceRadius / 2],

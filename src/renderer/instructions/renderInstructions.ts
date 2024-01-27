@@ -9,22 +9,28 @@ export function createInstructionRenderer(gl: WebGL2RenderingContext, resources:
   return function renderInstructions(showHelpText: boolean) {
     setupGl(gl)
     if (showHelpText) {
-      text.draw("S - dive", [1, 0])
-      text.draw("X - climb", [1, 1])
-      text.draw(", - roll left", [1, 2])
-      text.draw(". - roll right", [1, 3])
-      text.draw("/ - decelerate", [1, 4])
-      text.draw("SPACE - accelerate", [1, 5])
-      text.draw("J - jump", [1, 6])
-      text.draw("C - docking computer", [1, 7])
-      text.draw("1 - front \\ launch", [1, 8])
-      text.draw("2 - rear \\ trade", [1, 9])
+      let row = 0
+      text.draw("S - dive", [1, row++])
+      text.draw("X - climb", [1, row++])
+      text.draw(", - roll left", [1, row++])
+      text.draw(". - roll right", [1, row++])
+      text.draw("/ - decelerate", [1, row++])
+      text.draw("SPACE - accelerate", [1, row++])
+      text.draw("J - jump", [1, row++])
+      text.draw("C - docking computer", [1, row++])
+      row++
+      text.draw("1 - front \\ launch", [1, row++])
+      text.draw("2 - rear \\ trade", [1, row++])
+      text.draw("6 - short range chart", [1, row++])
+      text.draw("7 - system details", [1, row++])
+      text.draw("9 - player details", [1, row++])
       //text.draw("3 - right\\equipment", [1, 10])
 
-      text.draw("MISC", [1, 25])
-      text.draw("[ - previous effect", [1, 27])
-      text.draw("] - next effect", [1, 28])
-      text.draw("H - toggle help", [1, 29])
+      row = 27.5
+      text.draw("MISC", [1, row++])
+      text.draw("[ - previous effect", [1, row++])
+      text.draw("] - next effect", [1, row++])
+      text.draw("Q - toggle help", [1, row++])
     }
   }
 }

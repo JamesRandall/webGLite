@@ -214,7 +214,7 @@ export async function loadShipSpecifications(gl: WebGLRenderingContext) {
   })
   ships.push({
     name: "Transporter",
-    model: await loadModel(gl, "ships/transporter.obj", shipScaleFactor),
+    model: await loadModel(gl, "ships/trans.obj", shipScaleFactor),
     ...playerDefaults,
     pregameScale: 3,
   })

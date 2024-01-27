@@ -41,7 +41,7 @@ export function createTextRenderer(
   characterWidth?: number,
 ) {
   const programInfo = initShaderProgram(gl, resources)!
-  const square = createSquareModelWithTexture(gl, "/font.png", flippedY, true)
+  const square = createSquareModelWithTexture(gl, "font.png", flippedY, true)
   const projectionMatrix = mat4.create()
   mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
   if (characterWidth === undefined) {

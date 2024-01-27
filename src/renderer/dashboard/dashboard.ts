@@ -147,7 +147,7 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
     const safeZone = vec2.fromValues(
       compassCenter[0] - safeZoneW / 2 + 2,
       //rightStartBarX - safeZoneW - safeZoneW/2,
-      draw2d.size().height - safeZoneH / 2,
+      draw2d.size().height - safeZoneH * 1.5,
     )
     draw2d.text.drawAtSize("S", safeZone, safeZoneW, safeZoneH, 0, [1, 1, 1, 1])
   }

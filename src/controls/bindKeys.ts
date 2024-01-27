@@ -53,9 +53,6 @@ export function bindKeys(controlState: ControlState) {
       case "c":
         controlState.dockingOn = newState
         break
-      case "p":
-        controlState.dockingOff = newState
-        break
       case "[":
         controlState.previousEffectPressed = newState
         break

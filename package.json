@@ -2,10 +2,9 @@
   "name": "elitedemo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build",
+    "build": "parcel build --public-url ./",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "private": true,
