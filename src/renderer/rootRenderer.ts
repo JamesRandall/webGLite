@@ -110,6 +110,18 @@ function createRenderer(
   }
 }
 
+function createFrameBuffer(gl: WebGLRenderingContext, width: number, height: number) {
+  const frameBufferTexture = createFrameBufferTexture(gl, width, height)!
+  const frameBuffer = gl.createFramebuffer()
+  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameBufferTexture, 0)
+  const depthBuffer = gl.createRenderbuffer()
+  gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer)
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer)
+  return [frameBuffer!, frameBufferTexture!]
+}
+
 export function createRootRenderer(
   gl: WebGLRenderingContext,
   resources: Resources,
@@ -117,58 +129,93 @@ export function createRootRenderer(
   dashboardRenderer: RendererFunc,
 ) {
   // This sets up a frame buffer that will render to a texture and attaches a depth buffer to it
-  const viewportWidth = dimensions.width
-  const viewportHeight = dimensions.totalHeight
-  const frameBufferTexture = createFrameBufferTexture(gl, viewportWidth, viewportHeight)!
-  const frameBuffer = gl.createFramebuffer()
-  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameBufferTexture, 0)
-  const depthBuffer = gl.createRenderbuffer()
-  gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer)
-  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, viewportWidth, viewportHeight)
-  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer)
+  const [frameBuffer, frameBufferTexture] = createFrameBuffer(gl, dimensions.width, dimensions.totalHeight)
+  const [flightSceneFrameBuffer, flightSceneFrameBufferTexture] = createFrameBuffer(
+    gl,
+    dimensions.width,
+    dimensions.mainViewHeight,
+  )
+
+  //const flightSceneFrameBufferTexture = createFrameBufferTexture(gl, dimensions.width, dimensions.mainViewHeight)
+  //const flightSceneFrameBuffer = gl.createFramebuffer()
 
   var effects = new Map([
     [
       RenderEffect.None,
-      createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.simpleTexture, resources.textures.noise),
+      createRenderer(
+        gl,
+        dimensions.width,
+        dimensions.totalHeight,
+        resources.shaderSource.simpleTexture,
+        resources.textures.noise,
+      ),
     ],
     [
       RenderEffect.CRT,
-      createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.crt, resources.textures.noise),
+      createRenderer(
+        gl,
+        dimensions.width,
+        dimensions.totalHeight,
+        resources.shaderSource.crt,
+        resources.textures.noise,
+      ),
     ],
     [
       RenderEffect.AmberCRT,
-      createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.amberCrt, resources.textures.noise),
+      createRenderer(
+        gl,
+        dimensions.width,
+        dimensions.totalHeight,
+        resources.shaderSource.amberCrt,
+        resources.textures.noise,
+      ),
     ],
     [
       RenderEffect.GreenCRT,
-      createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.greenCrt, resources.textures.noise),
+      createRenderer(
+        gl,
+        dimensions.width,
+        dimensions.totalHeight,
+        resources.shaderSource.greenCrt,
+        resources.textures.noise,
+      ),
     ],
     [
       RenderEffect.VCR,
-      createRenderer(gl, viewportWidth, viewportHeight, resources.shaderSource.vcr, resources.textures.noise),
+      createRenderer(
+        gl,
+        dimensions.width,
+        dimensions.totalHeight,
+        resources.shaderSource.vcr,
+        resources.textures.noise,
+      ),
     ],
   ])
   let time = 0.0
 
   return (game: Game, timeDelta: number, effect: RenderEffect) => {
     time += timeDelta
-    // target the frame buffer and render to our target texture
-    gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
-    gl.viewport(0, dimensions.dashboardHeight, dimensions.width, dimensions.totalHeight)
-    setupGl(gl)
-    // draw the main scene
-    gl.viewport(0, dimensions.dashboardHeight, dimensions.width, dimensions.mainViewHeight)
+    // First draw our flight scene to a texture so that we can apply post processing effects to it
+    bindBufferAndSetViewport(gl, flightSceneFrameBuffer, dimensions.width, dimensions.mainViewHeight)
     sceneRenderer(game, timeDelta)
+
+    // Now select the frame buffer pointing at a texture that represents our composed scene (flight scene + dashboard)
+    // and draw the texture from the flight scene, using the appropriate effect, along with the dashboard (no effect)
+    bindBufferAndSetViewport(gl, frameBuffer, dimensions.width, dimensions.totalHeight)
+    setupGl(gl)
+    effects.get(RenderEffect.None)!(
+      [0, 0],
+      [dimensions.width, dimensions.mainViewHeight],
+      flightSceneFrameBufferTexture,
+      time,
+    )
     // draw the dashboard
     gl.viewport(0, 0, dimensions.width, dimensions.dashboardHeight)
     dashboardRenderer(game, timeDelta)
 
-    // target the output buffer and render our texture
-    // (this is where we will apply a post-processing effect)
-    bindBufferAndSetViewport(gl, null, viewportWidth, viewportHeight)
-    effects.get(effect)!([0, 0], [viewportWidth, viewportHeight], frameBufferTexture, time)
-    //draw2d.texturedRect([0,0], [viewportWidth, viewportHeight], frameBufferTexture)
+    // finally target the output buffer and render our texture applying a whole screen post processing effect if
+    // required
+    bindBufferAndSetViewport(gl, null, dimensions.width, dimensions.totalHeight)
+    effects.get(effect)!([0, 0], [dimensions.width, dimensions.totalHeight], frameBufferTexture, time)
   }
 }
