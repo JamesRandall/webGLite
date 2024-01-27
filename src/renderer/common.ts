@@ -30,9 +30,11 @@ export function bindBufferAndSetViewport(
   frameBuffer: WebGLFramebuffer | null,
   width: number,
   height: number,
+  x: number = 0,
+  y: number = 0,
 ) {
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
-  gl.viewport(0, 0, width, height)
+  gl.viewport(x, y, width, height)
 }
 
 export function createFrameBufferTexture(gl: WebGLRenderingContext, width: number, height: number) {

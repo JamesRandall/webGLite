@@ -8,6 +8,7 @@ import { Resources } from "../resources/resources"
 import { createHyperspaceLoop } from "./hyperspace"
 import { createDockingLoop } from "./docking"
 import { RenderEffect } from "../renderer/rootRenderer"
+import { createFramerateCounter } from "../utilities"
 
 function applySceneSelection(game: Game) {
   if (game.player.controlState.sceneSelection === null) {
@@ -87,6 +88,7 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
   let dockingLoop: ((deltaTime: number) => void) | null = null
   let hyperspaceLoop: ((deltaTime: number) => void) | null = null
   let hyperspaceClock: number | null = null
+  let frameRateCounter = createFramerateCounter()
 
   const scene: Scene = {
     update: (now: number, _: Size) => {
@@ -117,6 +119,8 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
         }
         dockingLoop!(deltaTime)
       }
+
+      game.diagnostics.push(`FPS: ${frameRateCounter(deltaTime)}`)
 
       renderer(game, deltaTime, game.renderEffect)
       game.player.previousControlState = { ...game.player.controlState }

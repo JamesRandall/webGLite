@@ -55,7 +55,7 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
         shipRenderer(projectionMatrix, game.localBubble)
         sunRenderer(projectionMatrix, game.localBubble, timeDelta)
         planetRenderer(projectionMatrix, game.localBubble, timeDelta)
-        stardustRenderer(game.localBubble)
+        stardustRenderer(game)
         gl.disable(gl.CULL_FACE)
         gl.disable(gl.DEPTH_TEST)
         break
@@ -88,7 +88,6 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
 
     gl.disable(gl.DEPTH_TEST)
 
-    drawFrame(draw2d)
     if (game.hyperspace !== null && game.hyperspace.countdown > 0) {
       draw2d.text.draw(game.hyperspace.countdown.toString(), [0.5, 0.5])
       const hyperspaceText = `HYPERSPACE - ${game.player.selectedSystem.name}`

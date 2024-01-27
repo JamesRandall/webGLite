@@ -5,6 +5,7 @@ import { LocalBubble } from "../../model/localBubble"
 import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
 import { mat4 } from "gl-matrix"
 import { Resources } from "../../resources/resources"
+import { Game } from "../../model/game"
 
 interface ProgramInfo {
   program: WebGLProgram
@@ -14,6 +15,7 @@ interface ProgramInfo {
   uniformLocations: {
     projectionMatrix: WebGLUniformLocation
     depth: WebGLUniformLocation
+    jumping: WebGLUniformLocation
   }
 }
 
@@ -31,6 +33,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
     uniformLocations: {
       projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!,
       depth: gl.getUniformLocation(shaderProgram, "uDepth")!,
+      jumping: gl.getUniformLocation(shaderProgram, "uJumping")!,
     },
   } as ProgramInfo
 }
@@ -50,7 +53,8 @@ function setPositionAttribute(gl: WebGLRenderingContext, buffer: WebGLBuffer, pr
 export function createStardustRenderer(gl: WebGLRenderingContext, resources: Resources) {
   const programInfo = initShaderProgram(gl, resources)!
 
-  return function (localBubble: LocalBubble) {
+  return function (game: Game) {
+    const localBubble = game.localBubble
     const positions = localBubble.stardust.flatMap((pos) => [pos[0], pos[1], pos[2]])
     const positionBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
@@ -64,6 +68,7 @@ export function createStardustRenderer(gl: WebGLRenderingContext, resources: Res
     // Set the shader uniforms
     gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix)
     gl.uniform1f(programInfo.uniformLocations.depth, localBubble.clipSpaceRadius - 2.0)
+    gl.uniform1i(programInfo.uniformLocations.jumping, game.player.isJumping ? 1 : 0)
 
     setPositionAttribute(gl, positionBuffer!, programInfo)
 

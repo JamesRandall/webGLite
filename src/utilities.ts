@@ -45,3 +45,17 @@ export function toVectorArray(positions: number[]) {
   }
   return result
 }
+
+export function createFramerateCounter() {
+  const size = 100
+  const frameTimes = new Array<number>(size)
+  let frameIndex = 0
+  return function updateAverageFrameRate(frameTime: number) {
+    frameTimes[frameIndex] = frameTime
+    frameIndex++
+    if (frameIndex === size) {
+      frameIndex = 0
+    }
+    return Math.round(1 / (frameTimes.reduce((a, b) => a + b, 0) / size))
+  }
+}

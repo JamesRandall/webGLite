@@ -1,5 +1,5 @@
 import { RendererFunc } from "../scenes/scene"
-import { bindBufferAndSetViewport, createFrameBufferTexture, setupGl } from "./common"
+import { bindBufferAndSetViewport, createFrameBufferTexture, drawFrame, setupGl } from "./common"
 import { dimensions } from "../constants"
 import { Game } from "../model/game"
 import { createPrimitiveRenderer } from "./primitives/primitives"
@@ -17,7 +17,7 @@ export enum RenderEffect {
   VCR,
 }
 
-const allRenderEffects = [
+const globalRenderEffects = [
   RenderEffect.None,
   RenderEffect.CRT,
   RenderEffect.AmberCRT,
@@ -26,19 +26,19 @@ const allRenderEffects = [
 ]
 
 export function nextEffect(currentEffect: RenderEffect) {
-  const index = allRenderEffects.indexOf(currentEffect)
-  if (index + 1 >= allRenderEffects.length) {
-    return allRenderEffects[0]
+  const index = globalRenderEffects.indexOf(currentEffect)
+  if (index + 1 >= globalRenderEffects.length) {
+    return globalRenderEffects[0]
   }
-  return allRenderEffects[index + 1]
+  return globalRenderEffects[index + 1]
 }
 
 export function previousEffect(currentEffect: RenderEffect) {
-  const index = allRenderEffects.indexOf(currentEffect)
+  const index = globalRenderEffects.indexOf(currentEffect)
   if (index - 1 < 0) {
-    return allRenderEffects[allRenderEffects.length - 1]
+    return globalRenderEffects[globalRenderEffects.length - 1]
   }
-  return allRenderEffects[index - 1]
+  return globalRenderEffects[index - 1]
 }
 
 function initShaderProgram(gl: WebGLRenderingContext, shaderSource: ShaderSource) {
@@ -139,76 +139,59 @@ export function createRootRenderer(
   //const flightSceneFrameBufferTexture = createFrameBufferTexture(gl, dimensions.width, dimensions.mainViewHeight)
   //const flightSceneFrameBuffer = gl.createFramebuffer()
 
-  var effects = new Map([
-    [
-      RenderEffect.None,
-      createRenderer(
-        gl,
-        dimensions.width,
-        dimensions.totalHeight,
-        resources.shaderSource.simpleTexture,
-        resources.textures.noise,
-      ),
-    ],
-    [
-      RenderEffect.CRT,
-      createRenderer(
-        gl,
-        dimensions.width,
-        dimensions.totalHeight,
-        resources.shaderSource.crt,
-        resources.textures.noise,
-      ),
-    ],
-    [
-      RenderEffect.AmberCRT,
-      createRenderer(
-        gl,
-        dimensions.width,
-        dimensions.totalHeight,
-        resources.shaderSource.amberCrt,
-        resources.textures.noise,
-      ),
-    ],
-    [
-      RenderEffect.GreenCRT,
-      createRenderer(
-        gl,
-        dimensions.width,
-        dimensions.totalHeight,
-        resources.shaderSource.greenCrt,
-        resources.textures.noise,
-      ),
-    ],
-    [
-      RenderEffect.VCR,
-      createRenderer(
-        gl,
-        dimensions.width,
-        dimensions.totalHeight,
-        resources.shaderSource.vcr,
-        resources.textures.noise,
-      ),
-    ],
+  const createGlobalRenderEffect = (src: ShaderSource) =>
+    createRenderer(gl, dimensions.width, dimensions.totalHeight, src, resources.textures.noise)
+  const createFlightSceneRenderEffect = (src: ShaderSource) =>
+    createRenderer(gl, dimensions.width, dimensions.mainViewHeight, src, resources.textures.noise)
+
+  var globalEffects = new Map([
+    [RenderEffect.None, createGlobalRenderEffect(resources.shaderSource.simpleTexture)],
+    [RenderEffect.CRT, createGlobalRenderEffect(resources.shaderSource.crt)],
+    [RenderEffect.AmberCRT, createGlobalRenderEffect(resources.shaderSource.amberCrt)],
+    [RenderEffect.GreenCRT, createGlobalRenderEffect(resources.shaderSource.greenCrt)],
+    [RenderEffect.VCR, createGlobalRenderEffect(resources.shaderSource.vcr)],
   ])
   let time = 0.0
+  const flightSceneMotionBlur = createFlightSceneRenderEffect(resources.shaderSource.motionBlur)
+  const flightSceneCopy = createFlightSceneRenderEffect(resources.shaderSource.simpleTexture)
+
+  const draw2d = createPrimitiveRenderer(gl, false, resources, dimensions.width, dimensions.mainViewHeight)
+
+  const applyFlightSceneMotionBlur = (effectTime: number) =>
+    flightSceneMotionBlur(
+      [0, 0],
+      [dimensions.width, dimensions.mainViewHeight],
+      flightSceneFrameBufferTexture,
+      effectTime,
+    )
+  const applyFlightSceneCopy = (effectTime: number) =>
+    flightSceneCopy([0, 0], [dimensions.width, dimensions.mainViewHeight], flightSceneFrameBufferTexture, effectTime)
 
   return (game: Game, timeDelta: number, effect: RenderEffect) => {
     time += timeDelta
     // First draw our flight scene to a texture so that we can apply post processing effects to it
     bindBufferAndSetViewport(gl, flightSceneFrameBuffer, dimensions.width, dimensions.mainViewHeight)
+    setupGl(gl)
     sceneRenderer(game, timeDelta)
 
     // Now select the frame buffer pointing at a texture that represents our composed scene (flight scene + dashboard)
     // and draw the texture from the flight scene, using the appropriate effect, along with the dashboard (no effect)
-    bindBufferAndSetViewport(gl, frameBuffer, dimensions.width, dimensions.totalHeight)
-    setupGl(gl)
-    effects.get(RenderEffect.None)!(
-      [0, 0],
-      [dimensions.width, dimensions.mainViewHeight],
-      flightSceneFrameBufferTexture,
-      time,
+    bindBufferAndSetViewport(
+      gl,
+      frameBuffer,
+      dimensions.width,
+      dimensions.mainViewHeight,
+      0,
+      dimensions.dashboardHeight,
     )
+    setupGl(gl)
+    if (game.player.isJumping) {
+      applyFlightSceneMotionBlur(time)
+    } else {
+      applyFlightSceneCopy(time)
+    }
+    drawFrame(draw2d)
+
     // draw the dashboard
     gl.viewport(0, 0, dimensions.width, dimensions.dashboardHeight)
     dashboardRenderer(game, timeDelta)
@@ -216,6 +199,6 @@ export function createRootRenderer(
     // finally target the output buffer and render our texture applying a whole screen post processing effect if
     // required
     bindBufferAndSetViewport(gl, null, dimensions.width, dimensions.totalHeight)
-    effects.get(effect)!([0, 0], [dimensions.width, dimensions.totalHeight], frameBufferTexture, time)
+    globalEffects.get(effect)!([0, 0], [dimensions.width, dimensions.totalHeight], frameBufferTexture, time)
   }
 }

@@ -25,13 +25,13 @@ The scanner shows ships that have a high byte that is < 63 (0x33) and so to be i
 Based on the above and attempting to time the speed things happen in Elite the below numbers attempt to scale
 things so that things "feel" right in this interpretation. There isn't really n expression of things
 "per second" in the code as things are expressed in terms of cycles of the main loop and the frame rate is very
-variable.
+variable.c
 */
 
 // Based on the above and the Elite world size (
 export const playerOrbitalBodyRelativeSpeedFudgeFactor = 2
 export const playerShipRelativeSpeedFudgeFactor = 4
-export const jumpSpeedMultiplier = 32
+export const jumpSpeedMultiplier = 16
 export const stardustJumpSpeedMultiplier = jumpSpeedMultiplier / 4
 export const shipScaleFactor = 0.1
 export const stationScaleFactor = shipScaleFactor * 4.0

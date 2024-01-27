@@ -33,6 +33,7 @@ export interface Resources {
     amberCrt: ShaderSource
     greenCrt: ShaderSource
     vcr: ShaderSource
+    motionBlur: ShaderSource
   }
 }
 
@@ -89,6 +90,7 @@ export async function loadResources(gl: WebGLRenderingContext): Promise<Resource
       amberCrt: await loadShaderSource("ambercrt"),
       greenCrt: await loadShaderSource("greencrt"),
       vcr: await loadShaderSource("vcr"),
+      motionBlur: await loadShaderSource("motionblur"),
     },
   }
 }
