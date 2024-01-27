@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <title>Elite Demo</title>
 </head>
-<body style="background-color: black;">
+<body style="background-color: black; overflow: hidden;">
     <!-- in the original Elite the space view is 256x192 pixels and the scanner is 256x56 pixels -->
-    <canvas width="800" height="760" id="viewcanvas" style="display: block; width: 800px; height: 760px;"></canvas>
+    <div style="display: grid; grid-template-columns: 800px 400px;">
+        <canvas width="800" height="760" id="viewcanvas" style="display: block; width: 800px; height: 760px;"></canvas>
+        <canvas width="500" height="760" id="doccanvas" style="display: block; width: 500px; height: 760px;"></canvas>
+    </div>
     <script>var exports = {};</script>
     <script type="module" src="launch.ts"></script>
 </body>

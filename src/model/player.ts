@@ -118,7 +118,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
       portLaser: LaserTypeEnum.None,
       starboardLaser: LaserTypeEnum.None,
       largeCargoBay: false,
-      dockingComputer: false,
+      dockingComputer: true,
       ecmSystem: false,
       galacticHyperdrive: false,
       fuelScoops: false,

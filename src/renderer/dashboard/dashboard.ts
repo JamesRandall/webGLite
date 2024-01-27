@@ -88,14 +88,15 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
   const cw = ch / 1.2
   const tl = frameWidth * 2
   const tr = rightStartBarX + barWidth + 3
+  const topOffset = 4
 
   const standardBarColor = vec4.fromValues(1.0, 0.0, 1.0, 1.0)
   drawBar(true, 0, game.player.forwardShield, game.player.ship.maxForwardShield, standardBarColor)
-  draw2d.text.drawAtSize("FS", [tl, barHeight], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
+  draw2d.text.drawAtSize("FS", [tl, topOffset], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawBar(true, 1, game.player.aftShield, game.player.ship.maxAftShield, standardBarColor)
-  draw2d.text.drawAtSize("AS", [tl, barHeight * 2], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
+  draw2d.text.drawAtSize("AS", [tl, topOffset + barHeight], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawBar(true, 2, game.player.fuel, game.player.ship.maxFuel, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
-  draw2d.text.drawAtSize("FV", [tl, barHeight * 3], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
+  draw2d.text.drawAtSize("FV", [tl, topOffset + barHeight * 2], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawBar(
     true,
     3,
@@ -105,7 +106,7 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
       ? vec4.fromValues(1, 0, 0, 1)
       : vec4.fromValues(1, 1, 1, 1),
   )
-  draw2d.text.drawAtSize("CT", [tl, barHeight * 4], cw, ch, 0, standardBarColor)
+  draw2d.text.drawAtSize("CT", [tl, topOffset + barHeight * 3], cw, ch, 0, standardBarColor)
   drawBar(
     true,
     4,
@@ -115,9 +116,9 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
       ? vec4.fromValues(1, 0, 0, 1)
       : vec4.fromValues(1, 1, 1, 1),
   )
-  draw2d.text.drawAtSize("LT", [tl, barHeight * 5], cw, ch, 0, standardBarColor)
+  draw2d.text.drawAtSize("LT", [tl, topOffset + barHeight * 4], cw, ch, 0, standardBarColor)
   drawBar(true, 5, game.player.altitude, game.player.ship.maxAltitude, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
-  draw2d.text.drawAtSize("AL", [tl, barHeight * 6], cw, ch, 0, standardBarColor)
+  draw2d.text.drawAtSize("AL", [tl, topOffset + barHeight * 5], cw, ch, 0, standardBarColor)
   drawBar(
     false,
     0,
@@ -125,19 +126,19 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
     game.player.ship.maxSpeed,
     game.player.speed / game.player.ship.maxSpeed > 0.8 ? vec4.fromValues(1, 0, 0, 1) : vec4.fromValues(1, 1, 1, 1),
   )
-  draw2d.text.drawAtSize("SP", [tr, barHeight], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
+  draw2d.text.drawAtSize("SP", [tr, topOffset], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawPositionalBar(false, 1, game.player.roll, game.player.ship.maxRollSpeed)
-  draw2d.text.drawAtSize("RL", [tr, barHeight * 2], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
+  draw2d.text.drawAtSize("RL", [tr, topOffset + barHeight], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawPositionalBar(false, 2, game.player.pitch, game.player.ship.maxPitchSpeed)
-  draw2d.text.drawAtSize("DC", [tr, barHeight * 3], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
+  draw2d.text.drawAtSize("DC", [tr, topOffset + barHeight * 2], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawBar(false, 3, game.player.energyBankLevel[0], game.player.ship.maxEnergyBankLevel[0], standardBarColor)
-  draw2d.text.drawAtSize("1", [tr + cw / 2, barHeight * 4], cw, ch, 0, standardBarColor)
+  draw2d.text.drawAtSize("1", [tr + cw / 2, topOffset + barHeight * 3], cw, ch, 0, standardBarColor)
   drawBar(false, 4, game.player.energyBankLevel[1], game.player.ship.maxEnergyBankLevel[1], standardBarColor)
-  draw2d.text.drawAtSize("2", [tr + cw / 2, barHeight * 5], cw, ch, 0, standardBarColor)
+  draw2d.text.drawAtSize("2", [tr + cw / 2, topOffset + barHeight * 4], cw, ch, 0, standardBarColor)
   drawBar(false, 5, game.player.energyBankLevel[2], game.player.ship.maxEnergyBankLevel[2], standardBarColor)
-  draw2d.text.drawAtSize("3", [tr + cw / 2, barHeight * 6], cw, ch, 0, standardBarColor)
+  draw2d.text.drawAtSize("3", [tr + cw / 2, topOffset + barHeight * 5], cw, ch, 0, standardBarColor)
   drawBar(false, 6, game.player.energyBankLevel[3], game.player.ship.maxEnergyBankLevel[3], standardBarColor)
-  draw2d.text.drawAtSize("4", [tr + cw / 2, barHeight * 7], cw, ch, 0, standardBarColor)
+  draw2d.text.drawAtSize("4", [tr + cw / 2, topOffset + barHeight * 6], cw, ch, 0, standardBarColor)
 
   const compassCenter = drawCompass(width, sidePanelWidth, draw2d, game)
   if (game.player.isInSafeZone && !game.player.isDocked) {

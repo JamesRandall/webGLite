@@ -16,7 +16,7 @@ import { createGameScene } from "./gameScene"
 import { generateMarketItems } from "../proceduralGeneration/marketItems"
 import { createRootRenderer, nextEffect, previousEffect, RenderEffect } from "../renderer/rootRenderer"
 
-const startingZ = -scannerRadialWorldRange[2]
+const startingZ = -scannerRadialWorldRange[2] * 2
 const targetZ = -scannerRadialWorldRange[2] / 24.0
 
 export function createPregameScene(resources: Resources, gl: WebGLRenderingContext) {

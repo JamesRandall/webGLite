@@ -31,7 +31,7 @@ export function createPrimitiveRenderer(
     rect: createRectRenderer(gl, width, height, resources),
     texturedRect: createTexturedRectRenderer(gl, width, height, resources),
     circle: createCircleRenderer(gl, width, height, resources),
-    text: createTextRenderer(gl, width, height, flippedY, resources),
+    text: createTextRenderer(gl, width, height, false, resources),
     size: () => ({ width: width, height: height }),
   }
 }

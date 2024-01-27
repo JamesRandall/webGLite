@@ -40,6 +40,7 @@ function applyEffects(game: Game) {
 function applyDockingComputer(game: Game, resources: Resources, timeDelta: number) {
   if (
     game.player.dockingComputerFlightExecuter === null &&
+    game.player.equipment.dockingComputer &&
     game.player.controlState.dockingOn &&
     !game.player.previousControlState.dockingOn
   ) {

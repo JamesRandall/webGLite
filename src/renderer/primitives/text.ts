@@ -38,23 +38,26 @@ export function createTextRenderer(
   height: number,
   flippedY: boolean,
   resources: Resources,
+  characterWidth?: number,
 ) {
   const programInfo = initShaderProgram(gl, resources)!
   const square = createSquareModelWithTexture(gl, "/font.png", flippedY, true)
   const projectionMatrix = mat4.create()
   mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
-  const characterWidth = width / 40.0
+  if (characterWidth === undefined) {
+    characterWidth = width / 40.0
+  }
   const characterHeight = characterWidth * 1.2
   const spacing = 1.0
   const yMultiplier = flippedY ? -1 : 1
 
   const convertToPosition = (characterPosition: vec2) =>
-    vec2.fromValues(characterPosition[0] * (characterWidth + spacing), characterPosition[1] * characterHeight)
+    vec2.fromValues(characterPosition[0] * (characterWidth! + spacing), characterPosition[1] * characterHeight)
 
   const convertToCharacterCoordinates = (position: vec2) =>
-    vec2.fromValues(Math.floor(position[0] / (characterWidth + spacing)), Math.floor(position[1] / characterHeight))
+    vec2.fromValues(Math.floor(position[0] / (characterWidth! + spacing)), Math.floor(position[1] / characterHeight))
   const measure = (text: string) => {
-    return { width: (characterWidth + spacing) * text.length, height: characterHeight }
+    return { width: (characterWidth! + spacing) * text.length, height: characterHeight }
   }
   const draw = (text: string, position: vec2, useCharacterSpace: boolean = true) => {
     gl.useProgram(programInfo.program)
@@ -63,10 +66,10 @@ export function createTextRenderer(
     gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix)
 
     let displayPosition = useCharacterSpace
-      ? vec3.fromValues(position[0] * (characterWidth + spacing), position[1] * characterHeight, 1.0)
+      ? vec3.fromValues(position[0] * (characterWidth! + spacing), position[1] * characterHeight, 1.0)
       : vec3.fromValues(position[0], position[1], 0.0)
     const color = vec4.fromValues(1.0, 1.0, 1.0, 1.0)
-    drawCharacters(text, displayPosition, characterWidth, characterHeight, color, spacing)
+    drawCharacters(text, displayPosition, characterWidth!, characterHeight, color, spacing)
   }
 
   function drawCharacters(
