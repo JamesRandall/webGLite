@@ -1,9 +1,9 @@
 // the positions are 8-bits but a galaxy looks to be sized 102.4x51.2 so we scale here
-import {vec3, vec4} from "gl-matrix";
+import { vec3, vec4 } from "gl-matrix"
 
 export const galaxySize = { width: 102.4, height: 51.2 }
 export const frameWidth = 4.0
-export const frameColor = vec4.fromValues(1.0,1.0,0.0,1.0)
+export const frameColor = vec4.fromValues(1.0, 1.0, 0.0, 1.0)
 
 /*
 To calibrate our co-ordinate system we use the range of the scanner in the original game.
@@ -35,14 +35,14 @@ export const jumpSpeedMultiplier = 32
 export const stardustJumpSpeedMultiplier = jumpSpeedMultiplier / 4
 export const shipScaleFactor = 0.1
 export const stationScaleFactor = shipScaleFactor * 4.0
-export const scannerRadialWorldRange = vec3.divide(vec3.create(),vec3.fromValues(0x3300, 0x3300, 0x3300),[8,8,8])
+export const scannerRadialWorldRange = vec3.divide(vec3.create(), vec3.fromValues(0x3300, 0x3300, 0x3300), [8, 8, 8])
 export const worldSize = 8388607 // max value of a signed 24-bit number
 export const dockingRollToleranceDegrees = 20
 export const planetScaleFactor = 0.75
 
 export const dimensions = {
-    width: 800,
-    mainViewHeight: 560,
-    dashboardHeight: 200,
-    totalHeight: 760
+  width: 800,
+  mainViewHeight: 560,
+  dashboardHeight: 200,
+  totalHeight: 760,
 }

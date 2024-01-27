@@ -1,9 +1,9 @@
-import {Size} from "../model/geometry";
-import {Game} from "../model/game";
-import {RenderEffect} from "../renderer/rootRenderer";
+import { Size } from "../model/geometry"
+import { Game } from "../model/game"
+import { RenderEffect } from "../renderer/rootRenderer"
 
 export interface Scene {
-    update: ((now: number, viewportExtent: Size) => Scene | null)
+  update: (now: number, viewportExtent: Size) => Scene | null
 }
 
 export type RendererFunc = (game: Game, timeDelta: number) => void

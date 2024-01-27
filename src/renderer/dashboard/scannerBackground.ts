@@ -1,69 +1,75 @@
-import {compileShaderProgram, compileShaderProgram2} from "../../shader";
-import {createSquareModelWithTexture, Model} from "../../resources/models";
-import {mat4, quat, vec3} from "gl-matrix";
-import {Resources} from "../../resources/resources";
-import {setCommonAttributes, setViewUniformLocations} from "../coregl/programInfo";
+import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
+import { createSquareModelWithTexture, Model } from "../../resources/models"
+import { mat4, quat, vec3 } from "gl-matrix"
+import { Resources } from "../../resources/resources"
+import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 
 interface ProgramInfo {
-    program: WebGLProgram
+  program: WebGLProgram
+  attribLocations: {
+    vertexPosition: number
+    textureCoords: number
+  }
+  uniformLocations: {
+    projectionMatrix: WebGLUniformLocation
+    modelViewMatrix: WebGLUniformLocation
+    textureSampler: WebGLUniformLocation
+  }
+}
+
+function initShaderProgram(gl: WebGLRenderingContext, resources: Resources): ProgramInfo | null {
+  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.simpleTexture)
+  if (!shaderProgram) {
+    return null
+  }
+
+  return {
+    program: shaderProgram,
     attribLocations: {
-        vertexPosition: number
-        textureCoords: number
+      vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+      textureCoords: gl.getAttribLocation(shaderProgram, "aTextureCoord"),
     },
     uniformLocations: {
-        projectionMatrix: WebGLUniformLocation
-        modelViewMatrix: WebGLUniformLocation
-        textureSampler: WebGLUniformLocation
-    }
+      projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!,
+      modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")!,
+      textureSampler: gl.getUniformLocation(shaderProgram, "uSampler")!,
+    },
+  }
 }
 
-function initShaderProgram(gl:WebGLRenderingContext, resources: Resources) : ProgramInfo | null {
-    const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.simpleTexture)
-    if (!shaderProgram) { return null }
+export function createScannerBackgroundRenderer(
+  gl: WebGLRenderingContext,
+  resources: Resources,
+  projectionMatrix: mat4,
+  scale: vec3,
+) {
+  const programInfo = initShaderProgram(gl, resources)!
+  const model = createSquareModelWithTexture(gl, "./scanner.png", true, false, true)
 
-    return {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-            textureCoords: gl.getAttribLocation(shaderProgram, "aTextureCoord")
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!,
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")!,
-            textureSampler: gl.getUniformLocation(shaderProgram, "uSampler")!
-        },
+  const rotate = quat.rotateX(quat.create(), quat.create(), -90 * (Math.PI / 180))
+  const position = vec3.fromValues(0, 0, 0)
+  const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), rotate, position, scale)
+
+  return function () {
+    gl.useProgram(programInfo.program)
+    setCommonAttributes(gl, model, programInfo)
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indices)
+    setViewUniformLocations(
+      gl,
+      programInfo,
+      {
+        projectionMatrix,
+        modelViewMatrix,
+        textureIndex: 0,
+      },
+      model.texture!,
+    )
+
+    {
+      const vertexCount = model.vertexCount
+      const type = gl.UNSIGNED_SHORT
+      const offset = 0
+      gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
     }
-}
-
-export function createScannerBackgroundRenderer(gl:WebGLRenderingContext, resources: Resources, projectionMatrix:mat4, scale:vec3) {
-    const programInfo = initShaderProgram(gl, resources)!
-    const model = createSquareModelWithTexture(gl, "./scanner.png", true, false, true)
-
-    const rotate = quat.rotateX(quat.create(), quat.create(), -90 * (Math.PI/180))
-    const position = vec3.fromValues(0,0,0)
-    const modelViewMatrix = mat4.fromRotationTranslationScale(
-        mat4.create(),
-        rotate,
-        position,
-        scale)
-
-    return function() {
-        gl.useProgram(programInfo.program);
-        setCommonAttributes(gl, model, programInfo)
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indices)
-        setViewUniformLocations(gl, programInfo,
-            {
-                projectionMatrix,
-                modelViewMatrix,
-                textureIndex: 0
-            },
-            model.texture!)
-
-        {
-            const vertexCount = model.vertexCount;
-            const type = gl.UNSIGNED_SHORT;
-            const offset = 0;
-            gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-        }
-    }
+  }
 }
