@@ -83,6 +83,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     marketItems: generateMarketItems(startingSystem),
     diagnostics: [],
     renderEffect: renderEffect,
+    isFPSEnabled: false,
   }
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
 

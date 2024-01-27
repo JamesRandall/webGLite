@@ -19,6 +19,7 @@ import { createSphericalPlanetRenderer } from "./sphericalPlanet"
 import { Resources } from "../../resources/resources"
 import { createBuyMarketItemsRenderer } from "../screens/buyMarketItems"
 import { dimensions } from "../../constants"
+import { mat4 } from "gl-matrix"
 
 export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -41,6 +42,9 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
 
   return (game: Game, timeDelta: number) => {
     const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
+    const cameraMatrix = mat4.lookAt(mat4.create(), game.player.lookAt, [0, 0, 0], [0, 1, 0])
+    const viewMatrix = mat4.invert(mat4.create(), cameraMatrix)
+    const viewProjectionMatrix = mat4.multiply(mat4.create(), projectionMatrix, viewMatrix)
 
     flashOnTime += timeDelta
     if (flashOnTime > 1.5) {
@@ -52,9 +56,9 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
       case SceneEnum.Front:
         gl.enable(gl.CULL_FACE)
         gl.enable(gl.DEPTH_TEST)
-        shipRenderer(projectionMatrix, game.localBubble)
-        sunRenderer(projectionMatrix, game.localBubble, timeDelta)
-        planetRenderer(projectionMatrix, game.localBubble, timeDelta)
+        shipRenderer(viewProjectionMatrix, game.localBubble)
+        sunRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
+        planetRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
         stardustRenderer(game)
         gl.disable(gl.CULL_FACE)
         gl.disable(gl.DEPTH_TEST)

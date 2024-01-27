@@ -6,6 +6,9 @@ import { RenderEffect } from "../renderer/rootRenderer"
 
 export enum SceneEnum {
   Front,
+  Rear,
+  Left,
+  Right,
   LocalMap,
   SystemDetails,
   PlayerDetails,
@@ -40,4 +43,5 @@ export interface Game {
   hyperspace: HyperspaceData | null
   diagnostics: string[]
   renderEffect: RenderEffect
+  isFPSEnabled: boolean
 }

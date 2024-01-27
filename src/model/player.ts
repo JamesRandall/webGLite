@@ -2,7 +2,7 @@ import { ShipBlueprint } from "./shipBlueprint"
 import { ControlState, getEmptyControlState } from "../controls/controlState"
 import { Position, StarSystem } from "./starSystem"
 import { Resources } from "../resources/resources"
-import { vec2 } from "gl-matrix"
+import { vec2, vec3 } from "gl-matrix"
 import { Game } from "./game"
 
 enum MissileTargettingStatusEnum {
@@ -78,6 +78,7 @@ export interface Player {
   isInSafeZone: boolean
   disableDamping: boolean
   isJumping: boolean
+  lookAt: vec3
 }
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem): Player {
@@ -128,5 +129,6 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     isInSafeZone: false,
     disableDamping: false,
     isJumping: false,
+    lookAt: vec3.fromValues(0, 0, 1),
   }
 }

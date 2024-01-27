@@ -7,7 +7,6 @@ import { applyControlState } from "./applyControlState"
 import { Resources } from "../resources/resources"
 import { createHyperspaceLoop } from "./hyperspace"
 import { createDockingLoop } from "./docking"
-import { RenderEffect } from "../renderer/rootRenderer"
 import { createFramerateCounter } from "../utilities"
 
 function applySceneSelection(game: Game) {
@@ -81,6 +80,56 @@ function shouldRunFlightLoop(game: Game) {
   )
 }
 
+function getLookAt(currentScene: SceneEnum) {
+  switch (currentScene) {
+    case SceneEnum.Rear:
+      return [0, 0, -1]
+    case SceneEnum.Left:
+      return [-1, 0, 0]
+    case SceneEnum.Right:
+      return [1, 0, 0]
+    case SceneEnum.Front:
+    default:
+      return [0, 0, 1]
+  }
+}
+
+function createApplyCameraShake() {
+  let time = 0
+  const maxXDelta = 0.01
+  const maxYDelta = 0.01
+  const maxXRange = 0.1
+  const maxYRange = 0.1
+  const timeBetweenShake = 0.04
+  return function applyCameraShake(game: Game, timeDelta: number) {
+    if (game.player.isJumping) {
+      time += timeDelta
+      if (time > timeBetweenShake) {
+        time = 0
+        const lookAt = getLookAt(game.currentScene)
+        const xDelta = (Math.random() - 0.5) * maxXDelta
+        const yDelta = (Math.random() - 0.5) * maxYDelta
+        if (game.currentScene == SceneEnum.Front) {
+          const c = game.player.lookAt
+          c[0] += xDelta
+          c[1] += yDelta
+          if (c[0] > maxXRange) {
+            c[0] = maxXRange
+          } else if (c[0] < -maxYRange) {
+            c[0] = -maxXRange
+          }
+          if (c[1] > maxYRange) {
+            c[1] = maxYRange
+          } else if (c[1] < -maxYRange) {
+            c[1] = -maxYRange
+          }
+          game.player.lookAt = c
+        }
+      }
+    }
+  }
+}
+
 export function createGameLoop(resources: Resources, game: Game, renderer: RendererEffectFunc) {
   let then = 0
   let deltaTime = 0
@@ -89,6 +138,7 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
   let hyperspaceLoop: ((deltaTime: number) => void) | null = null
   let hyperspaceClock: number | null = null
   let frameRateCounter = createFramerateCounter()
+  let applyCameraShake = createApplyCameraShake()
 
   const scene: Scene = {
     update: (now: number, _: Size) => {
@@ -102,6 +152,7 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
 
       if (shouldRunFlightLoop(game)) {
         flightLoop(game, deltaTime)
+        applyCameraShake(game, deltaTime)
       }
       if (game.currentScene === SceneEnum.Launching) {
         if (launchingLoop === null) {
@@ -120,7 +171,9 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
         dockingLoop!(deltaTime)
       }
 
-      game.diagnostics.push(`FPS: ${frameRateCounter(deltaTime)}`)
+      if (game.isFPSEnabled) {
+        game.diagnostics.push(`FPS: ${frameRateCounter(deltaTime)}`)
+      }
 
       renderer(game, deltaTime, game.renderEffect)
       game.player.previousControlState = { ...game.player.controlState }
