@@ -3,6 +3,7 @@ import { vec2, vec3 } from "gl-matrix"
 import { dockingRollToleranceDegrees, stationScaleFactor } from "../../constants"
 import { calculateRoll, radiansToDegrees } from "./transforms"
 import { ShipRoleEnum } from "../../model/ShipInstance"
+import { isInRotatedBox } from "./collisions"
 
 export function updateGameOnDocked(game: Game) {
   game.player.isDocked = true
@@ -18,8 +19,8 @@ export function updateGameOnDocked(game: Game) {
 export function isValidDocking(game: Game) {
   if (game.localBubble.station === null) return false
   const station = game.localBubble.station
-  const stationHalfSize = game.localBubble.station.blueprint.model.boundingBoxSize[2] / 2
 
+  const stationHalfSize = game.localBubble.station.blueprint.model.boundingBoxSize[2] / 2
   const gatePosition = vec3.add(
     vec3.create(),
     game.localBubble.station.position,
@@ -29,52 +30,31 @@ export function isValidDocking(game: Game) {
       stationHalfSize,
     ]),
   )
-  const gateDistance = vec3.length(gatePosition)
-  console.log(`GATE DISTANCE: ${gateDistance}`)
-  if (gateDistance < 2) {
-    const gateTopLeft = vec2.multiply(vec2.create(), vec2.fromValues(-30, -10), [
-      stationScaleFactor,
-      stationScaleFactor,
-    ])
-    const gateBottomRight = vec2.multiply(vec2.create(), vec2.fromValues(30, 10), [
-      stationScaleFactor,
-      stationScaleFactor,
-    ])
 
+  if (
+    isInRotatedBox(
+      gatePosition,
+      station.noseOrientation,
+      station.roofOrientation,
+      station.rightOrientation,
+      [60, 20, 2],
+    )
+  ) {
     const roughPitchToStation = Math.asin(
       game.localBubble.station.position[1] /
         vec2.length([game.localBubble.station.position[2], game.localBubble.station.position[1]]),
     )
     const roughPitchToStationDegrees = Math.abs(radiansToDegrees(roughPitchToStation))
-    //const pitchAngleRadians = calculatePitch(game.localBubble.station)
-    console.log(`GATE DISTANCE: ${gateDistance}`)
+    console.log(`GATE PITCH: ${roughPitchToStationDegrees}`)
     if (roughPitchToStationDegrees <= 20) {
       const stationRollRadians = calculateRoll(station)
       const stationRollDegrees = radiansToDegrees(stationRollRadians)
-
+      console.log(`GATE ROLL: ${stationRollDegrees}`)
       if (
         stationRollDegrees >= 90 - dockingRollToleranceDegrees &&
         stationRollDegrees <= 90 + dockingRollToleranceDegrees
       ) {
-        // we've collided and so we're basically sat on the surface so if we adjust the player position to be relative
-        // to the station position (ignoring Z as we're on the surface of the station) and rotate the position by the
-        // stations roll then we can check the player against the horizontal gate
-        // this is just a bit easier than checking if a point is inside a rotated rectangle - which would be the more
-        // obvious way to do this
-        const playerPositionRelativeToStationXY = vec2.rotate(
-          vec2.create(),
-          [station.position[0], station.position[1]],
-          [0, 0],
-          stationRollRadians,
-        )
-        if (
-          playerPositionRelativeToStationXY[0] > gateTopLeft[0] &&
-          playerPositionRelativeToStationXY[1] > gateTopLeft[1] &&
-          playerPositionRelativeToStationXY[0] < gateBottomRight[0] &&
-          playerPositionRelativeToStationXY[1] < gateBottomRight[1]
-        ) {
-          return true
-        }
+        return true
       }
     }
   }
