@@ -21,7 +21,7 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
   const docGl = docCanvas.getContext("webgl2")!
   const viewportExtent = { width: gl.canvas.width, height: gl.canvas.height }
 
-  const resources = await loadResources(gl)
+  const resources = await loadResources(gl, docGl)
   const renderInstructions = createInstructionRenderer(docGl, resources)
   //const docResources = await loadResources(docGl)
   let scene =

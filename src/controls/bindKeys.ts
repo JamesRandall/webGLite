@@ -18,9 +18,11 @@ export function bindKeys(controlState: ControlState) {
         controlState.rollRight = newState
         break
       case "s":
+      case "S":
         controlState.pitchDown = newState
         break
       case "x":
+      case "X":
         controlState.pitchUp = newState
         break
       case " ":
@@ -30,6 +32,7 @@ export function bindKeys(controlState: ControlState) {
         controlState.decelerate = newState
         break
       case "j":
+      case "J":
         controlState.jump = newState
         break
       case "ArrowLeft":
@@ -45,12 +48,14 @@ export function bindKeys(controlState: ControlState) {
         controlState.cursorDown = newState
         break
       case "h":
+      case "H":
         controlState.hyperspace = newState
         break
       case "Shift":
         controlState.shiftPressed = newState
         break
       case "c":
+      case "C":
         controlState.dockingOn = newState
         break
       case "[":

@@ -20,6 +20,8 @@ export interface Resources {
   textures: {
     planets: WebGLTexture[]
     noise: WebGLTexture
+    font: WebGLTexture
+    instructionsFont: WebGLTexture
   }
   shaderSource: {
     stardust: ShaderSource
@@ -46,7 +48,10 @@ async function loadShaderSource(name: string) {
   }
 }
 
-export async function loadResources(gl: WebGLRenderingContext): Promise<Resources> {
+export async function loadResources(
+  gl: WebGLRenderingContext,
+  instructionsGl: WebGLRenderingContext,
+): Promise<Resources> {
   const ships = await loadShipSpecifications(gl)
   const shaderNames = [
     "stardust",
@@ -93,6 +98,9 @@ export async function loadResources(gl: WebGLRenderingContext): Promise<Resource
         "./makemake.png",
       ].map((t) => loadTexture(gl, t)!),
       noise: loadTexture(gl, "noise.png")!,
+      font: loadTexture(gl, "font.png")!,
+      // We load the instructions font separately as its used in a different GL context
+      instructionsFont: loadTexture(instructionsGl, "font.png")!,
     },
     shaderSource: {
       stardust: namedShaders.get("stardust")!,
