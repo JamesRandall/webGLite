@@ -1,5 +1,4 @@
 import { loadModel, Model } from "../resources/models"
-import { vec3 } from "gl-matrix"
 import { shipScaleFactor, stationScaleFactor } from "../constants"
 
 // measured in BBC Elite:
@@ -47,9 +46,7 @@ export interface ShipBlueprint {
   pregameScale: number
 }
 
-export async function loadShipSpecifications(gl: WebGLRenderingContext) {
-  const ships: ShipBlueprint[] = []
-
+export async function loadShipSpecifications(gl: WebGLRenderingContext): Promise<ShipBlueprint[]> {
   const playerDefaults = {
     rollAcceleration: rollAcceleration,
     rollDeceleration: rollDeceleration,
@@ -73,163 +70,167 @@ export async function loadShipSpecifications(gl: WebGLRenderingContext) {
     pregameScale: 1,
   }
 
-  // put the Cobra at the start as we always want to kick off the new game screen with that
-  ships.push({
-    name: "Cobra Mk III",
-    model: await loadModel(gl, "ships/cobra3.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 2,
-  })
-  ships.push({
-    name: "Adder",
-    model: await loadModel(gl, "ships/adder.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 4,
-  })
-  ships.push({
-    name: "Anaconda",
-    model: await loadModel(gl, "ships/anaconda.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 1.5,
-  })
-  ships.push({
-    name: "Asp",
-    model: await loadModel(gl, "ships/asp2.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Asteroid",
-    model: await loadModel(gl, "ships/asteroid.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 2,
-  })
-  ships.push({
-    name: "Boa",
-    model: await loadModel(gl, "ships/boa.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 2,
-  })
-  ships.push({
-    name: "Boulder",
-    model: await loadModel(gl, "ships/boulder.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 4,
-  })
-  ships.push({
-    name: "Cargo",
-    model: await loadModel(gl, "ships/cargo.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 6,
-  })
-  ships.push({
-    name: "Cobra Mk I",
-    model: await loadModel(gl, "ships/cobra1.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Constrictor",
-    model: await loadModel(gl, "ships/constric.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Coriolis",
-    model: await loadModel(gl, "ships/coriolis.obj", stationScaleFactor),
-    ...playerDefaults,
-    pregameScale: 0.25,
-  })
-  ships.push({
-    name: "Dodo",
-    model: await loadModel(gl, "ships/dodo.obj", stationScaleFactor),
-    ...playerDefaults,
-    pregameScale: 0.2,
-  })
-  ships.push({
-    name: "Escape Pod",
-    model: await loadModel(gl, "ships/escape.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 6,
-  })
-  ships.push({
-    name: "Fer de Lance",
-    model: await loadModel(gl, "ships/ferdelan.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Gecko",
-    model: await loadModel(gl, "ships/gecko.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Krait",
-    model: await loadModel(gl, "ships/krait.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 2.5,
-  })
-  ships.push({
-    name: "Mamba",
-    model: await loadModel(gl, "ships/mamba.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Missile",
-    model: await loadModel(gl, "ships/missile.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 7,
-  })
-  ships.push({
-    name: "Moray",
-    model: await loadModel(gl, "ships/moray.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Python",
-    model: await loadModel(gl, "ships/python.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 1.5,
-  })
-  ships.push({
-    name: "Shuttle",
-    model: await loadModel(gl, "ships/shuttle.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 4,
-  })
-  ships.push({
-    name: "Sidewinder",
-    model: await loadModel(gl, "ships/sidewind.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Thargoid",
-    model: await loadModel(gl, "ships/thargoid.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 1.2,
-  })
-  ships.push({
-    name: "Transporter",
-    model: await loadModel(gl, "ships/trans.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3,
-  })
-  ships.push({
-    name: "Viper",
-    model: await loadModel(gl, "ships/viper.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 3.5,
-  })
-  ships.push({
-    name: "Worm",
-    model: await loadModel(gl, "ships/worm.obj", shipScaleFactor),
-    ...playerDefaults,
-    pregameScale: 4,
-  })
-
-  return ships
+  const loadingShips = [
+    {
+      name: "Cobra Mk III",
+      model: loadModel(gl, "ships/cobra3.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 2,
+    },
+    {
+      name: "Adder",
+      model: loadModel(gl, "ships/adder.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 4,
+    },
+    {
+      name: "Anaconda",
+      model: loadModel(gl, "ships/anaconda.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 1.5,
+    },
+    {
+      name: "Asp",
+      model: loadModel(gl, "ships/asp2.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Asteroid",
+      model: loadModel(gl, "ships/asteroid.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 2,
+    },
+    {
+      name: "Boa",
+      model: loadModel(gl, "ships/boa.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 2,
+    },
+    {
+      name: "Boulder",
+      model: loadModel(gl, "ships/boulder.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 4,
+    },
+    {
+      name: "Cargo",
+      model: loadModel(gl, "ships/cargo.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 6,
+    },
+    {
+      name: "Cobra Mk I",
+      model: loadModel(gl, "ships/cobra1.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Constrictor",
+      model: loadModel(gl, "ships/constric.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Coriolis",
+      model: loadModel(gl, "ships/coriolis.obj", stationScaleFactor),
+      ...playerDefaults,
+      pregameScale: 0.25,
+    },
+    {
+      name: "Dodo",
+      model: loadModel(gl, "ships/dodo.obj", stationScaleFactor),
+      ...playerDefaults,
+      pregameScale: 0.2,
+    },
+    {
+      name: "Escape Pod",
+      model: loadModel(gl, "ships/escape.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 6,
+    },
+    {
+      name: "Fer de Lance",
+      model: loadModel(gl, "ships/ferdelan.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Gecko",
+      model: loadModel(gl, "ships/gecko.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Krait",
+      model: loadModel(gl, "ships/krait.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 2.5,
+    },
+    {
+      name: "Mamba",
+      model: loadModel(gl, "ships/mamba.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Missile",
+      model: loadModel(gl, "ships/missile.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 7,
+    },
+    {
+      name: "Moray",
+      model: loadModel(gl, "ships/moray.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Python",
+      model: loadModel(gl, "ships/python.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 1.5,
+    },
+    {
+      name: "Shuttle",
+      model: loadModel(gl, "ships/shuttle.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 4,
+    },
+    {
+      name: "Sidewinder",
+      model: loadModel(gl, "ships/sidewind.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Thargoid",
+      model: loadModel(gl, "ships/thargoid.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 1.2,
+    },
+    {
+      name: "Transporter",
+      model: loadModel(gl, "ships/trans.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3,
+    },
+    {
+      name: "Viper",
+      model: loadModel(gl, "ships/viper.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 3.5,
+    },
+    {
+      name: "Worm",
+      model: loadModel(gl, "ships/worm.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 4,
+    },
+  ]
+  const loadedShips = await Promise.all(loadingShips.map((ls) => ls.model))
+  return loadingShips.map((ls, lsi) => ({
+    ...ls,
+    model: loadedShips[lsi],
+  }))
 }

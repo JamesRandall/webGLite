@@ -48,6 +48,22 @@ async function loadShaderSource(name: string) {
 
 export async function loadResources(gl: WebGLRenderingContext): Promise<Resources> {
   const ships = await loadShipSpecifications(gl)
+  const shaderNames = [
+    "stardust",
+    "ship",
+    "planet",
+    "sun",
+    "uColor",
+    "text",
+    "simpleTexture",
+    "crt",
+    "ambercrt",
+    "greencrt",
+    "vcr",
+    "motionblur",
+  ]
+  const loadedShaders = await Promise.all(shaderNames.map((sn) => loadShaderSource(sn)))
+  const namedShaders = new Map<string, ShaderSource>(shaderNames.map((sn, index) => [sn, loadedShaders[index]]))
   return {
     ships: {
       numberOfShips: ships.length,
@@ -76,21 +92,21 @@ export async function loadResources(gl: WebGLRenderingContext): Promise<Resource
         "./haumea.png",
         "./makemake.png",
       ].map((t) => loadTexture(gl, t)!),
-      noise: await loadTexture(gl, "noise.png")!,
+      noise: loadTexture(gl, "noise.png")!,
     },
     shaderSource: {
-      stardust: await loadShaderSource("stardust"),
-      ship: await loadShaderSource("ship"),
-      planet: await loadShaderSource("planet"),
-      sun: await loadShaderSource("sun"),
-      uColor: await loadShaderSource("uColor"),
-      text: await loadShaderSource("text"),
-      simpleTexture: await loadShaderSource("simpleTexture"),
-      crt: await loadShaderSource("crt"),
-      amberCrt: await loadShaderSource("ambercrt"),
-      greenCrt: await loadShaderSource("greencrt"),
-      vcr: await loadShaderSource("vcr"),
-      motionBlur: await loadShaderSource("motionblur"),
+      stardust: namedShaders.get("stardust")!,
+      ship: namedShaders.get("ship")!,
+      planet: namedShaders.get("planet")!,
+      sun: namedShaders.get("sun")!,
+      uColor: namedShaders.get("uColor")!,
+      text: namedShaders.get("text")!,
+      simpleTexture: namedShaders.get("simpleTexture")!,
+      crt: namedShaders.get("crt")!,
+      amberCrt: namedShaders.get("ambercrt")!,
+      greenCrt: namedShaders.get("greencrt")!,
+      vcr: namedShaders.get("vcr")!,
+      motionBlur: namedShaders.get("motionblur")!,
     },
   }
 }
