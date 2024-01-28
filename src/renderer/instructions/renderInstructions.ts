@@ -36,8 +36,8 @@ export function createInstructionRenderer(gl: WebGL2RenderingContext, resources:
       text.draw("9      player details", [1, row++])
       text.draw("ARROWS cursor on charts", [1, row++])
       row++
-      text.draw("[      previous effect", [1, row++])
-      text.draw("]      next effect", [1, row++])
+      text.draw("[      previous visual effect", [1, row++])
+      text.draw("]      next visual effect", [1, row++])
       text.draw("Q      toggle help", [1, row++])
     }
   }
