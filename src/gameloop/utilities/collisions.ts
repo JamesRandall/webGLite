@@ -24,6 +24,7 @@ export function isInRotatedBox(
     roofOrientation,
     sideOrientation,
   )
+  //console.log(`RP: [${rotatedPosition[0]},${rotatedPosition[1]},${rotatedPosition[2]}]`)
   //console.log(rotatedPosition)
   return (
     rotatedPosition[0] >= -(boxSize[0] / 2) &&

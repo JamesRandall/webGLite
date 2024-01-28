@@ -30,26 +30,27 @@ export function isValidDocking(game: Game) {
       stationHalfSize,
     ]),
   )
+  const dockingBox = vec3.multiply(
+    vec3.create(),
+    [20, 60, 2],
+    [stationScaleFactor, stationScaleFactor, stationScaleFactor],
+  )
+  //console.log(`GP: [${gatePosition[0]},${gatePosition[1]},${gatePosition[2]}]`)
+  //console.log(`DB: [${dockingBox[0]},${dockingBox[1]},${dockingBox[2]}]`)
 
   if (
-    isInRotatedBox(
-      gatePosition,
-      station.noseOrientation,
-      station.roofOrientation,
-      station.rightOrientation,
-      [60, 20, 2],
-    )
+    isInRotatedBox(gatePosition, station.noseOrientation, station.roofOrientation, station.rightOrientation, dockingBox)
   ) {
     const roughPitchToStation = Math.asin(
       game.localBubble.station.position[1] /
         vec2.length([game.localBubble.station.position[2], game.localBubble.station.position[1]]),
     )
     const roughPitchToStationDegrees = Math.abs(radiansToDegrees(roughPitchToStation))
-    console.log(`GATE PITCH: ${roughPitchToStationDegrees}`)
+    //console.log(`GATE PITCH: ${roughPitchToStationDegrees}`)
     if (roughPitchToStationDegrees <= 20) {
       const stationRollRadians = calculateRoll(station)
       const stationRollDegrees = radiansToDegrees(stationRollRadians)
-      console.log(`GATE ROLL: ${stationRollDegrees}`)
+      //console.log(`GATE ROLL: ${stationRollDegrees}`)
       if (
         stationRollDegrees >= 90 - dockingRollToleranceDegrees &&
         stationRollDegrees <= 90 + dockingRollToleranceDegrees
