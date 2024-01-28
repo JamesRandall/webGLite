@@ -20,7 +20,7 @@ const startingZ = -scannerRadialWorldRange[2] * 2
 const targetZ = -scannerRadialWorldRange[2] / 24.0
 
 export function createPregameScene(resources: Resources, gl: WebGLRenderingContext) {
-  const clipSpaceRadius = 512
+  const clipSpaceRadius = Math.abs(startingZ)
   const startingShip = 0
 
   // TODO: The ship models are currently pointing the wrong way round, wwe need to rotate them around Y 180 degrees
@@ -95,7 +95,7 @@ function createPregameLoop(game: Game, gl: WebGLRenderingContext, resources: Res
   let isMovingOut = false
   let timeSinceMovedIn = 0
   let currentShipIndex = 0
-  let speed = startingZ / 2
+  let speed = startingZ / 1.5
   let startGame = false
 
   function createShip() {
@@ -104,8 +104,8 @@ function createPregameLoop(game: Game, gl: WebGLRenderingContext, resources: Res
       vec3.fromValues(0, 0.0, startingZ),
       vec3.fromValues(0.0, 0.0, -1.0),
     )
-    game.localBubble.ships[0].roll = game.localBubble.ships[0].blueprint.maxRollSpeed * 2
-    game.localBubble.ships[0].pitch = -game.localBubble.ships[0].blueprint.maxPitchSpeed
+    game.localBubble.ships[0].roll = game.localBubble.ships[0].blueprint.maxRollSpeed
+    game.localBubble.ships[0].pitch = -game.localBubble.ships[0].blueprint.maxPitchSpeed * 2
   }
 
   function nextShip() {
