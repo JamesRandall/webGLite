@@ -3,7 +3,7 @@ import { bindKeys } from "../controls/bindKeys"
 import { createSceneRenderer } from "../renderer/flight/sceneRenderer"
 import { createStardust } from "../gameloop/stardust"
 import { LocalBubble } from "../model/localBubble"
-import { createSquareModel, createSquareModelWithTexture } from "../resources/models"
+import { createSquareModel, createSquareModelWithLoadedTexture } from "../resources/models"
 import { generateGalaxy } from "../proceduralGeneration/starSystems"
 import { Game, SceneEnum } from "../model/game"
 import { createGameLoop } from "../gameloop/gameLoop"
@@ -34,7 +34,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
   // around).
   const localBubble: LocalBubble = {
     sun: {
-      position: [0, 0, clipSpaceRadius - 1],
+      position: [0, 0, clipSpaceRadius - 100],
       noseOrientation: [0, 0, -1],
       initialOrientation: [0, 0, -1],
       roofOrientation: [0, 1, 0],
@@ -44,7 +44,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
       pitch: 0.0,
       roll: 0.0,
       surfaceTextureIndex: 0,
-      model: createSquareModelWithTexture(gl, "starmask.png"),
+      model: createSquareModelWithLoadedTexture(gl, resources.textures.starmask),
     },
     planet: {
       position: [0, 0, -clipSpaceRadius / 2],

@@ -73,12 +73,13 @@ export function createSunRenderer(gl: WebGLRenderingContext, resources: Resource
     gl.uniform2fv(programInfo.uniformLocations.mouse, mouse)
     gl.uniform2fv(programInfo.uniformLocations.resolution, resolution)
     gl.uniform1f(programInfo.uniformLocations.time, time)
-
+    gl.disable(gl.CULL_FACE)
     {
       const vertexCount = sun.model.vertexCount
       const type = gl.UNSIGNED_SHORT
       const offset = 0
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
     }
+    gl.enable(gl.CULL_FACE)
   }
 }

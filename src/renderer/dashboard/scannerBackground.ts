@@ -1,8 +1,8 @@
-import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
-import { createSquareModelWithTexture, Model } from "../../resources/models"
+import { compileShaderProgram2 } from "../../shader"
 import { mat4, quat, vec3 } from "gl-matrix"
 import { Resources } from "../../resources/resources"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
+import { createSquareModelWithLoadedTexture } from "../../resources/models"
 
 interface ProgramInfo {
   program: WebGLProgram
@@ -44,7 +44,7 @@ export function createScannerBackgroundRenderer(
   scale: vec3,
 ) {
   const programInfo = initShaderProgram(gl, resources)!
-  const model = createSquareModelWithTexture(gl, "./scanner.png", true, false, true)
+  const model = createSquareModelWithLoadedTexture(gl, resources.textures.scanner, true, false, true)
 
   const rotate = quat.rotateX(quat.create(), quat.create(), -90 * (Math.PI / 180))
   const position = vec3.fromValues(0, 0, 0)

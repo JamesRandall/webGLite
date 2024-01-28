@@ -22,6 +22,8 @@ export interface Resources {
     noise: WebGLTexture
     font: WebGLTexture
     instructionsFont: WebGLTexture
+    starmask: WebGLTexture
+    scanner: WebGLTexture
   }
   shaderSource: {
     stardust: ShaderSource
@@ -99,6 +101,8 @@ export async function loadResources(
       ].map((t) => loadTexture(gl, t)!),
       noise: loadTexture(gl, "noise.png")!,
       font: loadTexture(gl, "font.png")!,
+      starmask: loadTexture(gl, "starmask.png")!,
+      scanner: loadTexture(gl, "scanner.png")!,
       // We load the instructions font separately as its used in a different GL context
       instructionsFont: loadTexture(instructionsGl, "font.png")!,
     },

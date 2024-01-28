@@ -5,7 +5,15 @@ import { createTextRenderer } from "../primitives/text"
 import { dimensions } from "../../constants"
 
 export function createInstructionRenderer(gl: WebGL2RenderingContext, resources: Resources) {
-  const text = createTextRenderer(gl, gl.canvas.width, gl.canvas.height, false, resources, 800 / 60)
+  const text = createTextRenderer(
+    gl,
+    gl.canvas.width,
+    gl.canvas.height,
+    false,
+    resources,
+    800 / 60,
+    resources.textures.instructionsFont,
+  )
   return function renderInstructions(showHelpText: boolean) {
     setupGl(gl)
     if (showHelpText) {

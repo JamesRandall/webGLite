@@ -1,10 +1,6 @@
 import { Primitives } from "./primitives/primitives"
 import { frameColor, frameWidth } from "../constants"
-import { mat4, quat, vec2, vec4 } from "gl-matrix"
-import { compileShaderProgram2 } from "../shader"
-import { Resources } from "../resources/resources"
-import { setCommonAttributes2D, setViewUniformLocations } from "./coregl/programInfo"
-import { createSquareModelWithLoadedTexture, createSquareModelWithTexture } from "../resources/models"
+import { mat4 } from "gl-matrix"
 
 export function setupGl(gl: WebGLRenderingContext) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0)

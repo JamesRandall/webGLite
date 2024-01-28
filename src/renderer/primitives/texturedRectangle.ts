@@ -1,7 +1,7 @@
-import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
-import { createSquareModel, createSquareModelWithTexture } from "../../resources/models"
-import { mat4, quat, vec2, vec4 } from "gl-matrix"
-import { setCommonAttributes, setCommonAttributes2D, setViewUniformLocations } from "../coregl/programInfo"
+import { compileShaderProgram2 } from "../../shader"
+import { createSquareModel } from "../../resources/models"
+import { mat4, quat, vec2 } from "gl-matrix"
+import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
 function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {

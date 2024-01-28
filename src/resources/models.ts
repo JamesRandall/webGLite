@@ -304,6 +304,7 @@ export function createSquareModel(
   } as Model
 }
 
+/*
 export function createSquareModelWithTexture(
   gl: WebGLRenderingContext,
   texture: string,
@@ -364,7 +365,7 @@ export function createSquareModelWithTexture(
     textureCoords: textureCoordBuffer,
     texture: glTexture,
   } as Model
-}
+}*/
 
 export function createSquareModelWithLoadedTexture(
   gl: WebGLRenderingContext,
@@ -378,7 +379,8 @@ export function createSquareModelWithLoadedTexture(
     : [0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0]
   const normals = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0]
   const indices = [0, 1, 2, 0, 2, 3]
-  const textureCoords = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]
+  const textureCoords = flipY ? [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0] : [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]
+  //[0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]
 
   const color = [1.0, 1.0, 1.0, 1.0]
   const colors = [

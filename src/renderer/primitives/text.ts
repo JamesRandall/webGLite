@@ -3,7 +3,7 @@
 // There are 96 characters in the strip
 
 import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
-import { createSquareModelWithLoadedTexture, createSquareModelWithTexture } from "../../resources/models"
+import { createSquareModelWithLoadedTexture } from "../../resources/models"
 import { LocalBubble } from "../../model/localBubble"
 import { mat4, quat, vec2, vec3, vec4 } from "gl-matrix"
 import { setCommonAttributes, setCommonAttributes2D, setViewUniformLocations } from "../coregl/programInfo"
@@ -39,9 +39,15 @@ export function createTextRenderer(
   flippedY: boolean,
   resources: Resources,
   characterWidth?: number,
+  font?: WebGLTexture,
 ) {
   const programInfo = initShaderProgram(gl, resources)!
-  const square = createSquareModelWithLoadedTexture(gl, resources.textures.font, flippedY, true)
+  const square = createSquareModelWithLoadedTexture(
+    gl,
+    font !== undefined ? font : resources.textures.font,
+    flippedY,
+    true,
+  )
   const projectionMatrix = mat4.create()
   mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
   if (characterWidth === undefined) {

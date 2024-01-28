@@ -2,7 +2,7 @@ import { Resources } from "../resources/resources"
 import { vec3 } from "gl-matrix"
 import { dimensions, scannerRadialWorldRange } from "../constants"
 import { LocalBubble } from "../model/localBubble"
-import { createSquareModel, createSquareModelWithTexture } from "../resources/models"
+import { createSquareModel, createSquareModelWithLoadedTexture } from "../resources/models"
 import { createStardust } from "../gameloop/stardust"
 import { createPregameSceneRenderer } from "../renderer/pregame/sceneRenderer"
 import { createDashboardRenderer } from "../renderer/dashboard/dashboard"
@@ -44,7 +44,7 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
       pitch: 0.0,
       roll: 0.0,
       surfaceTextureIndex: 0,
-      model: createSquareModelWithTexture(gl, "starmask.png"),
+      model: createSquareModelWithLoadedTexture(gl, resources.textures.starmask),
     },
     planet: {
       position: [0, 0, -clipSpaceRadius / 2],
