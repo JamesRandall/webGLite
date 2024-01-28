@@ -71,6 +71,27 @@ export async function loadResources(
   ]
   const loadedShaders = await Promise.all(shaderNames.map((sn) => loadShaderSource(sn)))
   const namedShaders = new Map<string, ShaderSource>(shaderNames.map((sn, index) => [sn, loadedShaders[index]]))
+  const planets = await Promise.all(
+    [
+      "./mars.png",
+      "./neptune.png",
+      "./venusSurface.png",
+      "./venusAtmosphere.png",
+      "./saturn.png",
+      "./uranus.png",
+      "./mercury.png",
+      "./moon.png",
+      "./ceres.png",
+      "./eris.png",
+      "./haumea.png",
+      "./makemake.png",
+    ].map((t) => loadTexture(gl, t)),
+  )
+  const textureNames = ["noise", "font", "starmask", "scanner"]
+  const loadedTextures = await Promise.all(textureNames.map((tn) => loadTexture(gl, `./${tn}.png`)))
+  const textures = new Map<string, WebGLTexture>(loadedTextures.map((t, i) => [textureNames[i], t]))
+  const instructionFont = await loadTexture(instructionsGl, "font.png")
+
   return {
     ships: {
       numberOfShips: ships.length,
@@ -85,26 +106,13 @@ export async function loadResources(
         getNamedShip(ships, "Coriolis", position, noseOrientation, ShipRoleEnum.Station),
     },
     textures: {
-      planets: [
-        "./mars.png",
-        "./neptune.png",
-        "./venusSurface.png",
-        "./venusAtmosphere.png",
-        "./saturn.png",
-        "./uranus.png",
-        "./mercury.png",
-        "./moon.png",
-        "./ceres.png",
-        "./eris.png",
-        "./haumea.png",
-        "./makemake.png",
-      ].map((t) => loadTexture(gl, t)!),
-      noise: loadTexture(gl, "noise.png")!,
-      font: loadTexture(gl, "font.png")!,
-      starmask: loadTexture(gl, "starmask.png")!,
-      scanner: loadTexture(gl, "scanner.png")!,
+      planets: planets,
+      noise: textures.get("noise")!,
+      font: textures.get("font")!,
+      starmask: textures.get("starmask")!,
+      scanner: textures.get("scanner")!,
       // We load the instructions font separately as its used in a different GL context
-      instructionsFont: loadTexture(instructionsGl, "font.png")!,
+      instructionsFont: instructionFont,
     },
     shaderSource: {
       stardust: namedShaders.get("stardust")!,
