@@ -148,38 +148,48 @@ function createPregameLoop(game: Game, gl: WebGLRenderingContext, resources: Res
 
   window.addEventListener("keydown", keyDown)
 
+  let isFirst = true
+
   const scene: Scene = {
     update: (now: number, viewportExtent: Size) => {
-      if (startGame) {
-        window.removeEventListener("keydown", keyDown)
-        return createGameScene(resources, gl, game.renderEffect)
-      }
-
-      now *= 0.001 // convert to seconds
-      deltaTime = now - then
-      then = now
-
-      updateShipInstance(game.localBubble.ships[0], game.player, deltaTime)
-
-      // we can't use the ships speed to move it in as that follows the direction of the nose orientation
-      if (isMovingIn) {
-        game.localBubble.ships[0].position[2] -= speed * deltaTime
-        if (game.localBubble.ships[0].position[2] >= targetZ) {
-          isMovingIn = false
-          timeSinceMovedIn = now
+      // we skip the first frame of the pregame screen as the time we will be given is based on the render time
+      // and that initial number is large, if its used for the frame time then the initial ship will appear past the
+      // camera
+      if (!isFirst) {
+        if (startGame) {
+          window.removeEventListener("keydown", keyDown)
+          return createGameScene(resources, gl, game.renderEffect)
         }
-      } else if (isMovingOut) {
-        game.localBubble.ships[0].position[2] += speed * deltaTime
-        if (game.localBubble.ships[0].position[2] <= startingZ) {
-          nextShip()
-          isMovingIn = true
-          isMovingOut = false
-        }
-      } else if (now > timeSinceMovedIn + timeToStay) {
-        isMovingOut = true
-      }
 
-      renderer(game, deltaTime, game.renderEffect)
+        now *= 0.001 // convert to seconds
+        deltaTime = now - then
+        then = now
+
+        updateShipInstance(game.localBubble.ships[0], game.player, deltaTime)
+
+        // we can't use the ships speed to move it in as that follows the direction of the nose orientation
+        if (isMovingIn) {
+          game.localBubble.ships[0].position[2] -= speed * deltaTime
+          if (game.localBubble.ships[0].position[2] >= targetZ) {
+            isMovingIn = false
+            timeSinceMovedIn = now
+          }
+        } else if (isMovingOut) {
+          game.localBubble.ships[0].position[2] += speed * deltaTime
+          if (game.localBubble.ships[0].position[2] <= startingZ) {
+            nextShip()
+            isMovingIn = true
+            isMovingOut = false
+          }
+        } else if (now > timeSinceMovedIn + timeToStay) {
+          isMovingOut = true
+        }
+
+        renderer(game, deltaTime, game.renderEffect)
+      } else {
+        then = now * 0.001
+        isFirst = false
+      }
       return null
     },
   }
