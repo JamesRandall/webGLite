@@ -11,7 +11,7 @@ export interface Primitives {
   texturedRect: (position: vec2, size: vec2, texture: WebGLTexture) => void
   circle: (position: vec2, radius: number, color: vec4) => void
   text: {
-    draw: (text: string, position: vec2, useCharacterSpace?: boolean) => void
+    draw: (text: string, position: vec2, useCharacterSpace?: boolean, color?: vec4) => void
     measure: (text: string) => Size
     convertToCharacterCoordinates: (position: vec2) => vec2
     convertToPosition: (characterPosition: vec2) => vec2

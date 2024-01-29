@@ -65,7 +65,12 @@ export function createTextRenderer(
   const measure = (text: string) => {
     return { width: (characterWidth! + spacing) * text.length, height: characterHeight }
   }
-  const draw = (text: string, position: vec2, useCharacterSpace: boolean = true) => {
+  const draw = (
+    text: string,
+    position: vec2,
+    useCharacterSpace: boolean = true,
+    color: vec4 = vec4.fromValues(1.0, 1.0, 1.0, 1.0),
+  ) => {
     gl.useProgram(programInfo.program)
 
     // Set the shader uniforms
@@ -74,7 +79,6 @@ export function createTextRenderer(
     let displayPosition = useCharacterSpace
       ? vec3.fromValues(position[0] * (characterWidth! + spacing), position[1] * characterHeight, 1.0)
       : vec3.fromValues(position[0], position[1], 0.0)
-    const color = vec4.fromValues(1.0, 1.0, 1.0, 1.0)
     drawCharacters(text, displayPosition, characterWidth!, characterHeight, color, spacing)
   }
 

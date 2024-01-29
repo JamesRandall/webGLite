@@ -23,6 +23,9 @@ function applySceneSelection(game: Game) {
       case 2:
         game.currentScene = SceneEnum.BuyMarketItems
         break
+      case 3:
+        game.currentScene = SceneEnum.BuyEquipment
+        break
       case 6:
         game.currentScene = SceneEnum.LocalMap
         break

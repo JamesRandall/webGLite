@@ -5,13 +5,7 @@ import { createPrimitiveRenderer } from "../primitives/primitives"
 import { Game, SceneEnum } from "../../model/game"
 import { createLocalChartRenderer } from "../screens/localChart"
 import { createSystemDetailsRenderer } from "../screens/systemDetails"
-import {
-  bindBufferAndSetViewport,
-  createFrameBufferTexture,
-  createProjectionMatrix,
-  drawFrame,
-  setupGl,
-} from "../common"
+import { createProjectionMatrix } from "../common"
 import { createPlayerDetailsRenderer } from "../screens/playerDetails"
 import { createLaunchingRenderer } from "../screens/launching"
 import { createHyperspaceRenderer } from "../screens/hyperspace"
@@ -20,6 +14,7 @@ import { Resources } from "../../resources/resources"
 import { createBuyMarketItemsRenderer } from "../screens/buyMarketItems"
 import { dimensions } from "../../constants"
 import { mat4 } from "gl-matrix"
+import { createBuyEquipmentRenderer } from "../screens/buyEquipment"
 
 export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -37,6 +32,7 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
   const launchingRenderer = createLaunchingRenderer(gl, viewportWidth, viewportHeight, resources)
   const hyperspaceRenderer = createHyperspaceRenderer(gl, viewportWidth, viewportHeight, resources)
   const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
+  const buyEquipmentRenderer = createBuyEquipmentRenderer(draw2d)
   let flashOn = true
   let flashOnTime = 0
 
@@ -87,6 +83,10 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
 
       case SceneEnum.BuyMarketItems:
         buyMarketItemsRenderer(game)
+        break
+
+      case SceneEnum.BuyEquipment:
+        buyEquipmentRenderer(game)
         break
     }
 

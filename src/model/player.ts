@@ -36,15 +36,18 @@ export enum LaserTypeEnum {
 }
 
 export interface PlayerEquipment {
+  largeCargoBay: boolean
+  ecmSystem: boolean
   frontLaser: LaserTypeEnum
   aftLaser: LaserTypeEnum
   portLaser: LaserTypeEnum
   starboardLaser: LaserTypeEnum
-  largeCargoBay: boolean
-  ecmSystem: boolean
   fuelScoops: boolean
-  galacticHyperdrive: boolean
+  escapePod: boolean
+  energyBomb: boolean
+  energyUnit: boolean
   dockingComputer: boolean
+  galacticHyperdrive: boolean
 }
 
 export interface Player {
@@ -113,15 +116,18 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
       status: MissileTargettingStatusEnum.Normal,
     },
     equipment: {
+      largeCargoBay: false,
+      ecmSystem: false,
       frontLaser: LaserTypeEnum.Pulse,
       aftLaser: LaserTypeEnum.None,
       portLaser: LaserTypeEnum.None,
       starboardLaser: LaserTypeEnum.None,
-      largeCargoBay: false,
-      dockingComputer: true,
-      ecmSystem: false,
-      galacticHyperdrive: false,
       fuelScoops: false,
+      escapePod: false,
+      energyBomb: false,
+      energyUnit: false,
+      dockingComputer: true,
+      galacticHyperdrive: false,
     },
     cargoHoldContents: [],
     selectedSystem: currentSystem,

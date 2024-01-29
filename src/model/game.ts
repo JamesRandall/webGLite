@@ -16,6 +16,7 @@ export enum SceneEnum {
   Launching,
   Hyperspace,
   BuyMarketItems,
+  BuyEquipment,
   Docking,
   PlayerExploding,
 }
