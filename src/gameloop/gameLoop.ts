@@ -35,8 +35,14 @@ function applySceneSelection(game: Game) {
       case 7:
         game.currentScene = SceneEnum.SystemDetails
         break
+      case 8:
+        game.currentScene = SceneEnum.PriceList
+        break
       case 9:
         game.currentScene = SceneEnum.PlayerDetails
+        break
+      case 0:
+        game.currentScene = SceneEnum.Inventory
         break
     }
   } else {
@@ -53,8 +59,14 @@ function applySceneSelection(game: Game) {
       case 7:
         game.currentScene = SceneEnum.SystemDetails
         break
+      case 8:
+        game.currentScene = SceneEnum.PriceList
+        break
       case 9:
         game.currentScene = SceneEnum.PlayerDetails
+        break
+      case 0:
+        game.currentScene = SceneEnum.Inventory
         break
     }
   }

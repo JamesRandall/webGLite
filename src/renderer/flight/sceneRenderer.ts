@@ -16,6 +16,7 @@ import { dimensions } from "../../constants"
 import { mat4 } from "gl-matrix"
 import { createBuyEquipmentRenderer } from "../screens/buyEquipment"
 import { createLongRangeChartRenderer } from "../screens/galaxyChart"
+import { createInventoryRenderer } from "../screens/inventory"
 
 export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -35,6 +36,7 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
   const hyperspaceRenderer = createHyperspaceRenderer(gl, viewportWidth, viewportHeight, resources)
   const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
   const buyEquipmentRenderer = createBuyEquipmentRenderer(draw2d)
+  const inventoryRenderer = createInventoryRenderer(draw2d)
   let flashOn = true
   let flashOnTime = 0
 
@@ -88,11 +90,19 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
         break
 
       case SceneEnum.BuyMarketItems:
-        buyMarketItemsRenderer(game)
+        buyMarketItemsRenderer(game, false)
+        break
+
+      case SceneEnum.PriceList:
+        buyMarketItemsRenderer(game, true)
         break
 
       case SceneEnum.BuyEquipment:
         buyEquipmentRenderer(game)
+        break
+
+      case SceneEnum.Inventory:
+        inventoryRenderer(game)
         break
     }
 

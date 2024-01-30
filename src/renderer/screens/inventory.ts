@@ -1,0 +1,126 @@
+import { Primitives } from "../primitives/primitives"
+import { Game } from "../../model/game"
+import { frameColor, frameWidth } from "../../constants"
+import { CombatRatingEnum, LaserTypeEnum, LegalStatusEnum } from "../../model/player"
+
+function legalStatusText(value: LegalStatusEnum) {
+  switch (value) {
+    case LegalStatusEnum.Clean:
+    default:
+      return "Clean"
+  }
+}
+
+function ratingText(value: CombatRatingEnum) {
+  switch (value) {
+    case CombatRatingEnum.MostlyHarmless:
+      return "Mostly Harmless"
+    case CombatRatingEnum.Poor:
+      return "Poor"
+    case CombatRatingEnum.Average:
+      return "Average"
+    case CombatRatingEnum.AboveAverage:
+      return "Above Average"
+    case CombatRatingEnum.Competent:
+      return "Competent"
+    case CombatRatingEnum.Dangerous:
+      return "Dangerous"
+    case CombatRatingEnum.Deadly:
+      return "Deadly"
+    case CombatRatingEnum.Elite:
+      return "Elite"
+    case CombatRatingEnum.Harmless:
+    default:
+      return "Harmless"
+  }
+}
+
+function laserTypeText(value: LaserTypeEnum) {
+  switch (value) {
+    case LaserTypeEnum.Pulse:
+      return "Pulse Laser"
+    case LaserTypeEnum.Mining:
+      return "Mining Laser"
+    case LaserTypeEnum.Beam:
+      return "Beam Laser"
+    case LaserTypeEnum.Military:
+      return "Military Laser"
+    case LaserTypeEnum.None:
+    default:
+      return "None"
+  }
+}
+
+export function createInventoryRenderer(draw2d: Primitives) {
+  return function renderInventory(game: Game) {
+    const player = game.player
+    draw2d.text.draw("INVENTORY", [15, 0.5])
+    draw2d.rect([0, 40], [draw2d.size().width, frameWidth], frameColor)
+
+    draw2d.text.draw(
+      `Fuel:${(player.fuel / 10).toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} Light Years`,
+      [1, 3],
+    )
+    draw2d.text.draw(
+      `Cash:     ${player.cash.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} Cr`,
+      [1, 4],
+    )
+
+    let y = 6
+    game.marketItems
+      .map((item, index) => ({ item, index }))
+      .forEach(({ item, index }) => {
+        if (game.player.cargoHoldContents[index] > 0) {
+          draw2d.text.draw(item.name, [1, y])
+          draw2d.text.draw(`${game.player.cargoHoldContents[index]}${item.unit}`, [20, y])
+          y++
+        }
+      })
+
+    /*
+    let equipmentLine = 12
+
+    const title = `COMMANDER ${player.name}`
+    draw2d.text.draw(title, [19 - title.length / 2, 0.5])
+    draw2d.rect([0, 40], [draw2d.size().width, frameWidth], frameColor)
+
+    draw2d.text.draw(`Present System          :${game.currentSystem.name}`, [1, 3])
+    draw2d.text.draw(`Hyperspace System       :${player.selectedSystem.name}`, [1, 4])
+    draw2d.text.draw(`Condition               :${player.isDocked ? "Docked" : "Space"}`, [1, 5])
+
+    draw2d.text.draw(
+      `Cash:    ${player.cash.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} Cr`,
+      [1, 7],
+    )
+    draw2d.text.draw(`Legal Status: ${legalStatusText(player.legalStatus)}`, [1, 8])
+    draw2d.text.draw(`Rating: ${ratingText(player.combatRating)}`, [1, 9])
+    draw2d.text.draw(`EQUIPMENT:`, [1, 11])
+    if (equipment.frontLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Front ${laserTypeText(equipment.frontLaser)}`, [6, equipmentLine++])
+    }
+    if (equipment.aftLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Aft ${laserTypeText(equipment.aftLaser)}`, [6, equipmentLine++])
+    }
+    if (equipment.portLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Port ${laserTypeText(equipment.portLaser)}`, [6, equipmentLine++])
+    }
+    if (equipment.starboardLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Front ${laserTypeText(equipment.starboardLaser)}`, [6, equipmentLine++])
+    }
+    if (equipment.fuelScoops) {
+      draw2d.text.draw(`Fuel Scoops`, [6, equipmentLine++])
+    }
+    if (equipment.largeCargoBay) {
+      draw2d.text.draw(`Large Cargo Bay`, [6, equipmentLine++])
+    }
+    if (equipment.dockingComputer) {
+      draw2d.text.draw(`Docking Computer`, [6, equipmentLine++])
+    }
+    if (equipment.ecmSystem) {
+      draw2d.text.draw(`E.C.M. System`, [6, equipmentLine++])
+    }
+    if (equipment.galacticHyperdrive) {
+      draw2d.text.draw(`Galactic Hyperdrive`, [6, equipmentLine++])
+    }*/
+  }
+}

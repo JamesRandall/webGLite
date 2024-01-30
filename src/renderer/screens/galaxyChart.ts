@@ -11,7 +11,6 @@ export function createLongRangeChartRenderer(draw2d: Primitives) {
   const top = 40 + yScale
 
   return function renderGalaxyChart(game: Game) {
-    const orange = vec4.fromValues(0xf5 / 255.0, 0x9e / 255.0, 0x0b / 255.0, 1.0)
     const currentCenter = vec2.fromValues(
       game.currentSystem.galacticPosition[0] * xScale,
       game.currentSystem.galacticPosition[1] * yScale + top,

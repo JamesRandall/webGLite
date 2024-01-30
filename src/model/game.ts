@@ -20,6 +20,7 @@ export enum SceneEnum {
   BuyEquipment,
   Docking,
   PlayerExploding,
+  PriceList,
 }
 
 export interface LaunchingData {
