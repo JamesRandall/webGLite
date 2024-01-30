@@ -31,9 +31,14 @@ export function createInstructionRenderer(gl: WebGL2RenderingContext, resources:
       row++
       text.draw("1      front \\ launch", [1, row++])
       text.draw("2      rear \\ trade", [1, row++])
+      text.draw("3      left \\ equipment", [1, row++])
+      text.draw("4      right", [1, row++])
+      text.draw("5      galactic map", [1, row++])
       text.draw("6      short range chart", [1, row++])
       text.draw("7      system details", [1, row++])
+      text.draw("8      market prices", [1, row++])
       text.draw("9      player details", [1, row++])
+      text.draw("0      inventory", [1, row++])
       text.draw("ARROWS cursor on charts", [1, row++])
       row++
       text.draw("[      previous visual effect", [1, row++])
