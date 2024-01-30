@@ -71,8 +71,9 @@ export function createInventoryRenderer(draw2d: Primitives) {
       .map((item, index) => ({ item, index }))
       .forEach(({ item, index }) => {
         if (game.player.cargoHoldContents[index] > 0) {
+          const quantity = game.player.cargoHoldContents[index]
           draw2d.text.draw(item.name, [1, y])
-          draw2d.text.draw(`${game.player.cargoHoldContents[index]}${item.unit}`, [20, y])
+          draw2d.text.draw(`${quantity}${item.unit}`, [quantity >= 10 ? 15 : 16, y])
           y++
         }
       })
