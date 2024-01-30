@@ -2,7 +2,7 @@ import { Primitives } from "../primitives/primitives"
 import { Game } from "../../model/game"
 import { frameColor, frameWidth } from "../../constants"
 import { economyText, governmentText, StarSystem } from "../../model/starSystem"
-import { vec2 } from "gl-matrix"
+import { vec2, vec4 } from "gl-matrix"
 import { getNearestSystemToCursor } from "../../gameloop/utilities/map"
 import { availableCargoSpace } from "../../gameloop/utilities/cargo"
 

@@ -26,6 +26,9 @@ function applySceneSelection(game: Game) {
       case 3:
         game.currentScene = SceneEnum.BuyEquipment
         break
+      case 5:
+        game.currentScene = SceneEnum.LongRangeMap
+        break
       case 6:
         game.currentScene = SceneEnum.LocalMap
         break
@@ -40,6 +43,9 @@ function applySceneSelection(game: Game) {
     switch (game.player.controlState.sceneSelection!) {
       case 1:
         game.currentScene = SceneEnum.Front
+        break
+      case 5:
+        game.currentScene = SceneEnum.LongRangeMap
         break
       case 6:
         game.currentScene = SceneEnum.LocalMap

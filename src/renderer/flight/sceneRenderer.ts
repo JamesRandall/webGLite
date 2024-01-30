@@ -15,6 +15,7 @@ import { createBuyMarketItemsRenderer } from "../screens/buyMarketItems"
 import { dimensions } from "../../constants"
 import { mat4 } from "gl-matrix"
 import { createBuyEquipmentRenderer } from "../screens/buyEquipment"
+import { createLongRangeChartRenderer } from "../screens/galaxyChart"
 
 export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -27,6 +28,7 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
   const sunRenderer = createSunRenderer(gl, resources)
   const planetRenderer = createSphericalPlanetRenderer(gl, resources)
   const localChartRenderer = createLocalChartRenderer(draw2d)
+  const longRangeChartRenderer = createLongRangeChartRenderer(draw2d)
   const systemDetailsRenderer = createSystemDetailsRenderer(draw2d)
   const playerDetailsRenderer = createPlayerDetailsRenderer(draw2d)
   const launchingRenderer = createLaunchingRenderer(gl, viewportWidth, viewportHeight, resources)
@@ -62,6 +64,10 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
 
       case SceneEnum.LocalMap:
         localChartRenderer(game)
+        break
+
+      case SceneEnum.LongRangeMap:
+        longRangeChartRenderer(game)
         break
 
       case SceneEnum.SystemDetails:

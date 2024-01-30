@@ -75,6 +75,7 @@ export interface Player {
     status: MissileTargettingStatusEnum
   }
   equipment: PlayerEquipment
+  galaxyIndex: number
   selectedSystem: StarSystem // the system the player has selected in the star charts
   scannerCursor: vec2
   cargoHoldContents: number[]
@@ -130,6 +131,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
       galacticHyperdrive: false,
     },
     cargoHoldContents: [],
+    galaxyIndex: 0,
     selectedSystem: currentSystem,
     scannerCursor: vec2.copy(vec2.create(), currentSystem.galacticPosition),
     isInSafeZone: false,

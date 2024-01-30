@@ -10,6 +10,7 @@ export enum SceneEnum {
   Left,
   Right,
   LocalMap,
+  LongRangeMap,
   SystemDetails,
   PlayerDetails,
   Inventory,
