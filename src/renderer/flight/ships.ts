@@ -66,6 +66,7 @@ export function createShipsRenderer(
             ship.blueprint.pregameScale,
           ])
         : mat4.fromRotationTranslation(mat4.create(), targetToQuat, viewPosition)
+
       const normalMatrix = mat4.create()
       mat4.invert(normalMatrix, modelViewMatrix)
       mat4.transpose(normalMatrix, normalMatrix)

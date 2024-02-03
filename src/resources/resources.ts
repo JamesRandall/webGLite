@@ -156,10 +156,10 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
   return {
     role: role ?? ShipRoleEnum.Trader,
     blueprint: ship,
-    position: position,
-    noseOrientation: noseOrientation,
-    roofOrientation: orientations.roofOrientation,
-    rightOrientation: orientations.sideOrientation,
+    position: vec3.copy(vec3.create(), position),
+    noseOrientation: vec3.copy(vec3.create(), noseOrientation),
+    roofOrientation: vec3.copy(vec3.create(), orientations.roofOrientation),
+    rightOrientation: vec3.copy(vec3.create(), orientations.sideOrientation),
     roll: 0.0,
     totalRoll: 0.0,
     pitch: 0.0,
@@ -168,7 +168,7 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
     rendering: {
       shininess: 16.0,
     },
-    boundingBox: [...ship.model.boundingBox],
+    boundingBox: ship.model.boundingBox.map((v) => vec3.copy(vec3.create(), v)),
   } as ShipInstance
 }
 

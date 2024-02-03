@@ -25,6 +25,9 @@ function applyTactics(shipInstance: ShipInstance) {
 
 function moveShipBySpeed(shipInstance: ShipInstance, timeDelta: number) {
   // move the ship by its speed along its orientation vector
+  const speed = shipInstance.speed * timeDelta * playerShipRelativeSpeedFudgeFactor
+  const transform = vec3.multiply(vec3.create(), shipInstance.noseOrientation, [speed, speed, speed])
+  shipInstance.position = vec3.add(vec3.create(), shipInstance.position, transform)
 }
 
 function applyAcceleration(shipInstance: ShipInstance, timeDelta: number) {
