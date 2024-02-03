@@ -9,12 +9,12 @@ import { equipment, equipmentForTechLevel } from "../../model/equipment"
 import { Player, PlayerEquipment } from "../../model/player"
 
 function calculateFuelPrice(player: Player) {
-  return ((player.ship.maxFuel - player.fuel) / player.ship.maxFuel) * 14.0
+  return ((player.blueprint.maxFuel - player.fuel) / player.blueprint.maxFuel) * 14.0
 }
 
 function buyFuel(player: Player) {
   player.cash -= calculateFuelPrice(player)
-  player.fuel = player.ship.maxFuel
+  player.fuel = player.blueprint.maxFuel
 }
 
 function buyMissile(player: Player) {

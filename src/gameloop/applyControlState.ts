@@ -137,13 +137,13 @@ function applyCursors(player: Player, timeDelta: number) {
 
 function applyAcceleration(player: Player, timeDelta: number) {
   if (player.controlState.accelerate) {
-    player.speed += player.ship.speedAcceleration * timeDelta
-    if (player.speed > player.ship.maxSpeed) {
-      player.speed = player.ship.maxSpeed
+    player.speed += player.blueprint.speedAcceleration * timeDelta
+    if (player.speed > player.blueprint.maxSpeed) {
+      player.speed = player.blueprint.maxSpeed
     }
   }
   if (player.controlState.decelerate) {
-    player.speed -= player.ship.speedAcceleration * timeDelta
+    player.speed -= player.blueprint.speedAcceleration * timeDelta
     if (player.speed < 0.0) {
       player.speed = 0.0
     }
@@ -155,13 +155,13 @@ function applyRoll(player: Player, timeDelta: number) {
     if (!player.previousControlState.rollRight && player.roll < 0) {
       player.roll = 0
     } else {
-      player.roll += player.ship.rollAcceleration * timeDelta
-      if (player.roll > player.ship.maxRollSpeed) {
-        player.roll = player.ship.maxRollSpeed
+      player.roll += player.blueprint.rollAcceleration * timeDelta
+      if (player.roll > player.blueprint.maxRollSpeed) {
+        player.roll = player.blueprint.maxRollSpeed
       }
     }
   } else if (player.roll > 0 && !player.disableDamping) {
-    player.roll -= player.ship.rollDeceleration * timeDelta
+    player.roll -= player.blueprint.rollDeceleration * timeDelta
     if (player.roll < 0) {
       player.roll = 0
     }
@@ -171,13 +171,13 @@ function applyRoll(player: Player, timeDelta: number) {
     if (!player.previousControlState.rollLeft && player.roll > 0) {
       player.roll = 0
     } else {
-      player.roll -= player.ship.rollAcceleration * timeDelta
-      if (player.roll < -player.ship.maxRollSpeed) {
-        player.roll = -player.ship.maxRollSpeed
+      player.roll -= player.blueprint.rollAcceleration * timeDelta
+      if (player.roll < -player.blueprint.maxRollSpeed) {
+        player.roll = -player.blueprint.maxRollSpeed
       }
     }
   } else if (player.roll < 0 && !player.disableDamping) {
-    player.roll += player.ship.rollDeceleration * timeDelta
+    player.roll += player.blueprint.rollDeceleration * timeDelta
     if (player.roll > 0) {
       player.roll = 0
     }
@@ -189,13 +189,13 @@ function applyPitch(player: Player, timeDelta: number) {
     if (!player.previousControlState.pitchDown && player.pitch < 0) {
       player.pitch = 0
     } else {
-      player.pitch += player.ship.pitchAcceleration * timeDelta
-      if (player.pitch > player.ship.maxPitchSpeed) {
-        player.pitch = player.ship.maxPitchSpeed
+      player.pitch += player.blueprint.pitchAcceleration * timeDelta
+      if (player.pitch > player.blueprint.maxPitchSpeed) {
+        player.pitch = player.blueprint.maxPitchSpeed
       }
     }
   } else if (player.pitch > 0 && !player.disableDamping) {
-    player.pitch -= player.ship.pitchDeceleration * timeDelta
+    player.pitch -= player.blueprint.pitchDeceleration * timeDelta
     if (player.pitch < 0) {
       player.pitch = 0
     }
@@ -205,13 +205,13 @@ function applyPitch(player: Player, timeDelta: number) {
     if (!player.previousControlState.pitchUp && player.pitch > 0) {
       player.pitch = 0
     } else {
-      player.pitch -= player.ship.pitchAcceleration * timeDelta
-      if (player.pitch < -player.ship.maxPitchSpeed) {
-        player.pitch = -player.ship.maxPitchSpeed
+      player.pitch -= player.blueprint.pitchAcceleration * timeDelta
+      if (player.pitch < -player.blueprint.maxPitchSpeed) {
+        player.pitch = -player.blueprint.maxPitchSpeed
       }
     }
   } else if (player.pitch < 0 && !player.disableDamping) {
-    player.pitch += player.ship.pitchDeceleration * timeDelta
+    player.pitch += player.blueprint.pitchDeceleration * timeDelta
     if (player.pitch > 0) {
       player.pitch = 0
     }

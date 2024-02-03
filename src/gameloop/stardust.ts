@@ -28,7 +28,7 @@ export function updateStardust(game: Game, timeDelta: number) {
   game.localBubble.stardust = game.localBubble.stardust.map((sd) => {
     const z = sd[2]
     const playerSpeed =
-      Math.max(game.player.speed / game.player.ship.maxSpeed, 0.02) *
+      Math.max(game.player.speed / game.player.blueprint.maxSpeed, 0.02) *
       (game.player.isJumping ? stardustJumpSpeedMultiplier : 1)
     const speed = ((1 - z) * distancePerSecondAtBack * 10 + distancePerSecondAtBack) * timeDelta * playerSpeed
     let newZ = sd[2] - speed

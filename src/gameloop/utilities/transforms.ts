@@ -80,13 +80,13 @@ export function rotateVectorByOrientation(
 
 export function calculatePlayerVelocity(player: Player, timeDelta: number) {
   const velocity = player.isJumping
-    ? player.ship.maxSpeed * timeDelta * playerShipRelativeSpeedFudgeFactor * jumpSpeedMultiplier
+    ? player.blueprint.maxSpeed * timeDelta * playerShipRelativeSpeedFudgeFactor * jumpSpeedMultiplier
     : player.speed * timeDelta * playerShipRelativeSpeedFudgeFactor
   return vec3.fromValues(0, 0, velocity)
 }
 
 export function calculateSpaceStationRotationSpeed(player: Player) {
-  return -player.ship.maxRollSpeed / 4 // if we start allowing ships to be bought we need to base this on the Cobra
+  return -player.blueprint.maxRollSpeed / 4 // if we start allowing ships to be bought we need to base this on the Cobra
 }
 
 export function calculateSpaceStationPlanetDistance(game: Game) {

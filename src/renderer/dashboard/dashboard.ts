@@ -91,18 +91,18 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
   const topOffset = 4
 
   const standardBarColor = vec4.fromValues(1.0, 0.0, 1.0, 1.0)
-  drawBar(true, 0, game.player.forwardShield, game.player.ship.maxForwardShield, standardBarColor)
+  drawBar(true, 0, game.player.forwardShield, game.player.blueprint.maxForwardShield, standardBarColor)
   draw2d.text.drawAtSize("FS", [tl, topOffset], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
-  drawBar(true, 1, game.player.aftShield, game.player.ship.maxAftShield, standardBarColor)
+  drawBar(true, 1, game.player.aftShield, game.player.blueprint.maxAftShield, standardBarColor)
   draw2d.text.drawAtSize("AS", [tl, topOffset + barHeight], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
-  drawBar(true, 2, game.player.fuel, game.player.ship.maxFuel, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
+  drawBar(true, 2, game.player.fuel, game.player.blueprint.maxFuel, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
   draw2d.text.drawAtSize("FV", [tl, topOffset + barHeight * 2], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawBar(
     true,
     3,
     game.player.cabinTemperature,
-    game.player.ship.maxCabinTemperature,
-    game.player.cabinTemperature / game.player.ship.maxCabinTemperature > 0.8
+    game.player.blueprint.maxCabinTemperature,
+    game.player.cabinTemperature / game.player.blueprint.maxCabinTemperature > 0.8
       ? vec4.fromValues(1, 0, 0, 1)
       : vec4.fromValues(1, 1, 1, 1),
   )
@@ -111,33 +111,35 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
     true,
     4,
     game.player.laserTemperature,
-    game.player.ship.maxLaserTemperature,
-    game.player.laserTemperature / game.player.ship.maxLaserTemperature > 0.8
+    game.player.blueprint.maxLaserTemperature,
+    game.player.laserTemperature / game.player.blueprint.maxLaserTemperature > 0.8
       ? vec4.fromValues(1, 0, 0, 1)
       : vec4.fromValues(1, 1, 1, 1),
   )
   draw2d.text.drawAtSize("LT", [tl, topOffset + barHeight * 4], cw, ch, 0, standardBarColor)
-  drawBar(true, 5, game.player.altitude, game.player.ship.maxAltitude, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
+  drawBar(true, 5, game.player.altitude, game.player.blueprint.maxAltitude, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
   draw2d.text.drawAtSize("AL", [tl, topOffset + barHeight * 5], cw, ch, 0, standardBarColor)
   drawBar(
     false,
     0,
     game.player.speed,
-    game.player.ship.maxSpeed,
-    game.player.speed / game.player.ship.maxSpeed > 0.8 ? vec4.fromValues(1, 0, 0, 1) : vec4.fromValues(1, 1, 1, 1),
+    game.player.blueprint.maxSpeed,
+    game.player.speed / game.player.blueprint.maxSpeed > 0.8
+      ? vec4.fromValues(1, 0, 0, 1)
+      : vec4.fromValues(1, 1, 1, 1),
   )
   draw2d.text.drawAtSize("SP", [tr, topOffset], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
-  drawPositionalBar(false, 1, game.player.roll, game.player.ship.maxRollSpeed)
+  drawPositionalBar(false, 1, game.player.roll, game.player.blueprint.maxRollSpeed)
   draw2d.text.drawAtSize("RL", [tr, topOffset + barHeight], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
-  drawPositionalBar(false, 2, -game.player.pitch, game.player.ship.maxPitchSpeed)
+  drawPositionalBar(false, 2, -game.player.pitch, game.player.blueprint.maxPitchSpeed)
   draw2d.text.drawAtSize("DC", [tr, topOffset + barHeight * 2], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
-  drawBar(false, 3, game.player.energyBankLevel[0], game.player.ship.maxEnergyBankLevel[0], standardBarColor)
+  drawBar(false, 3, game.player.energyBankLevel[0], game.player.blueprint.maxEnergyBankLevel[0], standardBarColor)
   draw2d.text.drawAtSize("1", [tr + cw / 2, topOffset + barHeight * 3], cw, ch, 0, standardBarColor)
-  drawBar(false, 4, game.player.energyBankLevel[1], game.player.ship.maxEnergyBankLevel[1], standardBarColor)
+  drawBar(false, 4, game.player.energyBankLevel[1], game.player.blueprint.maxEnergyBankLevel[1], standardBarColor)
   draw2d.text.drawAtSize("2", [tr + cw / 2, topOffset + barHeight * 4], cw, ch, 0, standardBarColor)
-  drawBar(false, 5, game.player.energyBankLevel[2], game.player.ship.maxEnergyBankLevel[2], standardBarColor)
+  drawBar(false, 5, game.player.energyBankLevel[2], game.player.blueprint.maxEnergyBankLevel[2], standardBarColor)
   draw2d.text.drawAtSize("3", [tr + cw / 2, topOffset + barHeight * 5], cw, ch, 0, standardBarColor)
-  drawBar(false, 6, game.player.energyBankLevel[3], game.player.ship.maxEnergyBankLevel[3], standardBarColor)
+  drawBar(false, 6, game.player.energyBankLevel[3], game.player.blueprint.maxEnergyBankLevel[3], standardBarColor)
   draw2d.text.drawAtSize("4", [tr + cw / 2, topOffset + barHeight * 6], cw, ch, 0, standardBarColor)
 
   const compassCenter = drawCompass(width, sidePanelWidth, draw2d, game)

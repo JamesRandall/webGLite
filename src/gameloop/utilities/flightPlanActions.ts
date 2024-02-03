@@ -33,12 +33,12 @@ export function rollToPoint(game: Game, context: vec3, timeDelta: number) {
     pitchAngle = 0
   } else if (pitchDotProduct < 0) {
     pitchAngle = facingTowards
-      ? Math.max(-Math.abs(remainingPitchAngle / timeDelta), -game.player.ship.maxPitchSpeed)
-      : -game.player.ship.maxPitchSpeed
+      ? Math.max(-Math.abs(remainingPitchAngle / timeDelta), -game.player.blueprint.maxPitchSpeed)
+      : -game.player.blueprint.maxPitchSpeed
   } else {
     pitchAngle = facingTowards
-      ? Math.min(Math.abs(remainingPitchAngle / timeDelta), game.player.ship.maxPitchSpeed)
-      : game.player.ship.maxPitchSpeed
+      ? Math.min(Math.abs(remainingPitchAngle / timeDelta), game.player.blueprint.maxPitchSpeed)
+      : game.player.blueprint.maxPitchSpeed
   }
 
   const rollDotProduct = vec3.dot([1, 0, 0], normalisedTarget)
@@ -48,7 +48,7 @@ export function rollToPoint(game: Game, context: vec3, timeDelta: number) {
   if (absRollDotProduct < tolerance) {
     rollAngle = 0
   } else {
-    rollAngle = Math.min(rollAngleRemainingRadians / timeDelta, game.player.ship.maxRollSpeed)
+    rollAngle = Math.min(rollAngleRemainingRadians / timeDelta, game.player.blueprint.maxRollSpeed)
     rollAngle *= rollDirection
   }
   game.player.roll = rollAngle
@@ -60,7 +60,7 @@ export function moveToPoint(game: Game, position: vec3, timeDelta: number) {
   // it is not very accurate. We need to come back and make this refine its trajectory as it goes
   const distance = vec3.length(position)
   if (distance > 2) {
-    game.player.speed = distance < 5 ? game.player.ship.maxSpeed / 4 : game.player.ship.maxSpeed
+    game.player.speed = distance < 5 ? game.player.blueprint.maxSpeed / 4 : game.player.blueprint.maxSpeed
     // This resolves the above inaccuracy but results in very "rolling" approach. I've not had it fail
     // but it looks weird to the player
     //rollToPoint(game, position, timeDelta)
@@ -121,12 +121,12 @@ export function pitchToPoint(game: Game, context: vec3, timeDelta: number) {
     pitchAngle = 0
   } else if (pitchDotProduct < 0) {
     pitchAngle = facingTowards
-      ? Math.max(-Math.abs(remainingPitchAngle / timeDelta), -game.player.ship.maxPitchSpeed)
-      : -game.player.ship.maxPitchSpeed
+      ? Math.max(-Math.abs(remainingPitchAngle / timeDelta), -game.player.blueprint.maxPitchSpeed)
+      : -game.player.blueprint.maxPitchSpeed
   } else {
     pitchAngle = facingTowards
-      ? Math.min(Math.abs(remainingPitchAngle / timeDelta), game.player.ship.maxPitchSpeed)
-      : game.player.ship.maxPitchSpeed
+      ? Math.min(Math.abs(remainingPitchAngle / timeDelta), game.player.blueprint.maxPitchSpeed)
+      : game.player.blueprint.maxPitchSpeed
   }
 
   game.player.pitch = pitchAngle
@@ -137,29 +137,29 @@ export function pitchToPoint(game: Game, context: vec3, timeDelta: number) {
 
 export function allStop(game: Game, _: vec3, timeDelta: number) {
   if (game.player.speed > 0) {
-    game.player.speed -= game.player.ship.speedAcceleration * timeDelta
+    game.player.speed -= game.player.blueprint.speedAcceleration * timeDelta
     if (game.player.speed <= 0) {
       game.player.speed = 0
     }
   }
   if (game.player.roll > 0) {
-    game.player.roll -= game.player.ship.rollAcceleration * timeDelta
+    game.player.roll -= game.player.blueprint.rollAcceleration * timeDelta
     if (game.player.roll < 0) {
       game.player.roll = 0
     }
   } else if (game.player.roll < 0) {
-    game.player.roll += game.player.ship.rollAcceleration * timeDelta
+    game.player.roll += game.player.blueprint.rollAcceleration * timeDelta
     if (game.player.roll > 0) {
       game.player.roll = 0
     }
   }
   if (game.player.pitch > 0) {
-    game.player.pitch -= game.player.ship.pitchAcceleration * timeDelta
+    game.player.pitch -= game.player.blueprint.pitchAcceleration * timeDelta
     if (game.player.pitch < 0) {
       game.player.pitch = 0
     }
   } else if (game.player.pitch < 0) {
-    game.player.pitch += game.player.ship.pitchAcceleration * timeDelta
+    game.player.pitch += game.player.blueprint.pitchAcceleration * timeDelta
     if (game.player.pitch > 0) {
       game.player.pitch = 0
     }
@@ -176,9 +176,9 @@ export function immediateAllStop(game: Game, _: vec3, timeDelta: number) {
 }
 
 export function accelerateToOneThird(game: Game, _: vec3, timeDelta: number) {
-  const oneThirdSpeed = game.player.ship.maxSpeed / 3
+  const oneThirdSpeed = game.player.blueprint.maxSpeed / 3
   if (game.player.speed < oneThirdSpeed) {
-    game.player.speed += game.player.ship.speedAcceleration * timeDelta
+    game.player.speed += game.player.blueprint.speedAcceleration * timeDelta
   }
   if (game.player.speed >= oneThirdSpeed) {
     game.player.speed = oneThirdSpeed

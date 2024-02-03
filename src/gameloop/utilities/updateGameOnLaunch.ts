@@ -93,6 +93,6 @@ function positionSun(game: Game) {
 
 function launchPlayer(player: Player) {
   player.isDocked = false
-  player.speed = player.ship.maxSpeed * 0.25
+  player.speed = player.blueprint.maxSpeed * 0.25
   player.roll = calculateSpaceStationRotationSpeed(player)
 }

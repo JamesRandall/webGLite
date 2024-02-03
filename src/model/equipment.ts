@@ -2,7 +2,7 @@
 import { Player } from "./player"
 
 export const equipment = [
-  { name: "Fuel", price: 0, canBuy: (player: Player) => player.fuel < player.ship.maxFuel },
+  { name: "Fuel", price: 0, canBuy: (player: Player) => player.fuel < player.blueprint.maxFuel },
   { name: "Missile", price: 30, canBuy: (player: Player) => player.missiles.currentNumber < 4 },
   { name: "Large Cargo Bay", price: 400, canBuy: (player: Player) => !player.equipment.largeCargoBay },
   { name: "E.C.M. System", price: 600, canBuy: (player: Player) => !player.equipment.ecmSystem },

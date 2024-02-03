@@ -53,7 +53,7 @@ export interface PlayerEquipment {
 export interface Player {
   previousControlState: ControlState
   controlState: ControlState
-  ship: ShipBlueprint
+  blueprint: ShipBlueprint
   pitch: number
   roll: number
   speed: number
@@ -90,7 +90,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
   return {
     previousControlState: getEmptyControlState(),
     controlState: getEmptyControlState(),
-    ship: cobra,
+    blueprint: cobra,
     pitch: 0.0, // radians per second
     roll: 0.0, // radians per second
     speed: 0.0,

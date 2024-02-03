@@ -19,8 +19,6 @@ export enum ShipRoleEnum {
 export interface ShipInstance extends PositionedObject {
   role: ShipRoleEnum
   blueprint: ShipBlueprint
-  totalRoll: number
-  totalPitch: number
   speed: number
   rendering: {
     shininess: number
