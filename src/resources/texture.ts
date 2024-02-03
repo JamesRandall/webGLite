@@ -1,5 +1,5 @@
 export function loadTexture(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   url: string,
   smoothScaling: boolean = false,
 ): Promise<WebGLTexture> {

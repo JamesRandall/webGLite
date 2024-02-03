@@ -6,7 +6,7 @@ import { Resources } from "../../resources/resources"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { planetScaleFactor } from "../../constants"
 
-function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
+function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.planet)
   if (!shaderProgram) {
     return null
@@ -30,7 +30,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
   }
 }
 
-export function createSphericalPlanetRenderer(gl: WebGLRenderingContext, resources: Resources) {
+export function createSphericalPlanetRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const programInfo = initShaderProgram(gl, resources)!
 
   const sphere = createSphere(gl, {

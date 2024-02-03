@@ -15,8 +15,9 @@ import { dimensions, worldSize } from "../constants"
 import { generateMarketItems } from "../proceduralGeneration/marketItems"
 import { bindMouse } from "../controls/bindMouse"
 import { createRootRenderer, RenderEffect } from "../renderer/rootRenderer"
+import { randomiseSpawnDelta } from "../utilities"
 
-export function createGameScene(resources: Resources, gl: WebGLRenderingContext, renderEffect: RenderEffect) {
+export function createGameScene(resources: Resources, gl: WebGL2RenderingContext, renderEffect: RenderEffect) {
   //const clipSpaceRadius = 2048
   const clipSpaceRadius = worldSize
 
@@ -84,6 +85,7 @@ export function createGameScene(resources: Resources, gl: WebGLRenderingContext,
     diagnostics: [],
     renderEffect: renderEffect,
     isFPSEnabled: false,
+    timeUntilNextSpawnChance: randomiseSpawnDelta(),
   }
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
 

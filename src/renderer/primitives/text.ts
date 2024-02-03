@@ -9,7 +9,7 @@ import { mat4, quat, vec2, vec3, vec4 } from "gl-matrix"
 import { setCommonAttributes, setCommonAttributes2D, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
-function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
+function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.text)
   if (!shaderProgram) {
     return null
@@ -33,7 +33,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
 }
 
 export function createTextRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   width: number,
   height: number,
   flippedY: boolean,

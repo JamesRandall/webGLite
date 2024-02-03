@@ -3,7 +3,7 @@ import { mat4, quat, vec2, vec4 } from "gl-matrix"
 import { setCommonAttributes2D, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
-function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
+function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.uColor)
   if (!shaderProgram) {
     return null
@@ -22,7 +22,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
   }
 }
 
-function createVertexBuffer(gl: WebGLRenderingContext, points: number) {
+function createVertexBuffer(gl: WebGL2RenderingContext, points: number) {
   const vertexBuffer = gl.createBuffer()
   let vertices: number[] = []
   for (let angle = 0; angle <= 360.0; angle += 360.0 / points) {
@@ -40,7 +40,7 @@ function createVertexBuffer(gl: WebGLRenderingContext, points: number) {
 }
 
 export function createPolygonRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   width: number,
   height: number,
   points: number,

@@ -23,7 +23,7 @@ interface AttributeLocations {
 }
 
 export function setCommonAttributes(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   buffers: AttributeBuffers,
   programInfo: {
     attribLocations: AttributeLocations
@@ -33,7 +33,7 @@ export function setCommonAttributes(
 }
 
 export function setCommonAttributes2D(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   buffers: AttributeBuffers,
   programInfo: {
     attribLocations: AttributeLocations
@@ -43,7 +43,7 @@ export function setCommonAttributes2D(
 }
 
 function internalSetCommonAttributes(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   buffers: AttributeBuffers,
   programInfo: {
     attribLocations: AttributeLocations
@@ -65,7 +65,7 @@ function internalSetCommonAttributes(
 }
 
 export function setViewUniformLocations(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   programInfo: {
     uniformLocations: {
       projectionMatrix?: WebGLUniformLocation
@@ -133,7 +133,7 @@ export function setViewUniformLocations(
   }
 }
 
-function setNormalAttribute(gl: WebGLRenderingContext, normalsBuffer: WebGLBuffer, vertexNormal: number) {
+function setNormalAttribute(gl: WebGL2RenderingContext, normalsBuffer: WebGLBuffer, vertexNormal: number) {
   const numComponents = 3
   const type = gl.FLOAT
   const normalize = false
@@ -144,7 +144,7 @@ function setNormalAttribute(gl: WebGLRenderingContext, normalsBuffer: WebGLBuffe
   gl.enableVertexAttribArray(vertexNormal)
 }
 
-function setColorAttribute(gl: WebGLRenderingContext, colorsBuffer: WebGLBuffer, vertexColor: number) {
+function setColorAttribute(gl: WebGL2RenderingContext, colorsBuffer: WebGLBuffer, vertexColor: number) {
   const numComponents = 4
   const type = gl.FLOAT
   const normalize = false
@@ -156,7 +156,7 @@ function setColorAttribute(gl: WebGLRenderingContext, colorsBuffer: WebGLBuffer,
 }
 
 function setPositionAttribute(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   vertexBuffer: WebGLBuffer,
   vertexPosition: number,
   numComponents: number,
@@ -172,7 +172,7 @@ function setPositionAttribute(
 }
 
 function setTextureAttribute(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   textureCoordsBuffer: WebGLBuffer,
   textureCoordsPosition: number,
 ) {
@@ -186,7 +186,7 @@ function setTextureAttribute(
   gl.enableVertexAttribArray(textureCoordsPosition)
 }
 
-function getGLTexture(gl: WebGLRenderingContext, index: number) {
+function getGLTexture(gl: WebGL2RenderingContext, index: number) {
   return index == 0
     ? gl.TEXTURE0
     : index == 1

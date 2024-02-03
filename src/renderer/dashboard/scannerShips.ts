@@ -40,7 +40,7 @@ interface ProgramInfo {
   }
 }
 
-function initShaderProgram(gl: WebGLRenderingContext): ProgramInfo | null {
+function initShaderProgram(gl: WebGL2RenderingContext): ProgramInfo | null {
   const shaderProgram = compileShaderProgram(gl, vsSource, fsSource)
   if (!shaderProgram) {
     return null
@@ -59,7 +59,7 @@ function initShaderProgram(gl: WebGLRenderingContext): ProgramInfo | null {
   }
 }
 
-function setPositionAttribute(gl: WebGLRenderingContext, buffers: Model, programInfo: ProgramInfo) {
+function setPositionAttribute(gl: WebGL2RenderingContext, buffers: Model, programInfo: ProgramInfo) {
   const numComponents = 3 // pull out 2 values per iteration
   const type = gl.FLOAT // the data in the buffer is 32bit floats
   const normalize = false // don't normalize
@@ -71,7 +71,7 @@ function setPositionAttribute(gl: WebGLRenderingContext, buffers: Model, program
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition)
 }
 
-export function createScannerShipRenderer(gl: WebGLRenderingContext, projectionMatrix: mat4, scale: vec3) {
+export function createScannerShipRenderer(gl: WebGL2RenderingContext, projectionMatrix: mat4, scale: vec3) {
   // TODO: we need to position this on the bottom middle i.e (-1.0,2.0 to 1.0,0.0)
   const verticalLine = [0.5, 0.0, 0.0, 1.5, 0.0, 0.0, 1.5, 1.0, 0.0, 0.5, 1.0, 0.0]
   const lineCap = [-0.5, 0.0, 0.0, 1.5, 0.0, 0.0, 1.5, 1, 0.0, -0.5, 1, 0.0]

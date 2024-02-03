@@ -19,7 +19,7 @@ interface ProgramInfo {
   }
 }
 
-function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
+function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.stardust)
   if (!shaderProgram) {
     return null
@@ -38,7 +38,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
   } as ProgramInfo
 }
 
-function setPositionAttribute(gl: WebGLRenderingContext, buffer: WebGLBuffer, programInfo: ProgramInfo) {
+function setPositionAttribute(gl: WebGL2RenderingContext, buffer: WebGLBuffer, programInfo: ProgramInfo) {
   const numComponents = 3 // pull out 2 values per iteration
   const type = gl.FLOAT // the data in the buffer is 32bit floats
   const normalize = false // don't normalize
@@ -50,7 +50,7 @@ function setPositionAttribute(gl: WebGLRenderingContext, buffer: WebGLBuffer, pr
   gl.enableVertexAttribArray(programInfo.attribLocations.position)
 }
 
-export function createStardustRenderer(gl: WebGLRenderingContext, resources: Resources) {
+export function createStardustRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const programInfo = initShaderProgram(gl, resources)!
 
   return function (game: Game) {

@@ -86,6 +86,20 @@ https://www.solarsystemscope.com/textures/
 
 Super cool and, handily, licensed under the CC Attribution license.
 
+## Ship spawning (trader, pirate etc.)
+
+The game looks to spawn a ship every 256 times through its main loop (and then applies some random chance).
+
+From videoing and observing the game it appears to be running on average between 10 and 20 fps depending on how much is on screen.
+
+So 256 times through the loop will take around 17 seconds (256/15). We're starting by using that as the basis for spawning in this version.
+
+This is set, and changeable, in the constants file.
+
+The spawning is covered in the main game loop parts 1 to 6:
+
+https://www.bbcelite.com/master/main/subroutine/main_game_loop_part_1_of_6.html
+
 ## License
 
 Obviously the original game, code, ship models, names, etc. is copyright the original authors and copyright owners.

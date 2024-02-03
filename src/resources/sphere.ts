@@ -91,7 +91,7 @@ function createSphereVertices(radius: number, subdivisionsAxis: number, subdivis
   }
 }
 
-function createBuffers(gl: WebGLRenderingContext, geometry: ModelGeometry): Model {
+function createBuffers(gl: WebGL2RenderingContext, geometry: ModelGeometry): Model {
   const positionBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.positions.items), gl.STATIC_DRAW)
@@ -123,7 +123,7 @@ function createBuffers(gl: WebGLRenderingContext, geometry: ModelGeometry): Mode
 }
 
 export function createSphere(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   options: {
     radius: number
     subdivisionsAxis: number

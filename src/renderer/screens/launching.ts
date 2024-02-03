@@ -7,7 +7,7 @@ import { vec2, vec4 } from "gl-matrix"
 import { Resources } from "../../resources/resources"
 
 export function createLaunchingRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   width: number,
   height: number,
   resources: Resources,

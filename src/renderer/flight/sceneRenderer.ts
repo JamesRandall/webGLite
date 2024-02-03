@@ -18,7 +18,7 @@ import { createBuyEquipmentRenderer } from "../screens/buyEquipment"
 import { createLongRangeChartRenderer } from "../screens/galaxyChart"
 import { createInventoryRenderer } from "../screens/inventory"
 
-export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resources) {
+export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
   const viewportHeight = dimensions.mainViewHeight
 
@@ -54,13 +54,11 @@ export function createSceneRenderer(gl: WebGLRenderingContext, resources: Resour
 
     switch (game.currentScene) {
       case SceneEnum.Front:
-        gl.enable(gl.CULL_FACE)
         gl.enable(gl.DEPTH_TEST)
         shipRenderer(viewProjectionMatrix, game.localBubble)
         sunRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
         planetRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
         stardustRenderer(game)
-        gl.disable(gl.CULL_FACE)
         gl.disable(gl.DEPTH_TEST)
         break
 

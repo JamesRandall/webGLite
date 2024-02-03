@@ -17,7 +17,7 @@ interface ProgramInfo {
   }
 }
 
-function initShaderProgram(gl: WebGLRenderingContext, resources: Resources): ProgramInfo | null {
+function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources): ProgramInfo | null {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.simpleTexture)
   if (!shaderProgram) {
     return null
@@ -38,7 +38,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources): Pro
 }
 
 export function createScannerBackgroundRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   resources: Resources,
   projectionMatrix: mat4,
   scale: vec3,

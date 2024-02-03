@@ -145,7 +145,7 @@ function extractFromObj(
   })
 }
 
-export async function loadModel(gl: WebGLRenderingContext, path: string, scale: number = 1.0) {
+export async function loadModel(gl: WebGL2RenderingContext, path: string, scale: number = 1.0) {
   const response = await fetch(path)
   const text = await response.text()
   const lines = text.split("\n")
@@ -245,7 +245,7 @@ export async function loadModel(gl: WebGLRenderingContext, path: string, scale: 
 }
 
 export function createSquareModel(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   color: vec4,
   customPositions: number[] | null = null,
   flippedTexCoords: boolean = false,
@@ -306,7 +306,7 @@ export function createSquareModel(
 
 /*
 export function createSquareModelWithTexture(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   texture: string,
   flipY: boolean = true,
   topLeftBased = false,
@@ -368,7 +368,7 @@ export function createSquareModelWithTexture(
 }*/
 
 export function createSquareModelWithLoadedTexture(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   texture: WebGLTexture,
   flipY: boolean = true,
   topLeftBased = false,

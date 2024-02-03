@@ -16,10 +16,10 @@ import { createGameScene } from "./gameScene"
 import { generateMarketItems } from "../proceduralGeneration/marketItems"
 import { createRootRenderer, nextEffect, previousEffect, RenderEffect } from "../renderer/rootRenderer"
 
-const startingZ = -scannerRadialWorldRange[2] * 2
+const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
 
-export function createPregameScene(resources: Resources, gl: WebGLRenderingContext) {
+export function createPregameScene(resources: Resources, gl: WebGL2RenderingContext) {
   const clipSpaceRadius = Math.abs(startingZ)
   const startingShip = 0
 
@@ -79,6 +79,7 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
     diagnostics: [],
     renderEffect: RenderEffect.None,
     isFPSEnabled: false,
+    timeUntilNextSpawnChance: 0,
   }
 
   const sceneRenderer = createPregameSceneRenderer(gl, resources)
@@ -87,7 +88,7 @@ export function createPregameScene(resources: Resources, gl: WebGLRenderingConte
   return createPregameLoop(game, gl, resources, rootRenderer)
 }
 
-function createPregameLoop(game: Game, gl: WebGLRenderingContext, resources: Resources, renderer: RendererEffectFunc) {
+function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Resources, renderer: RendererEffectFunc) {
   const timeToStay = 6.0
   let then = 0
   let deltaTime = 0

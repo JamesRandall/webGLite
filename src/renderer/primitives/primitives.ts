@@ -21,7 +21,7 @@ export interface Primitives {
 }
 
 export function createPrimitiveRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   flippedY: boolean,
   resources: Resources,
   width: number,

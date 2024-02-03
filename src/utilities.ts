@@ -1,4 +1,5 @@
 import { vec3 } from "gl-matrix"
+import { averageSpawnTimeInSecond } from "./constants"
 
 export function getConstraints(vertices: vec3[]) {
   return vertices.reduce(
@@ -32,6 +33,10 @@ export function createBoundingBox(constraints: { min: vec3; max: vec3 }) {
     vec3.fromValues(size[0] / 2, size[1] / 2, size[2] / 2),
     vec3.fromValues(-size[0] / 2, size[1] / 2, size[2] / 2),
   ]
+}
+
+export function randomiseSpawnDelta() {
+  return averageSpawnTimeInSecond + (Math.random() * 3 - 1)
 }
 
 export function getSizeFromConstraints(constraints: { min: vec3; max: vec3 }) {

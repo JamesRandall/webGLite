@@ -8,14 +8,14 @@ let then = 0;
 let cubeRotation = 0.0
 let deltaTime = 0
 
-export async function setupScene(gl: WebGLRenderingContext, programInfo: ProgramInfo) {
+export async function setupScene(gl: WebGL2RenderingContext, programInfo: ProgramInfo) {
     const buffers = await loadModel(gl, "ships/cobramk3.obj",0.2)
     const shipDistance = 40.0
 
     return (now:number) => drawScene(gl, programInfo, buffers, shipDistance,now)
 }
 
-function drawScene(gl:WebGLRenderingContext, programInfo:ProgramInfo, buffers:any, distance:number, now: number) {
+function drawScene(gl:WebGL2RenderingContext, programInfo:ProgramInfo, buffers:any, distance:number, now: number) {
     now *= 0.001; // convert to seconds
     deltaTime = now - then;
     then = now;

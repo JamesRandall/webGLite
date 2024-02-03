@@ -1,4 +1,4 @@
-function initColorBuffer(gl: WebGLRenderingContext) {
+function initColorBuffer(gl: WebGL2RenderingContext) {
   const faceColors = [
     [1.0, 1.0, 1.0, 1.0], // Front face: white
     [1.0, 0.0, 0.0, 1.0], // Back face: red
@@ -25,7 +25,7 @@ function initColorBuffer(gl: WebGLRenderingContext) {
   return colorBuffer
 }
 
-function initIndexBuffer(gl: WebGLRenderingContext) {
+function initIndexBuffer(gl: WebGL2RenderingContext) {
   const indexBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
 
@@ -79,7 +79,7 @@ function initIndexBuffer(gl: WebGLRenderingContext) {
   return indexBuffer
 }
 
-function initPositionBuffer(gl: WebGLRenderingContext) {
+function initPositionBuffer(gl: WebGL2RenderingContext) {
   // Create a buffer for the square's positions.
   const positionBuffer = gl.createBuffer()
 
@@ -116,7 +116,7 @@ function initPositionBuffer(gl: WebGLRenderingContext) {
   return positionBuffer
 }
 
-export function initBuffers(gl: WebGLRenderingContext) {
+export function initBuffers(gl: WebGL2RenderingContext) {
   const positionBuffer = initPositionBuffer(gl)
   const colorBuffer = initColorBuffer(gl)
   const indexBuffer = initIndexBuffer(gl)

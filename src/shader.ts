@@ -1,6 +1,6 @@
 import { ShaderSource } from "./resources/resources"
 
-export function loadShader(gl: WebGLRenderingContext, type: number, source: string) {
+export function loadShader(gl: WebGL2RenderingContext, type: number, source: string) {
   const shader = gl.createShader(type)!
   gl.shaderSource(shader, source)
   gl.compileShader(shader)
@@ -14,7 +14,7 @@ export function loadShader(gl: WebGLRenderingContext, type: number, source: stri
   return shader
 }
 
-export function compileShaderProgram(gl: WebGLRenderingContext, vsSource: string, fsSource: string) {
+export function compileShaderProgram(gl: WebGL2RenderingContext, vsSource: string, fsSource: string) {
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)!
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource)!
 
@@ -30,7 +30,7 @@ export function compileShaderProgram(gl: WebGLRenderingContext, vsSource: string
   return shaderProgram
 }
 
-export function compileShaderProgram2(gl: WebGLRenderingContext, source: ShaderSource) {
+export function compileShaderProgram2(gl: WebGL2RenderingContext, source: ShaderSource) {
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, source.vert)!
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, source.frag)!
 

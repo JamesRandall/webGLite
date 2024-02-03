@@ -41,7 +41,7 @@ export function previousEffect(currentEffect: RenderEffect) {
   return globalRenderEffects[index - 1]
 }
 
-function initShaderProgram(gl: WebGLRenderingContext, shaderSource: ShaderSource) {
+function initShaderProgram(gl: WebGL2RenderingContext, shaderSource: ShaderSource) {
   const shaderProgram = compileShaderProgram2(gl, shaderSource)
   if (!shaderProgram) {
     return null
@@ -65,7 +65,7 @@ function initShaderProgram(gl: WebGLRenderingContext, shaderSource: ShaderSource
 }
 
 function createRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   width: number,
   height: number,
   source: ShaderSource,
@@ -110,20 +110,20 @@ function createRenderer(
   }
 }
 
-function createFrameBuffer(gl: WebGLRenderingContext, width: number, height: number) {
+function createFrameBuffer(gl: WebGL2RenderingContext, width: number, height: number) {
   const frameBufferTexture = createFrameBufferTexture(gl, width, height)!
   const frameBuffer = gl.createFramebuffer()
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameBufferTexture, 0)
   const depthBuffer = gl.createRenderbuffer()
   gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer)
-  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
+  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT32F, width, height)
   gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer)
   return [frameBuffer!, frameBufferTexture!]
 }
 
 export function createRootRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   resources: Resources,
   sceneRenderer: RendererFunc,
   dashboardRenderer: RendererFunc,

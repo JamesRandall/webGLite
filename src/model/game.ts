@@ -47,4 +47,5 @@ export interface Game {
   diagnostics: string[]
   renderEffect: RenderEffect
   isFPSEnabled: boolean
+  timeUntilNextSpawnChance: number
 }

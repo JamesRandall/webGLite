@@ -12,6 +12,8 @@ export enum ShipRoleEnum {
   BountyHunter,
   Thargoid,
   Station,
+  Asteroid,
+  Cargo,
 }
 
 export interface ShipInstance extends PositionedObject {

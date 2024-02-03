@@ -5,7 +5,7 @@ import { createProjectionMatrix, drawFrame, setupGl } from "../common"
 import { Resources } from "../../resources/resources"
 import { dimensions } from "../../constants"
 
-export function createPregameSceneRenderer(gl: WebGLRenderingContext, resources: Resources) {
+export function createPregameSceneRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const shipRenderer = createShipsRenderer(gl, resources, true)
   const draw2d = createPrimitiveRenderer(gl, false, resources, dimensions.width, dimensions.mainViewHeight)
 
@@ -18,10 +18,8 @@ export function createPregameSceneRenderer(gl: WebGLRenderingContext, resources:
 
     setupGl(gl)
     gl.enable(gl.DEPTH_TEST)
-    gl.enable(gl.CULL_FACE)
     shipRenderer(projectionMatrix, game.localBubble)
     gl.disable(gl.DEPTH_TEST)
-    gl.disable(gl.CULL_FACE)
     drawFrame(draw2d)
     draw2d.text.draw("---- webGLite ----", [10, 1])
     draw2d.text.draw("based on Elite", [12, 2.5])

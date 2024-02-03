@@ -4,7 +4,7 @@ import { mat4, quat, vec2 } from "gl-matrix"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
-function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
+function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.simpleTexture)
   if (!shaderProgram) {
     return null
@@ -25,7 +25,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
 }
 
 export function createTexturedRectRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   width: number,
   height: number,
   resources: Resources,

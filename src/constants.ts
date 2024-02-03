@@ -39,10 +39,33 @@ export const scannerRadialWorldRange = vec3.divide(vec3.create(), vec3.fromValue
 export const worldSize = 8388607 // max value of a signed 24-bit number
 export const dockingRollToleranceDegrees = 20
 export const planetScaleFactor = 0.75
+// every 256 times through the original game loop, based on an average frame rate of 15fps, will see how it feels
+export const averageSpawnTimeInSecond = 256.0 / 15.0
 
 export const dimensions = {
   width: 800,
   mainViewHeight: 560,
   dashboardHeight: 200,
   totalHeight: 760,
+}
+
+// measured in BBC Elite:
+//   1.6 seconds to react max roll speed
+//   9.5 seconds for roll to slow to zero
+//   3.5 seconds to complete 360 degrees of roll at max roll speed
+//   1 second to reach max pitch speed
+//   7 seconds for pitch to slow to zero
+//   10.6 seconds to complete 360 degrees of pitch at max pitch speed
+const maxRollSpeed = (2.0 * Math.PI) / 3.5
+const maxPitchSpeed = (2.0 * Math.PI) / 10
+const maxSpeed = 32.0
+export const shipMovementSpeeds = {
+  maxRollSpeed: maxRollSpeed,
+  rollAcceleration: maxRollSpeed / 2,
+  rollDeceleration: maxRollSpeed / 7.0,
+  maxPitchSpeed: maxPitchSpeed,
+  pitchAcceleration: maxPitchSpeed, // / 1.0
+  pitchDeceleration: maxPitchSpeed / 7.0,
+  maxSpeed: maxSpeed,
+  speedAcceleration: maxSpeed / 3.0,
 }

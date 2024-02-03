@@ -2,7 +2,7 @@ import { Primitives } from "./primitives/primitives"
 import { frameColor, frameWidth } from "../constants"
 import { mat4 } from "gl-matrix"
 
-export function setupGl(gl: WebGLRenderingContext) {
+export function setupGl(gl: WebGL2RenderingContext) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0)
   gl.clearDepth(1.0)
   gl.disable(gl.DEPTH_TEST)
@@ -22,7 +22,7 @@ export function drawFrame(draw2d: Primitives) {
 }
 
 export function bindBufferAndSetViewport(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   frameBuffer: WebGLFramebuffer | null,
   width: number,
   height: number,
@@ -33,7 +33,7 @@ export function bindBufferAndSetViewport(
   gl.viewport(x, y, width, height)
 }
 
-export function createFrameBufferTexture(gl: WebGLRenderingContext, width: number, height: number) {
+export function createFrameBufferTexture(gl: WebGL2RenderingContext, width: number, height: number) {
   const texture = gl.createTexture()
   gl.bindTexture(gl.TEXTURE_2D, texture)
 

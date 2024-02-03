@@ -172,7 +172,7 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
       applyControlState(game, resources, deltaTime)
 
       if (shouldRunFlightLoop(game)) {
-        flightLoop(game, deltaTime)
+        flightLoop(resources, game, deltaTime)
         applyCameraShake(game, deltaTime)
       }
       if (game.currentScene === SceneEnum.Launching) {

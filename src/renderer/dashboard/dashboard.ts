@@ -6,7 +6,7 @@ import { createScannerBackgroundRenderer } from "./scannerBackground"
 import { createScannerShipRenderer } from "./scannerShips"
 import { Resources } from "../../resources/resources"
 
-function setup(gl: WebGLRenderingContext) {
+function setup(gl: WebGL2RenderingContext) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0)
   gl.clearDepth(1.0)
   gl.enable(gl.DEPTH_TEST)
@@ -162,7 +162,7 @@ function drawFrame(draw2d: Primitives, width: number, height: number) {
 }
 
 export function createDashboardRenderer(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   resources: Resources,
   width: number,
   height: number,

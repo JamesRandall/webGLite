@@ -4,7 +4,7 @@ import { mat4, quat, vec2 } from "gl-matrix"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
-function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
+function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.sun)
   if (!shaderProgram) {
     return null
@@ -30,7 +30,7 @@ function initShaderProgram(gl: WebGLRenderingContext, resources: Resources) {
   }
 }
 
-export function createSunRenderer(gl: WebGLRenderingContext, resources: Resources) {
+export function createSunRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const programInfo = initShaderProgram(gl, resources)!
 
   let time = 0.0
@@ -73,13 +73,11 @@ export function createSunRenderer(gl: WebGLRenderingContext, resources: Resource
     gl.uniform2fv(programInfo.uniformLocations.mouse, mouse)
     gl.uniform2fv(programInfo.uniformLocations.resolution, resolution)
     gl.uniform1f(programInfo.uniformLocations.time, time)
-    gl.disable(gl.CULL_FACE)
     {
       const vertexCount = sun.model.vertexCount
       const type = gl.UNSIGNED_SHORT
       const offset = 0
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
     }
-    gl.enable(gl.CULL_FACE)
   }
 }

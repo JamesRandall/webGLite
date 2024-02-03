@@ -12,6 +12,7 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
     console.error("Your browser doesn't support WebGL")
     return
   }
+
   let showHelpText = true
   window.addEventListener("keydown", (ev) => {
     if (ev.key.toLowerCase() === "q") {

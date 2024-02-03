@@ -6,8 +6,10 @@ import { isShipCollidingWithPlayer } from "./utilities/collisions"
 import { ShipRoleEnum } from "../model/ShipInstance"
 import { isValidDocking } from "./utilities/docking"
 import { vec3 } from "gl-matrix"
+import { spawnNPCShips } from "./utilities/spawn"
+import { Resources } from "../resources/resources"
 
-export function flightLoop(game: Game, timeDelta: number) {
+export function flightLoop(resources: Resources, game: Game, timeDelta: number) {
   game.localBubble.ships.forEach((ship) => {
     updateShipInstance(ship, game.player, timeDelta)
   })
@@ -15,6 +17,7 @@ export function flightLoop(game: Game, timeDelta: number) {
   updateOrbitalBodies(game, timeDelta)
   updateStardust(game, timeDelta)
   handleCollisions(game)
+  spawnNPCShips(resources, game, timeDelta)
 
   // Useful diagnostic when working on manual docking or with the docking computer - shows the station roll and pitch
   //stationPitchAndRoll(game)
