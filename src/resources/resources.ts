@@ -15,6 +15,8 @@ export interface Resources {
   ships: {
     numberOfShips: number
     traderIndexes: number[]
+    bountyHunterIndexes: number[]
+    pirateIndexes: number[]
     getRandomShip: () => ShipBlueprint
     getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) => ShipInstance
     getCobraMk3: (position: vec3, noseOrientation: vec3) => ShipInstance
@@ -97,13 +99,22 @@ export async function loadResources(
   const instructionFont = await loadTexture(instructionsGl, "font.png")
   const traderIndexes = ships
     .map((s, i) => ({ s, i }))
-    .filter(({ s, i }) => s.canBeTrader)
-    .map(({ s, i }) => i)
-
+    .filter(({ s }) => s.canBeTrader)
+    .map(({ i }) => i)
+  const bountyHunterIndexes = ships
+    .map((s, i) => ({ s, i }))
+    .filter(({ s }) => s.canBeBountyHunter)
+    .map(({ i }) => i)
+  const pirateIndexes = ships
+    .map((s, i) => ({ s, i }))
+    .filter(({ s }) => s.canBePirate)
+    .map(({ i }) => i)
   return {
     ships: {
       numberOfShips: ships.length,
       traderIndexes,
+      bountyHunterIndexes,
+      pirateIndexes,
       getRandomShip: () => getRandomShip(ships),
       getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) =>
         toInstance(ships[index], position, noseOrientation),
@@ -167,6 +178,10 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
       shininess: 16.0,
     },
     boundingBox: ship.model.boundingBox.map((v) => vec3.copy(vec3.create(), v)),
+    aggressionLevel: 0,
+    hasECM: false,
+    aiEnabled: false,
+    missiles: 0,
   } as ShipInstance
 }
 

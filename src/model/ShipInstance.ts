@@ -24,4 +24,7 @@ export interface ShipInstance extends PositionedObject {
     shininess: number
   }
   boundingBox: vec3[]
+  aggressionLevel: number
+  hasECM: boolean
+  aiEnabled: boolean
 }

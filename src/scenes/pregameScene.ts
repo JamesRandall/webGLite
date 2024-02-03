@@ -80,6 +80,7 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
     renderEffect: RenderEffect.None,
     isFPSEnabled: false,
     timeUntilNextSpawnChance: 0,
+    extraVesselsSpawningDelay: 0,
   }
 
   const sceneRenderer = createPregameSceneRenderer(gl, resources)

@@ -48,4 +48,6 @@ export interface Game {
   renderEffect: RenderEffect
   isFPSEnabled: boolean
   timeUntilNextSpawnChance: number
+  extraVesselsSpawningDelay: number
+  missiles: number
 }

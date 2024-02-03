@@ -86,6 +86,7 @@ export function createGameScene(resources: Resources, gl: WebGL2RenderingContext
     renderEffect: renderEffect,
     isFPSEnabled: false,
     timeUntilNextSpawnChance: randomiseSpawnDelta(),
+    extraVesselsSpawningDelay: 0,
   }
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
 

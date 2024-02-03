@@ -26,14 +26,14 @@ export const economyText = [
 ]
 
 export enum GovernmentEnum {
-  Anarchy,
-  Feudal,
-  MultiGovernment,
-  Dictatorship,
-  Communist,
-  Confederacy,
-  Democracy,
-  CorporateState,
+  Anarchy = 0,
+  Feudal = 1,
+  MultiGovernment = 2,
+  Dictatorship = 3,
+  Communist = 4,
+  Confederacy = 5,
+  Democracy = 6,
+  CorporateState = 7,
 }
 
 export const governmentText = [
