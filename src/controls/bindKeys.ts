@@ -11,6 +11,10 @@ export function bindKeys(controlState: ControlState) {
 
     let handled = true
     switch (e.key) {
+      case "a":
+      case "A":
+        controlState.firing = newState
+        break
       case ",":
         controlState.rollLeft = newState
         break

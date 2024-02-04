@@ -34,6 +34,7 @@ export interface ShipInstance extends PositionedObject {
   aiEnabled: boolean
   attitude: AttitudeEnum
   energy: number
+  missiles: number
   timeLeftFiringLasers: number | null // none null if the ship is firing lasers
   fixedDirectionOfMovement: vec3 | null // asteroids and boulders do not change direction as they pitch and roll
 }

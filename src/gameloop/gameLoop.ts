@@ -8,6 +8,7 @@ import { Resources } from "../resources/resources"
 import { createHyperspaceLoop } from "./hyperspace"
 import { createDockingLoop } from "./docking"
 import { createFramerateCounter } from "../utilities"
+import { vec3 } from "gl-matrix"
 
 function applySceneSelection(game: Game) {
   if (game.player.controlState.sceneSelection === null) {
@@ -127,7 +128,6 @@ function createApplyCameraShake() {
       time += timeDelta
       if (time > timeBetweenShake) {
         time = 0
-        const lookAt = getLookAt(game.currentScene)
         const xDelta = (Math.random() - 0.5) * maxXDelta
         const yDelta = (Math.random() - 0.5) * maxYDelta
         if (game.currentScene == SceneEnum.Front) {
@@ -147,6 +147,9 @@ function createApplyCameraShake() {
           game.player.lookAt = c
         }
       }
+    } else {
+      const lookAt = getLookAt(game.currentScene)
+      game.player.lookAt = vec3.fromValues(lookAt[0], lookAt[1], lookAt[2])
     }
   }
 }

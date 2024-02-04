@@ -47,6 +47,8 @@ export const dimensions = {
   mainViewHeight: 560,
   dashboardHeight: 200,
   totalHeight: 760,
+  crosshairLength: 32,
+  crosshairSpace: 20,
 }
 
 // measured in BBC Elite:

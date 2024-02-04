@@ -1,7 +1,7 @@
 import { createShipsRenderer } from "./ships"
 import { createStardustRenderer } from "./stardust"
 import { createSunRenderer } from "./sun"
-import { createPrimitiveRenderer } from "../primitives/primitives"
+import { createPrimitiveRenderer, Primitives } from "../primitives/primitives"
 import { Game, SceneEnum } from "../../model/game"
 import { createLocalChartRenderer } from "../screens/localChart"
 import { createSystemDetailsRenderer } from "../screens/systemDetails"
@@ -12,11 +12,14 @@ import { createHyperspaceRenderer } from "../screens/hyperspace"
 import { createSphericalPlanetRenderer } from "./sphericalPlanet"
 import { Resources } from "../../resources/resources"
 import { createBuyMarketItemsRenderer } from "../screens/buyMarketItems"
-import { dimensions } from "../../constants"
+import { dimensions, frameColor, frameWidth } from "../../constants"
 import { mat4 } from "gl-matrix"
 import { createBuyEquipmentRenderer } from "../screens/buyEquipment"
 import { createLongRangeChartRenderer } from "../screens/galaxyChart"
 import { createInventoryRenderer } from "../screens/inventory"
+import { LaserTypeEnum } from "../../model/player"
+import { drawCrosshairs } from "./crosshairs"
+import { createLaserRenderer } from "./lasers"
 
 export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -37,6 +40,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
   const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
   const buyEquipmentRenderer = createBuyEquipmentRenderer(draw2d)
   const inventoryRenderer = createInventoryRenderer(draw2d)
+  const laserRenderer = createLaserRenderer(gl, resources)
   let flashOn = true
   let flashOnTime = 0
 
@@ -105,6 +109,9 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
     }
 
     gl.disable(gl.DEPTH_TEST)
+
+    drawCrosshairs(draw2d, game)
+    laserRenderer(game)
 
     if (game.hyperspace !== null && game.hyperspace.countdown > 0) {
       draw2d.text.draw(game.hyperspace.countdown.toString(), [0.5, 0.5])

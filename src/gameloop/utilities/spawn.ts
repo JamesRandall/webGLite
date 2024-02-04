@@ -1,6 +1,6 @@
 import { Game } from "../../model/game"
 import { randomiseSpawnDelta } from "../../utilities"
-import { ShipRoleEnum } from "../../model/ShipInstance"
+import { ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
 import { vec3 } from "gl-matrix"
 import { scannerRadialWorldRange } from "../../constants"
 import { Resources } from "../../resources/resources"
@@ -141,9 +141,10 @@ function spawnInstanceOfTrader(resources: Resources, game: Game, position: vec3,
   const shipIndirectIndex = Math.floor(resources.ships.traderIndexes.length * Math.random())
   const shipIndex = resources.ships.traderIndexes[shipIndirectIndex]
   const ship = resources.ships.getIndexedShip(shipIndex, position, noseOrientation)
-  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
+  setStartingSpeed(ship)
   ship.roll = Math.random() * (ship.blueprint.maxRollSpeed / 4)
   ship.role = ShipRoleEnum.Trader
+  ship.missiles = Math.random() > 0.5 ? 1 : 0
 
   game.localBubble.ships.push(ship)
   return ship
@@ -154,7 +155,7 @@ function spawnInstanceOfBountyHunter(resources: Resources, game: Game, position:
   const shipIndirectIndex = Math.floor(resources.ships.bountyHunterIndexes.length * Math.random())
   const shipIndex = resources.ships.bountyHunterIndexes[shipIndirectIndex]
   const ship = resources.ships.getIndexedShip(shipIndex, position, noseOrientation)
-  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
+  setStartingSpeed(ship)
   ship.roll = Math.random() * (ship.blueprint.maxRollSpeed / 4)
   ship.role = ShipRoleEnum.BountyHunter
   ship.aggressionLevel = 28
@@ -170,11 +171,10 @@ function spawnInstanceOfPirate(resources: Resources, game: Game, position: vec3,
   const shipIndirectIndex = Math.floor(resources.ships.pirateIndexes.length * Math.random())
   const shipIndex = resources.ships.pirateIndexes[shipIndirectIndex]
   const ship = resources.ships.getIndexedShip(shipIndex, position, noseOrientation)
-  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
+  setStartingSpeed(ship)
   ship.roll = Math.random() * (ship.blueprint.maxRollSpeed / 4)
-  ship.role = ShipRoleEnum.BountyHunter
-  //ship.aggressionLevel = 28
-  //ship.hasECM = true
+  ship.role = ShipRoleEnum.Pirate
+  ship.hasECM = Math.random() < 0.22
 
   game.localBubble.ships.push(ship)
   return ship
@@ -186,7 +186,7 @@ function spawnInstanceOfAsteroidOrBoulder(resources: Resources, game: Game, posi
     noseOrientation,
   )
   log(`Spawning ${ship.blueprint.name.toLowerCase()}`)
-  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
+  setStartingSpeed(ship)
   ship.roll = Math.random() * ship.blueprint.maxRollSpeed
   ship.pitch = Math.random() * ship.blueprint.maxPitchSpeed
 
@@ -196,9 +196,13 @@ function spawnInstanceOfAsteroidOrBoulder(resources: Resources, game: Game, posi
 function spawnInstanceOfCargo(resources: Resources, game: Game, position: vec3, noseOrientation: vec3) {
   log("Spawning cargo")
   const ship = resources.ships.getCargo(position, noseOrientation)
-  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
+  setStartingSpeed(ship)
   ship.roll = Math.random() * ship.blueprint.maxRollSpeed
   ship.pitch = Math.random() * ship.blueprint.maxPitchSpeed
 
   game.localBubble.ships.push(ship)
+}
+
+function setStartingSpeed(ship: ShipInstance) {
+  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
 }

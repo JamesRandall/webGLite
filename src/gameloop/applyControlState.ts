@@ -1,12 +1,11 @@
-import { Player } from "../model/player"
-import { Game } from "../model/game"
-import { move } from "./utilities/transforms"
+import { addToEnergyLevel, Player } from "../model/player"
+import { Game, SceneEnum } from "../model/game"
 import { vec2, vec3 } from "gl-matrix"
 import { getNearestSystemToCursor } from "./utilities/map"
 import { createDockingComputer } from "./utilities/dockingComputer"
 import { Resources } from "../resources/resources"
 import { ShipInstance } from "../model/ShipInstance"
-import { scannerRadialWorldRange } from "../constants"
+import { dimensions, scannerRadialWorldRange } from "../constants"
 import { nextEffect, previousEffect } from "../renderer/rootRenderer"
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
@@ -19,11 +18,52 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
       applyJump(game)
       applyHyperspace(game)
     }
+    applyLasers(game, timeDelta)
   }
   if (game.hyperspace === null) {
     applyCursors(player, timeDelta)
   }
   applyEffects(game)
+}
+
+function applyLasers(game: Game, timeDelta: number) {
+  const pulseLaserMs = 1.0 / 4.0
+
+  // TODO: we need to deal with the different kinds of laser here
+  if (
+    game.player.controlState.firing &&
+    !game.player.previousControlState.firing &&
+    game.player.timeToLaserStateChange === null
+  ) {
+    game.player.isLaserFiring = true
+    game.player.timeToLaserStateChange = pulseLaserMs + timeDelta
+  }
+
+  if (game.player.timeToLaserStateChange !== null) {
+    game.player.timeToLaserStateChange -= timeDelta
+    if (game.player.timeToLaserStateChange < 0) {
+      if (!game.player.controlState.firing) {
+        // we've stopped firing
+        game.player.timeToLaserStateChange = null
+        game.player.isLaserFiring = false
+      } else {
+        // we're still firing
+        game.player.timeToLaserStateChange = pulseLaserMs
+        game.player.isLaserFiring = !game.player.isLaserFiring
+        if (game.player.isLaserFiring) {
+          game.player.laserTemperature++
+          addToEnergyLevel(game.player, -1)
+          if (game.player.laserTemperature === game.player.blueprint.maxLaserTemperature) {
+            game.currentScene = SceneEnum.PlayerExploding
+          }
+          game.player.laserOffset = vec2.fromValues(
+            (dimensions.crosshairSpace / 2) * Math.random() - dimensions.crosshairSpace / 4,
+            (dimensions.crosshairSpace / 2) * Math.random() - dimensions.crosshairSpace / 4,
+          )
+        }
+      }
+    }
+  }
 }
 
 function applyEffects(game: Game) {

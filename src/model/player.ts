@@ -83,6 +83,9 @@ export interface Player {
   disableDamping: boolean
   isJumping: boolean
   lookAt: vec3
+  isLaserFiring: boolean
+  timeToLaserStateChange: number | null
+  laserOffset: vec2
 }
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem): Player {
@@ -138,5 +141,36 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     disableDamping: false,
     isJumping: false,
     lookAt: vec3.fromValues(0, 0, 1),
+    isLaserFiring: false,
+    timeToLaserStateChange: null,
+    laserOffset: vec2.fromValues(0, 0),
+  }
+}
+
+export function addToEnergyLevel(player: Player, value: number) {
+  if (value >= 0) {
+    for (let index = player.energyBankLevel.length - 1; index >= 0; index--) {
+      const max = player.blueprint.maxEnergyBankLevel[index] - (index === 0 ? 1 : 0)
+      const delta = max - player.energyBankLevel[index]
+      if (delta > 0) {
+        player.energyBankLevel[index] += Math.min(delta, value)
+        if (delta > value) {
+          value -= delta
+        }
+      }
+    }
+  } else {
+    value *= -1
+    for (let index = 0; index < player.energyBankLevel.length; index++) {
+      if (player.energyBankLevel[index] > 0) {
+        if (value >= player.energyBankLevel[index]) {
+          value -= player.energyBankLevel[index]
+          player.energyBankLevel[index] = 0
+        } else {
+          player.energyBankLevel[index] -= value
+          value = 0
+        }
+      }
+    }
   }
 }
