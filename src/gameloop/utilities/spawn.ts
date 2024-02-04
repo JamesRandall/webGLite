@@ -5,6 +5,7 @@ import { vec3 } from "gl-matrix"
 import { scannerRadialWorldRange } from "../../constants"
 import { Resources } from "../../resources/resources"
 import { GovernmentEnum } from "../../model/starSystem"
+import { log } from "../../gameConsole"
 
 // this is heavily based on the main loop in the original game amazingly documented here by Mark Moxon:
 // https://www.bbcelite.com/master/main/subroutine/main_game_loop_part_2_of_6.html
@@ -13,16 +14,17 @@ const spawnSequence = [spawnDockingTrader, spawnLaunchingTrader, spawnFriendly, 
 
 export function spawnNPCShips(resources: Resources, game: Game, timeDelta: number) {
   if (game.player.isDocked) return
-
   // when we are jumping we spawn more often
   game.timeUntilNextSpawnChance -= timeDelta * (game.player.isJumping ? 2 : 1)
   if (game.timeUntilNextSpawnChance > 0) return
+
+  log("Beginning spawn")
   game.timeUntilNextSpawnChance = randomiseSpawnDelta()
   spawnSequence.reduce((result, func) => (result ? result : func(resources, game)), false)
 }
 
 function spawnDockingTrader(resources: Resources, game: Game) {
-  console.log("Chance to spawn docking trader")
+  log("Chance to spawn docking trader")
   if (!game.player.isInSafeZone) return false
   if (Math.random() > 0.25) return false
   if (countOfJunkInLocalBubble(game) >= 3) return false
@@ -34,7 +36,7 @@ function spawnDockingTrader(resources: Resources, game: Game) {
 }
 
 function spawnLaunchingTrader(resources: Resources, game: Game) {
-  console.log("Chance to spawn launching trader")
+  log("Chance to spawn launching trader")
   if (!game.player.isInSafeZone || game.localBubble.station === null) return false
   if (Math.random() > 0.25) return false
 
@@ -50,7 +52,7 @@ function spawnLaunchingTrader(resources: Resources, game: Game) {
 }
 
 function spawnFriendly(resources: Resources, game: Game) {
-  console.log("Chance to spawn friendly")
+  log("Chance to spawn friendly")
   if (Math.random() > 0.13) return false
   if (countOfJunkInLocalBubble(game) >= 3) return false
 
@@ -75,7 +77,7 @@ function spawnCop(resources: Resources, game: Game) {
 }
 
 function spawnEnemy(resources: Resources, game: Game) {
-  console.log("Chance to spawn enemy")
+  log("Chance to spawn enemy")
   if (game.player.isInSafeZone) return false
   game.extraVesselsSpawningDelay--
   if (game.extraVesselsSpawningDelay >= 0) return false
@@ -135,6 +137,7 @@ function randomPositionInFrontOfPlayer() {
 }
 
 function spawnInstanceOfTrader(resources: Resources, game: Game, position: vec3, noseOrientation: vec3) {
+  log("Spawning trader")
   const shipIndirectIndex = Math.floor(resources.ships.traderIndexes.length * Math.random())
   const shipIndex = resources.ships.traderIndexes[shipIndirectIndex]
   const ship = resources.ships.getIndexedShip(shipIndex, position, noseOrientation)
@@ -147,6 +150,7 @@ function spawnInstanceOfTrader(resources: Resources, game: Game, position: vec3,
 }
 
 function spawnInstanceOfBountyHunter(resources: Resources, game: Game, position: vec3, noseOrientation: vec3) {
+  log("Spawning bounty hunter")
   const shipIndirectIndex = Math.floor(resources.ships.bountyHunterIndexes.length * Math.random())
   const shipIndex = resources.ships.bountyHunterIndexes[shipIndirectIndex]
   const ship = resources.ships.getIndexedShip(shipIndex, position, noseOrientation)
@@ -162,6 +166,7 @@ function spawnInstanceOfBountyHunter(resources: Resources, game: Game, position:
 }
 
 function spawnInstanceOfPirate(resources: Resources, game: Game, position: vec3, noseOrientation: vec3) {
+  log("Spawning pirate")
   const shipIndirectIndex = Math.floor(resources.ships.pirateIndexes.length * Math.random())
   const shipIndex = resources.ships.pirateIndexes[shipIndirectIndex]
   const ship = resources.ships.getIndexedShip(shipIndex, position, noseOrientation)
@@ -176,9 +181,24 @@ function spawnInstanceOfPirate(resources: Resources, game: Game, position: vec3,
 }
 
 function spawnInstanceOfAsteroidOrBoulder(resources: Resources, game: Game, position: vec3, noseOrientation: vec3) {
-  spawnInstanceOfTrader(resources, game, position, noseOrientation)
+  const ship = (Math.random() > 0.5 ? resources.ships.getAsteroid : resources.ships.getBoulder)(
+    position,
+    noseOrientation,
+  )
+  log(`Spawning ${ship.blueprint.name.toLowerCase()}`)
+  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
+  ship.roll = Math.random() * ship.blueprint.maxRollSpeed
+  ship.pitch = Math.random() * ship.blueprint.maxPitchSpeed
+
+  game.localBubble.ships.push(ship)
 }
 
 function spawnInstanceOfCargo(resources: Resources, game: Game, position: vec3, noseOrientation: vec3) {
-  spawnInstanceOfTrader(resources, game, position, noseOrientation)
+  log("Spawning cargo")
+  const ship = resources.ships.getCargo(position, noseOrientation)
+  ship.speed = Math.random() * (ship.blueprint.maxSpeed / 2) + ship.blueprint.maxSpeed / 2
+  ship.roll = Math.random() * ship.blueprint.maxRollSpeed
+  ship.pitch = Math.random() * ship.blueprint.maxPitchSpeed
+
+  game.localBubble.ships.push(ship)
 }

@@ -1,8 +1,9 @@
-import { mat4, quat, vec3, vec4 } from "gl-matrix"
+import { mat4, quat, vec3 } from "gl-matrix"
 import { Game } from "../../model/game"
 import { createSquareModel, Model } from "../../resources/models"
 import { compileShaderProgram } from "../../shader"
 import { scannerRadialWorldRange } from "../../constants"
+import { ShipRoleEnum } from "../../model/ShipInstance"
 // TODO: We need to rework this to use the shared style
 const vsSource = `#version 300 es
     precision highp float;
@@ -115,7 +116,12 @@ export function createScannerShipRenderer(gl: WebGL2RenderingContext, projection
       setPositionAttribute(gl, verticalLineModel, programInfo)
       gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, verticalLineModelViewMatrix)
       gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix)
-      gl.uniform4f(programInfo.uniformLocations.color, 0.0, 1.0, 0.0, 1.0)
+      if (ship.role === ShipRoleEnum.Cargo || ship.role === ShipRoleEnum.Asteroid) {
+        gl.uniform4f(programInfo.uniformLocations.color, 1.0, 0.0, 0.0, 1.0)
+      } else {
+        gl.uniform4f(programInfo.uniformLocations.color, 0.0, 1.0, 0.0, 1.0)
+      }
+
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, verticalLineModel.indices)
       {
         const vertexCount = verticalLineModel.vertexCount

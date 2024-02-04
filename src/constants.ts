@@ -58,7 +58,7 @@ export const dimensions = {
 //   10.6 seconds to complete 360 degrees of pitch at max pitch speed
 const maxRollSpeed = (2.0 * Math.PI) / 3.5
 const maxPitchSpeed = (2.0 * Math.PI) / 10
-const maxSpeed = 32.0
+const maxSpeed = 30.0
 export const shipMovementSpeeds = {
   maxRollSpeed: maxRollSpeed,
   rollAcceleration: maxRollSpeed / 2,

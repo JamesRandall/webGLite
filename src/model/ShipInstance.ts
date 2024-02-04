@@ -16,6 +16,11 @@ export enum ShipRoleEnum {
   Cargo,
 }
 
+export enum AttitudeEnum {
+  Hostile,
+  Friendly,
+}
+
 export interface ShipInstance extends PositionedObject {
   role: ShipRoleEnum
   blueprint: ShipBlueprint
@@ -27,4 +32,8 @@ export interface ShipInstance extends PositionedObject {
   aggressionLevel: number
   hasECM: boolean
   aiEnabled: boolean
+  attitude: AttitudeEnum
+  energy: number
+  timeLeftFiringLasers: number | null // none null if the ship is firing lasers
+  fixedDirectionOfMovement: vec3 | null // asteroids and boulders do not change direction as they pitch and roll
 }

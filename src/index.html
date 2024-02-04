@@ -9,6 +9,9 @@
     <div style="display: grid; grid-template-columns: 800px 400px;">
         <canvas width="800" height="760" id="viewcanvas" style="display: block; width: 800px; height: 760px;"></canvas>
         <canvas width="480" height="760" id="doccanvas" style="display: block; width: 480px; height: 760px;"></canvas>
+        <div id="game-console" style="margin-top: 1em; display:block; grid-column: 1/-1; background-color: black; border: solid 1px green; overflow-y: auto; height: 200px; max-height: 200px;">
+            <div style="padding: 3px; color: rgb(0,255,0);">&gt; Game started</div>
+        </div>
     </div>
     <script>var exports = {};</script>
     <script type="module" src="launch.ts"></script>

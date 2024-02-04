@@ -31,4 +31,11 @@ export interface ShipBlueprint {
   canBeTrader: boolean
   canBeBountyHunter: boolean
   canBePirate: boolean
+  fixedDirectionOfMovement: boolean
+  maxCanistersOnDeath: number
+  targetableArea: number
+  laserPower: number
+  maxAiMissiles: number
+  maxAiEnergy: number
+  bounty: number
 }

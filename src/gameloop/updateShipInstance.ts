@@ -26,7 +26,11 @@ function applyTactics(shipInstance: ShipInstance) {
 function moveShipBySpeed(shipInstance: ShipInstance, timeDelta: number) {
   // move the ship by its speed along its orientation vector
   const speed = shipInstance.speed * timeDelta * playerShipRelativeSpeedFudgeFactor
-  const transform = vec3.multiply(vec3.create(), shipInstance.noseOrientation, [speed, speed, speed])
+  const transform = vec3.multiply(
+    vec3.create(),
+    shipInstance.fixedDirectionOfMovement ?? shipInstance.noseOrientation,
+    [speed, speed, speed],
+  )
   shipInstance.position = vec3.add(vec3.create(), shipInstance.position, transform)
 }
 
@@ -46,11 +50,18 @@ function moveShipByPlayerSpeed(shipInstance: ShipInstance, player: Player, timeD
 }
 
 function rotateAccordingToPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta: number) {
-  rotateOrientationVectorsByPitchAndRoll(shipInstance, player.roll * timeDelta, player.pitch * timeDelta)
+  const roll = player.roll * timeDelta
+  const pitch = player.pitch * timeDelta
+  rotateOrientationVectorsByPitchAndRoll(shipInstance, roll, pitch)
   shipInstance.boundingBox.forEach((v) => {
     vec3.rotateZ(v, v, [0, 0, 0], player.roll * timeDelta)
     vec3.rotateX(v, v, [0, 0, 0], player.pitch * timeDelta)
   })
+  if (shipInstance.fixedDirectionOfMovement !== null) {
+    vec3.rotateZ(shipInstance.fixedDirectionOfMovement, shipInstance.fixedDirectionOfMovement, [0, 0, 0], roll)
+    vec3.rotateX(shipInstance.fixedDirectionOfMovement, shipInstance.fixedDirectionOfMovement, [0, 0, 0], pitch)
+    vec3.normalize(shipInstance.fixedDirectionOfMovement, shipInstance.fixedDirectionOfMovement)
+  }
 }
 
 function rotateShipByPitchAndRoll(shipInstance: ShipInstance, timeDelta: number) {
