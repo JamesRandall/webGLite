@@ -1,4 +1,4 @@
-import { addToEnergyLevel, Player } from "../model/player"
+import { Player } from "../model/player"
 import { Game, SceneEnum } from "../model/game"
 import { vec2, vec3 } from "gl-matrix"
 import { getNearestSystemToCursor } from "./utilities/map"
@@ -50,9 +50,10 @@ function applyLasers(game: Game, timeDelta: number) {
         // we're still firing
         game.player.timeToLaserStateChange = pulseLaserMs
         game.player.isLaserFiring = !game.player.isLaserFiring
+        if (game.player.energyBankLevel <= 1) game.player.isLaserFiring = false
         if (game.player.isLaserFiring) {
           game.player.laserTemperature++
-          addToEnergyLevel(game.player, -1)
+          game.player.energyBankLevel -= 8
           if (game.player.laserTemperature === game.player.blueprint.maxLaserTemperature) {
             game.currentScene = SceneEnum.PlayerExploding
           }

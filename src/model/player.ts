@@ -64,7 +64,7 @@ export interface Player {
   isDocked: boolean
   dockingComputerFlightExecuter: ((game: Game, timeDelta: number) => void) | null
   fuel: number
-  energyBankLevel: number[]
+  energyBankLevel: number
   cabinTemperature: number
   laserTemperature: number
   altitude: number
@@ -104,12 +104,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     isDocked: true,
     dockingComputerFlightExecuter: null,
     fuel: cobra.maxFuel, // 70 is a full tank, goes 7 lightyears
-    energyBankLevel: [
-      cobra.maxEnergyBankLevel[0] - 1,
-      cobra.maxEnergyBankLevel[1],
-      cobra.maxEnergyBankLevel[2],
-      cobra.maxEnergyBankLevel[3],
-    ],
+    energyBankLevel: cobra.maxEnergy,
     cabinTemperature: 10,
     laserTemperature: 0,
     altitude: cobra.maxAltitude,
@@ -144,33 +139,5 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     isLaserFiring: false,
     timeToLaserStateChange: null,
     laserOffset: vec2.fromValues(0, 0),
-  }
-}
-
-export function addToEnergyLevel(player: Player, value: number) {
-  if (value >= 0) {
-    for (let index = player.energyBankLevel.length - 1; index >= 0; index--) {
-      const max = player.blueprint.maxEnergyBankLevel[index] - (index === 0 ? 1 : 0)
-      const delta = max - player.energyBankLevel[index]
-      if (delta > 0) {
-        player.energyBankLevel[index] += Math.min(delta, value)
-        if (delta > value) {
-          value -= delta
-        }
-      }
-    }
-  } else {
-    value *= -1
-    for (let index = 0; index < player.energyBankLevel.length; index++) {
-      if (player.energyBankLevel[index] > 0) {
-        if (value >= player.energyBankLevel[index]) {
-          value -= player.energyBankLevel[index]
-          player.energyBankLevel[index] = 0
-        } else {
-          player.energyBankLevel[index] -= value
-          value = 0
-        }
-      }
-    }
   }
 }

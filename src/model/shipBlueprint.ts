@@ -14,7 +14,7 @@ export interface ShipBlueprint {
   maxSpeed: number
 
   numberOfEnergyBanks: number
-  maxEnergyBankLevel: number[]
+  maxEnergy: number
   maxFuel: number
   maxCabinTemperature: number
   maxLaserTemperature: number

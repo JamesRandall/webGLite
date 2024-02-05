@@ -49,5 +49,4 @@ export interface Game {
   isFPSEnabled: boolean
   timeUntilNextSpawnChance: number
   extraVesselsSpawningDelay: number
-  missiles: number
 }

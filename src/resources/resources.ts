@@ -213,7 +213,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     speedAcceleration: shipMovementSpeeds.speedAcceleration,
 
     numberOfEnergyBanks: 4,
-    maxEnergyBankLevel: [63, 64, 64, 64],
+    maxEnergy: 255,
     maxFuel: 70,
     maxCabinTemperature: 255,
     maxLaserTemperature: 255,

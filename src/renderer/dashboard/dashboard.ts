@@ -73,6 +73,17 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
     draw2d.rect([x, y], [barSize, barHeight - 2.0], vec4.fromValues(1.0, 1.0, 1.0, 1.0))
   }
 
+  function maxEnergyBankLevel(index: number) {
+    return index === 0 ? 63 : 64
+  }
+
+  function energyBankLevel(index: number) {
+    const reversedIndex = 3 - index
+    const energyLevelBase = 64 * reversedIndex
+    const energyInBar = Math.max(0, Math.min(maxEnergyBankLevel(index), game.player.energyBankLevel - energyLevelBase))
+    return energyInBar
+  }
+
   // missiles
   const missileRow = 7
   const missileSpacing = 5
@@ -133,13 +144,13 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
   draw2d.text.drawAtSize("RL", [tr, topOffset + barHeight], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
   drawPositionalBar(false, 2, -game.player.pitch, game.player.blueprint.maxPitchSpeed)
   draw2d.text.drawAtSize("DC", [tr, topOffset + barHeight * 2], cw, ch, 0, vec4.fromValues(0.0, 1.0, 1.0, 1.0))
-  drawBar(false, 3, game.player.energyBankLevel[0], game.player.blueprint.maxEnergyBankLevel[0], standardBarColor)
+  drawBar(false, 3, energyBankLevel(0), maxEnergyBankLevel(0), standardBarColor)
   draw2d.text.drawAtSize("1", [tr + cw / 2, topOffset + barHeight * 3], cw, ch, 0, standardBarColor)
-  drawBar(false, 4, game.player.energyBankLevel[1], game.player.blueprint.maxEnergyBankLevel[1], standardBarColor)
+  drawBar(false, 4, energyBankLevel(1), maxEnergyBankLevel(1), standardBarColor)
   draw2d.text.drawAtSize("2", [tr + cw / 2, topOffset + barHeight * 4], cw, ch, 0, standardBarColor)
-  drawBar(false, 5, game.player.energyBankLevel[2], game.player.blueprint.maxEnergyBankLevel[2], standardBarColor)
+  drawBar(false, 5, energyBankLevel(2), maxEnergyBankLevel(2), standardBarColor)
   draw2d.text.drawAtSize("3", [tr + cw / 2, topOffset + barHeight * 5], cw, ch, 0, standardBarColor)
-  drawBar(false, 6, game.player.energyBankLevel[3], game.player.blueprint.maxEnergyBankLevel[3], standardBarColor)
+  drawBar(false, 6, energyBankLevel(3), maxEnergyBankLevel(3), standardBarColor)
   draw2d.text.drawAtSize("4", [tr + cw / 2, topOffset + barHeight * 6], cw, ch, 0, standardBarColor)
 
   const compassCenter = drawCompass(width, sidePanelWidth, draw2d, game)
