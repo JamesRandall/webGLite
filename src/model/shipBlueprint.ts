@@ -27,7 +27,7 @@ export interface ShipBlueprint {
   // because the ships are different sizes we need a way of making them "about" the same scale on the pregame
   // screen
   pregameScale: number
-
+  canBeRockHermit: boolean
   canBeTrader: boolean
   canBeBountyHunter: boolean
   canBePirate: boolean

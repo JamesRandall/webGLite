@@ -13,6 +13,9 @@ enum MissileTargettingStatusEnum {
 
 export enum LegalStatusEnum {
   Clean,
+  Offender,
+  SeriousOffender,
+  Fugitive,
 }
 
 export enum CombatRatingEnum {

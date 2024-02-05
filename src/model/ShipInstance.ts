@@ -5,15 +5,17 @@ import { vec3 } from "gl-matrix"
 export enum ShipRoleEnum {
   Missile,
   EscapePod,
-  PlanetartTrader, // go between the station and the planet
+  PlanetaryTrader, // go between the station and the planet
   Trader, // go between the station and other systems
   Police,
   Pirate,
   BountyHunter,
   Thargoid,
+  Thargon,
   Station,
   Asteroid,
   Cargo,
+  RockHermit, // I need to remind myself what a rock hermit is
 }
 
 export enum AttitudeEnum {

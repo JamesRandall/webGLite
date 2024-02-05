@@ -10,7 +10,7 @@ import { log } from "../../gameConsole"
 // this is heavily based on the main loop in the original game amazingly documented here by Mark Moxon:
 // https://www.bbcelite.com/master/main/subroutine/main_game_loop_part_2_of_6.html
 
-const spawnSequence = [spawnDockingTrader, spawnLaunchingTrader, spawnFriendly, spawnCop, spawnEnemy]
+const spawnSequence = [spawnDockingTrader, spawnFriendly, spawnCop, spawnEnemy]
 
 export function spawnNPCShips(resources: Resources, game: Game, timeDelta: number) {
   if (game.player.isDocked) return
@@ -32,22 +32,6 @@ function spawnDockingTrader(resources: Resources, game: Game) {
   // we need to spawn a trader and attach the docking computer flight path to it
 
   //return false
-  return true
-}
-
-function spawnLaunchingTrader(resources: Resources, game: Game) {
-  log("Chance to spawn launching trader")
-  if (!game.player.isInSafeZone || game.localBubble.station === null) return false
-  if (Math.random() > 0.25) return false
-
-  const ship = spawnInstanceOfTrader(
-    resources,
-    game,
-    game.localBubble.station.position,
-    game.localBubble.station.noseOrientation,
-  )
-  ship.speed = ship.blueprint.maxSpeed / 4
-  ship.roll = game.localBubble.station.roll
   return true
 }
 

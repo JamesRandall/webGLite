@@ -17,6 +17,7 @@ export interface Resources {
     traderIndexes: number[]
     bountyHunterIndexes: number[]
     pirateIndexes: number[]
+    rockHermitIndexes: number[]
     getRandomShip: () => ShipBlueprint
     getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) => ShipInstance
     getCobraMk3: (position: vec3, noseOrientation: vec3) => ShipInstance
@@ -25,6 +26,8 @@ export interface Resources {
     getAsteroid: (position: vec3, noseOrientation: vec3) => ShipInstance
     getBoulder: (position: vec3, noseOrientation: vec3) => ShipInstance
     getCargo: (position: vec3, noseOrientation: vec3) => ShipInstance
+    getTransporter: (position: vec3, noseOrientation: vec3) => ShipInstance
+    getShuttle: (position: vec3, noseOrientation: vec3) => ShipInstance
   }
   textures: {
     planets: WebGLTexture[]
@@ -112,12 +115,17 @@ export async function loadResources(
     .map((s, i) => ({ s, i }))
     .filter(({ s }) => s.canBePirate)
     .map(({ i }) => i)
+  const rockHermitIndexes = ships
+    .map((s, i) => ({ s, i }))
+    .filter(({ s }) => s.canBeRockHermit)
+    .map(({ i }) => i)
   return {
     ships: {
       numberOfShips: ships.length,
       traderIndexes,
       bountyHunterIndexes,
       pirateIndexes,
+      rockHermitIndexes,
       getRandomShip: () => getRandomShip(ships),
       getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) =>
         toInstance(ships[index], position, noseOrientation),
@@ -133,6 +141,10 @@ export async function loadResources(
         getNamedShip(ships, "Boulder", position, noseOrientation, ShipRoleEnum.Asteroid),
       getCargo: (position: vec3, noseOrientation: vec3) =>
         getNamedShip(ships, "Thargoid", position, noseOrientation, ShipRoleEnum.Cargo),
+      getTransporter: (position: vec3, noseOrientation: vec3) =>
+        getNamedShip(ships, "Transporter", position, noseOrientation, ShipRoleEnum.Cargo),
+      getShuttle: (position: vec3, noseOrientation: vec3) =>
+        getNamedShip(ships, "Shuttle", position, noseOrientation, ShipRoleEnum.Cargo),
     },
     textures: {
       planets: planets,
@@ -242,6 +254,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 3,
       maxAiEnergy: 150,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Adder",
@@ -259,6 +272,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 85,
       bounty: 4.0,
+      canBeRockHermit: true,
     },
     {
       name: "Anaconda",
@@ -276,6 +290,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 7,
       maxAiEnergy: 252,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Asp",
@@ -293,6 +308,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 1,
       maxAiEnergy: 150,
       bounty: 20.0,
+      canBeRockHermit: false,
     },
     {
       name: "Asteroid",
@@ -310,6 +326,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 60,
       bounty: 0.5,
+      canBeRockHermit: false,
     },
     {
       name: "Boa",
@@ -327,6 +344,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 4,
       maxAiEnergy: 250,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Boulder",
@@ -344,6 +362,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 20,
       bounty: 0.1,
+      canBeRockHermit: false,
     },
     {
       name: "Cargo",
@@ -361,6 +380,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 17,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Cobra Mk I",
@@ -378,6 +398,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 2,
       maxAiEnergy: 90,
       bounty: 7.5,
+      canBeRockHermit: false,
     },
     {
       name: "Constrictor",
@@ -395,6 +416,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 4,
       maxAiEnergy: 252,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Coriolis",
@@ -412,6 +434,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 6,
       maxAiEnergy: 240,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Dodo",
@@ -429,6 +452,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 240,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Escape Pod",
@@ -446,6 +470,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 17,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Fer de Lance",
@@ -463,6 +488,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 3,
       maxAiEnergy: 160,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Gecko",
@@ -480,6 +506,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 70,
       bounty: 5.5,
+      canBeRockHermit: true,
     },
     {
       name: "Krait",
@@ -497,6 +524,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 80,
       bounty: 10.0,
+      canBeRockHermit: true,
     },
     {
       name: "Mamba",
@@ -514,6 +542,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 2,
       maxAiEnergy: 90,
       bounty: 15.0,
+      canBeRockHermit: true,
     },
     {
       name: "Missile",
@@ -531,6 +560,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 2,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Moray",
@@ -548,6 +578,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 100,
       bounty: 5.0,
+      canBeRockHermit: false,
     },
     {
       name: "Python",
@@ -565,6 +596,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 3,
       maxAiEnergy: 250,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Shuttle",
@@ -582,6 +614,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 32,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Sidewinder",
@@ -599,6 +632,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 70,
       bounty: 5.0,
+      canBeRockHermit: true,
     },
     {
       name: "Thargoid",
@@ -616,6 +650,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 6,
       maxAiEnergy: 240,
       bounty: 50.0,
+      canBeRockHermit: false,
     },
     {
       name: "Transporter",
@@ -633,6 +668,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 32,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Viper",
@@ -650,6 +686,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 1,
       maxAiEnergy: 140,
       bounty: 0,
+      canBeRockHermit: false,
     },
     {
       name: "Worm",
@@ -667,6 +704,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiMissiles: 0,
       maxAiEnergy: 30,
       bounty: 0,
+      canBeRockHermit: false,
     },
   ]
   const loadedShips = await Promise.all(loadingShips.map((ls) => ls.model))
