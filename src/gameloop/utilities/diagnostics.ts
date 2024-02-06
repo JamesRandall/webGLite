@@ -11,7 +11,7 @@ export function stationAngles(game: Game) {
     game.diagnostics.push(`N: ${noseAngle}`)
     game.diagnostics.push(`R: ${roofAngle}`)
     game.diagnostics.push(`S: ${sideAngle}`)
-    const gateDistance = game.localBubble.station.blueprint.model.boundingBoxSize[2] / 2
+    const gateDistance = game.localBubble.station.blueprint.renderingModel.boundingBoxSize[2] / 2
     const gatePosition = vec3.add(
       vec3.create(),
       game.localBubble.station.position,
@@ -37,7 +37,7 @@ export function stationPitchAndRoll(game: Game) {
     )
     const roughPitchAngleDegrees = radiansToDegrees(roughPitchToStation)
     game.diagnostics.push(`SP: ${roughPitchAngleDegrees}`)
-    const gateDistance = game.localBubble.station.blueprint.model.boundingBoxSize[2] / 2
+    const gateDistance = game.localBubble.station.blueprint.renderingModel.boundingBoxSize[2] / 2
     const gatePosition = vec3.add(
       vec3.create(),
       game.localBubble.station.position,

@@ -37,7 +37,7 @@ export function isInRotatedBox(
 }
 
 export function isShipCollidingWithPlayer(shipInstance: ShipInstance) {
-  const boundingBoxSize = shipInstance.blueprint.model.boundingBoxSize
+  const boundingBoxSize = shipInstance.blueprint.renderingModel.boundingBoxSize
   const largestAxis = Math.max(boundingBoxSize[0], boundingBoxSize[1], boundingBoxSize[2])
   const shipDistance = vec3.length(shipInstance.position)
   // start with a range check, I believe this is all the original game does and in a super efficient way with just a
@@ -64,7 +64,7 @@ export function isShipCollidingWithPlayer(shipInstance: ShipInstance) {
         shipInstance.noseOrientation,
         shipInstance.roofOrientation,
         shipInstance.rightOrientation,
-        shipInstance.blueprint.model.boundingBoxSize,
+        shipInstance.blueprint.renderingModel.boundingBoxSize,
       )
     }
     return false
@@ -85,7 +85,11 @@ function isValidDockingApproach(game: Game) {
     // the docking port is on the surface of the face that the nose orientation intersects (i.e. the nose
     // orientation points in the direction of the docking port) and is located half the depth of the station
     // from its center
-    vec3.multiply(vec3.create(), station.noseOrientation, [0, 0, station.blueprint.model.boundingBoxSize[2] / 2])
+    vec3.multiply(vec3.create(), station.noseOrientation, [
+      0,
+      0,
+      station.blueprint.renderingModel.boundingBoxSize[2] / 2,
+    ])
   const dockingPortLocationRelativeToPlayer = vec3.add(
     vec3.create(),
     dockingPortLocationRelativeToStationCenter,

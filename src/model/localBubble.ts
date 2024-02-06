@@ -1,5 +1,5 @@
 import { vec3 } from "gl-matrix"
-import { Model } from "../resources/models"
+import { RenderingModel } from "../resources/models"
 import { ShipInstance } from "./ShipInstance"
 
 export interface PositionedObject {
@@ -16,7 +16,7 @@ export interface OrbitalBody extends PositionedObject {
   initialOrientation: vec3
   //distance: number
   radius: number
-  model: Model
+  model: RenderingModel
   surfaceTextureIndex: number
 }
 

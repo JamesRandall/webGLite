@@ -1,4 +1,4 @@
-import { Model } from "./models"
+import { RenderingModel } from "./models"
 import { loadTexture } from "./texture"
 import { createBoundingBox, getConstraints, getSizeFromConstraints, toVectorArray } from "../utilities"
 
@@ -91,7 +91,7 @@ function createSphereVertices(radius: number, subdivisionsAxis: number, subdivis
   }
 }
 
-function createBuffers(gl: WebGL2RenderingContext, geometry: ModelGeometry): Model {
+function createBuffers(gl: WebGL2RenderingContext, geometry: ModelGeometry): RenderingModel {
   const positionBuffer = gl.createBuffer()
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.positions.items), gl.STATIC_DRAW)
@@ -119,7 +119,7 @@ function createBuffers(gl: WebGL2RenderingContext, geometry: ModelGeometry): Mod
     texture: null,
     boundingBox: createBoundingBox(constraints),
     boundingBoxSize: getSizeFromConstraints(constraints),
-  } as Model
+  } as RenderingModel
 }
 
 export function createSphere(

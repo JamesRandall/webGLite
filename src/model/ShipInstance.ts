@@ -33,6 +33,7 @@ export interface ShipInstance extends PositionedObject {
   boundingBox: vec3[]
   aggressionLevel: number
   hasECM: boolean
+  hasEscapePod: boolean
   aiEnabled: boolean
   attitude: AttitudeEnum
   energy: number

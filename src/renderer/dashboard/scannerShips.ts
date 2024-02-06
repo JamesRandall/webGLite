@@ -1,6 +1,6 @@
 import { mat4, quat, vec3 } from "gl-matrix"
 import { Game } from "../../model/game"
-import { createSquareModel, Model } from "../../resources/models"
+import { createSquareModel, RenderingModel } from "../../resources/models"
 import { compileShaderProgram } from "../../shader"
 import { scannerRadialWorldRange } from "../../constants"
 import { ShipRoleEnum } from "../../model/ShipInstance"
@@ -60,7 +60,7 @@ function initShaderProgram(gl: WebGL2RenderingContext): ProgramInfo | null {
   }
 }
 
-function setPositionAttribute(gl: WebGL2RenderingContext, buffers: Model, programInfo: ProgramInfo) {
+function setPositionAttribute(gl: WebGL2RenderingContext, buffers: RenderingModel, programInfo: ProgramInfo) {
   const numComponents = 3 // pull out 2 values per iteration
   const type = gl.FLOAT // the data in the buffer is 32bit floats
   const normalize = false // don't normalize

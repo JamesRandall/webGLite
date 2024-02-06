@@ -1,4 +1,4 @@
-import { loadModel, Model } from "../resources/models"
+import { loadModel, RenderingModel } from "../resources/models"
 import { shipScaleFactor, stationScaleFactor } from "../constants"
 
 export enum ShipModelEnum {
@@ -33,7 +33,8 @@ export enum ShipModelEnum {
 
 export interface ShipBlueprint {
   name: string
-  model: Model
+  model: ShipModelEnum
+  renderingModel: RenderingModel
   rollAcceleration: number
   rollDeceleration: number
   maxRollSpeed: number

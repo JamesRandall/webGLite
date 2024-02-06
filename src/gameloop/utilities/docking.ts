@@ -20,7 +20,7 @@ export function isValidDocking(game: Game) {
   if (game.localBubble.station === null) return false
   const station = game.localBubble.station
 
-  const stationHalfSize = game.localBubble.station.blueprint.model.boundingBoxSize[2] / 2
+  const stationHalfSize = game.localBubble.station.blueprint.renderingModel.boundingBoxSize[2] / 2
   const gatePosition = vec3.add(
     vec3.create(),
     game.localBubble.station.position,

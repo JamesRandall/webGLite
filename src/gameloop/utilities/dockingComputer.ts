@@ -13,8 +13,8 @@ import { executeFlightPlan } from "./flightPlan"
 
 export function createDockingComputer(game: Game) {
   let station = game.localBubble.station!
-  const frontDistance = station.blueprint.model.boundingBoxSize[2] * 2
-  const gateDistance = station.blueprint.model.boundingBoxSize[2] / 2
+  const frontDistance = station.blueprint.renderingModel.boundingBoxSize[2] * 2
+  const gateDistance = station.blueprint.renderingModel.boundingBoxSize[2] / 2
 
   // The function signature is important as we use that to determine what to do with the response
   const matchRotationToStation = (game: Game, context: vec3, timeDelta: number) => matchRotation(game, station)

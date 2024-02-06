@@ -6,8 +6,11 @@ import { stationTactics } from "./stationTactics"
 import { rockHermitTactics } from "./rockHermitTactics"
 import { traderTactics } from "./traderTactics"
 import { bountyHunterTactics } from "./bountyHunterTactics"
-import { flyTowards } from "./manouver"
+import { flyTowards, rollShipByNoticeableAmount, steerShip } from "./manouver"
 import { thargonTactics } from "./thargonTactics"
+import { ShipModelEnum } from "../model/shipBlueprint"
+import { anacondaTactics } from "./anacondaTactics"
+import { considerFiringLasers, considerFiringMissile, considerLaunchingEscapePod } from "./weapons"
 
 export function applyTactics(game: Game, resources: Resources, timeDelta: number) {
   // TODO: In the original game this operated on a couple of ships from the full set each
@@ -51,6 +54,21 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     }
     // Tactics part 4 of 7
     // https://www.bbcelite.com/master/main/subroutine/tactics_part_4_of_7.html
-    // TODO !
+    if (ship.blueprint.model === ShipModelEnum.Anaconda) {
+      anacondaTactics(ship, game, resources)
+    }
+    if (Math.random() < 0.0025) {
+      rollShipByNoticeableAmount(ship)
+    }
+    if (ship.energy > ship.blueprint.maxAiEnergy / 2) {
+      considerFiringLasers(ship, game, resources)
+    } else if (ship.energy > ship.blueprint.maxAiEnergy / 8) {
+      considerFiringMissile(ship, game, resources)
+    } else {
+      if (ship.hasEscapePod) {
+        considerLaunchingEscapePod(ship, game, resources)
+      }
+    }
+    steerShip(ship, game)
   })
 }

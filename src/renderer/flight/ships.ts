@@ -71,8 +71,8 @@ export function createShipsRenderer(
       mat4.invert(normalMatrix, modelViewMatrix)
       mat4.transpose(normalMatrix, normalMatrix)
 
-      setCommonAttributes(gl, ship.blueprint.model, programInfo)
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ship.blueprint.model.indices)
+      setCommonAttributes(gl, ship.blueprint.renderingModel, programInfo)
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ship.blueprint.renderingModel.indices)
       setViewUniformLocations(gl, programInfo, {
         modelViewMatrix,
         normalMatrix,
@@ -80,7 +80,7 @@ export function createShipsRenderer(
       })
 
       {
-        const vertexCount = ship.blueprint.model.vertexCount
+        const vertexCount = ship.blueprint.renderingModel.vertexCount
         const type = gl.UNSIGNED_SHORT
         const offset = 0
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)

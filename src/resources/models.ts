@@ -2,7 +2,7 @@ import { vec2, vec3, vec4 } from "gl-matrix"
 import { loadTexture } from "./texture"
 import { createBoundingBox, getConstraints, getSizeFromConstraints } from "../utilities"
 
-export interface Model {
+export interface RenderingModel {
   position: WebGLBuffer
   color: WebGLBuffer
   indices: WebGLBuffer
@@ -241,7 +241,7 @@ export async function loadModel(gl: WebGL2RenderingContext, path: string, scale:
     texture: null,
     boundingBox: createBoundingBox(constraints),
     boundingBoxSize: getSizeFromConstraints(constraints),
-  } as Model
+  } as RenderingModel
 }
 
 export function createSquareModel(
@@ -301,7 +301,7 @@ export function createSquareModel(
     vertexCount: indices.length,
     textureCoords: textureCoordBuffer,
     texture: null,
-  } as Model
+  } as RenderingModel
 }
 
 /*
@@ -426,5 +426,5 @@ export function createSquareModelWithLoadedTexture(
     vertexCount: indices.length,
     textureCoords: textureCoordBuffer,
     texture: texture,
-  } as Model
+  } as RenderingModel
 }

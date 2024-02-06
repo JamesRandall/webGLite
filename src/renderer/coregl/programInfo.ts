@@ -1,4 +1,4 @@
-import { Model } from "../../resources/models"
+import { RenderingModel } from "../../resources/models"
 import { mat4, vec3, vec4 } from "gl-matrix"
 
 // TODO - I did a first pass refactor to pull out the common code. However the data types, as structured, allow

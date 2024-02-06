@@ -1,4 +1,4 @@
-import { ShipBlueprint } from "../model/shipBlueprint"
+import { ShipBlueprint, ShipModelEnum } from "../model/shipBlueprint"
 import { vec3 } from "gl-matrix"
 import { AttitudeEnum, ShipInstance, ShipRoleEnum } from "../model/ShipInstance"
 import { loadTexture } from "./texture"
@@ -19,6 +19,7 @@ export interface Resources {
     pirateIndexes: number[]
     rockHermitIndexes: number[]
     getRandomShip: () => ShipBlueprint
+    getInstanceOfModel: (model: ShipModelEnum, position: vec3, noseOrientation: vec3) => ShipInstance
     getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) => ShipInstance
     getCobraMk3: (position: vec3, noseOrientation: vec3) => ShipInstance
     getThargoid: (position: vec3, noseOrientation: vec3) => ShipInstance
@@ -126,6 +127,8 @@ export async function loadResources(
       bountyHunterIndexes,
       pirateIndexes,
       rockHermitIndexes,
+      getInstanceOfModel: (model: ShipModelEnum, position: vec3, noseOrientation: vec3) =>
+        toInstance(ships.filter((s) => s.model === model)[0], position, noseOrientation),
       getRandomShip: () => getRandomShip(ships),
       getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) =>
         toInstance(ships[index], position, noseOrientation),
@@ -198,9 +201,10 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
     rendering: {
       shininess: 16.0,
     },
-    boundingBox: ship.model.boundingBox.map((v) => vec3.copy(vec3.create(), v)),
+    boundingBox: ship.renderingModel.boundingBox.map((v) => vec3.copy(vec3.create(), v)),
     aggressionLevel: Math.floor(Math.random() * 32),
     hasECM: false,
+    hasEscapePod: false,
     aiEnabled: false,
     missiles: ship.maxAiMissiles,
     attitude: AttitudeEnum.Friendly,
@@ -240,7 +244,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
   const loadingShips = [
     {
       name: "Cobra Mk III",
-      model: loadModel(gl, "ships/cobra3.obj", shipScaleFactor),
+      model: ShipModelEnum.CobraMk3,
+      renderingModel: loadModel(gl, "ships/cobra3.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 2,
       maxSpeed: shipMovementSpeeds.maxSpeed,
@@ -258,7 +263,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Adder",
-      model: loadModel(gl, "ships/adder.obj", shipScaleFactor),
+      model: ShipModelEnum.Adder,
+      renderingModel: loadModel(gl, "ships/adder.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 4,
       maxSpeed: 24,
@@ -276,7 +282,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Anaconda",
-      model: loadModel(gl, "ships/anaconda.obj", shipScaleFactor),
+      model: ShipModelEnum.Anaconda,
+      renderingModel: loadModel(gl, "ships/anaconda.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 1.5,
       maxSpeed: 14,
@@ -294,7 +301,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Asp",
-      model: loadModel(gl, "ships/asp2.obj", shipScaleFactor),
+      model: ShipModelEnum.Asp,
+      renderingModel: loadModel(gl, "ships/asp2.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 40,
@@ -312,7 +320,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Asteroid",
-      model: loadModel(gl, "ships/asteroid.obj", shipScaleFactor),
+      model: ShipModelEnum.Asteroid,
+      renderingModel: loadModel(gl, "ships/asteroid.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 2,
       maxSpeed: 10,
@@ -330,7 +339,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Boa",
-      model: loadModel(gl, "ships/boa.obj", shipScaleFactor),
+      model: ShipModelEnum.Boa,
+      renderingModel: loadModel(gl, "ships/boa.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 2,
       maxSpeed: 24,
@@ -348,7 +358,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Boulder",
-      model: loadModel(gl, "ships/boulder.obj", shipScaleFactor),
+      model: ShipModelEnum.Boulder,
+      renderingModel: loadModel(gl, "ships/boulder.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 4,
       maxSpeed: 12,
@@ -366,7 +377,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Cargo",
-      model: loadModel(gl, "ships/cargo.obj", shipScaleFactor),
+      model: ShipModelEnum.Cargo,
+      renderingModel: loadModel(gl, "ships/cargo.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 6,
       maxSpeed: 20,
@@ -384,7 +396,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Cobra Mk I",
-      model: loadModel(gl, "ships/cobra1.obj", shipScaleFactor),
+      model: ShipModelEnum.CobraMk1,
+      renderingModel: loadModel(gl, "ships/cobra1.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 26,
@@ -402,7 +415,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Constrictor",
-      model: loadModel(gl, "ships/constric.obj", shipScaleFactor),
+      model: ShipModelEnum.Constrictor,
+      renderingModel: loadModel(gl, "ships/constric.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 36,
@@ -420,7 +434,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Coriolis",
-      model: loadModel(gl, "ships/coriolis.obj", stationScaleFactor),
+      model: ShipModelEnum.Coriolis,
+      renderingModel: loadModel(gl, "ships/coriolis.obj", stationScaleFactor),
       ...playerDefaults,
       pregameScale: 0.25,
       maxSpeed: 0,
@@ -438,7 +453,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Dodo",
-      model: loadModel(gl, "ships/dodo.obj", stationScaleFactor),
+      model: ShipModelEnum.Dodo,
+      renderingModel: loadModel(gl, "ships/dodo.obj", stationScaleFactor),
       ...playerDefaults,
       pregameScale: 0.2,
       maxSpeed: 0,
@@ -456,7 +472,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Escape Pod",
-      model: loadModel(gl, "ships/escape.obj", shipScaleFactor),
+      model: ShipModelEnum.EscapePod,
+      renderingModel: loadModel(gl, "ships/escape.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 6,
       maxSpeed: 8,
@@ -474,7 +491,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Fer de Lance",
-      model: loadModel(gl, "ships/ferdelan.obj", shipScaleFactor),
+      model: ShipModelEnum.FerDeLance,
+      renderingModel: loadModel(gl, "ships/ferdelan.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 30,
@@ -492,7 +510,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Gecko",
-      model: loadModel(gl, "ships/gecko.obj", shipScaleFactor),
+      model: ShipModelEnum.Gecko,
+      renderingModel: loadModel(gl, "ships/gecko.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 30,
@@ -510,7 +529,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Krait",
-      model: loadModel(gl, "ships/krait.obj", shipScaleFactor),
+      model: ShipModelEnum.Krait,
+      renderingModel: loadModel(gl, "ships/krait.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 2.5,
       maxSpeed: 30,
@@ -528,7 +548,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Mamba",
-      model: loadModel(gl, "ships/mamba.obj", shipScaleFactor),
+      model: ShipModelEnum.Mamba,
+      renderingModel: loadModel(gl, "ships/mamba.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 32,
@@ -546,7 +567,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Missile",
-      model: loadModel(gl, "ships/missile.obj", shipScaleFactor),
+      model: ShipModelEnum.Missile,
+      renderingModel: loadModel(gl, "ships/missile.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 7,
       maxSpeed: 44,
@@ -564,7 +586,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Moray",
-      model: loadModel(gl, "ships/moray.obj", shipScaleFactor),
+      model: ShipModelEnum.Moray,
+      renderingModel: loadModel(gl, "ships/moray.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 25,
@@ -582,7 +605,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Python",
-      model: loadModel(gl, "ships/python.obj", shipScaleFactor),
+      model: ShipModelEnum.Python,
+      renderingModel: loadModel(gl, "ships/python.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 1.5,
       maxSpeed: 20,
@@ -600,7 +624,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Shuttle",
-      model: loadModel(gl, "ships/shuttle.obj", shipScaleFactor),
+      model: ShipModelEnum.Shuttle,
+      renderingModel: loadModel(gl, "ships/shuttle.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 4,
       maxSpeed: 8,
@@ -618,7 +643,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Sidewinder",
-      model: loadModel(gl, "ships/sidewind.obj", shipScaleFactor),
+      model: ShipModelEnum.Sidewinder,
+      renderingModel: loadModel(gl, "ships/sidewind.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 37,
@@ -636,7 +662,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Thargoid",
-      model: loadModel(gl, "ships/thargoid.obj", shipScaleFactor),
+      model: ShipModelEnum.Thargoid,
+      renderingModel: loadModel(gl, "ships/thargoid.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 1.2,
       maxSpeed: 39,
@@ -654,7 +681,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Transporter",
-      model: loadModel(gl, "ships/trans.obj", shipScaleFactor),
+      model: ShipModelEnum.Transporter,
+      renderingModel: loadModel(gl, "ships/trans.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3,
       maxSpeed: 10,
@@ -672,7 +700,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Viper",
-      model: loadModel(gl, "ships/viper.obj", shipScaleFactor),
+      model: ShipModelEnum.Viper,
+      renderingModel: loadModel(gl, "ships/viper.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 3.5,
       maxSpeed: 32,
@@ -690,7 +719,8 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
     },
     {
       name: "Worm",
-      model: loadModel(gl, "ships/worm.obj", shipScaleFactor),
+      model: ShipModelEnum.Worm,
+      renderingModel: loadModel(gl, "ships/worm.obj", shipScaleFactor),
       ...playerDefaults,
       pregameScale: 4,
       maxSpeed: 23,
@@ -707,9 +737,9 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       canBeRockHermit: false,
     },
   ]
-  const loadedShips = await Promise.all(loadingShips.map((ls) => ls.model))
+  const loadedShips = await Promise.all(loadingShips.map((ls) => ls.renderingModel))
   return loadingShips.map((ls, lsi) => ({
     ...ls,
-    model: loadedShips[lsi],
+    renderingModel: loadedShips[lsi],
   }))
 }
