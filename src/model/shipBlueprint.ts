@@ -1,6 +1,36 @@
 import { loadModel, Model } from "../resources/models"
 import { shipScaleFactor, stationScaleFactor } from "../constants"
 
+export enum ShipModelEnum {
+  CobraMk3,
+  Adder,
+  Anaconda,
+  Asp,
+  Asteroid,
+  Boa,
+  Boulder,
+  Cargo,
+  CobraMk1,
+  Constrictor,
+  Coriolis,
+  Dodo,
+  EscapePod,
+  FerDeLance,
+  Gecko,
+  Krait,
+  Mamba,
+  Missile,
+  Moray,
+  Python,
+  Shuttle,
+  Sidewinder,
+  Thargoid,
+  Thargon,
+  Transporter,
+  Viper,
+  Worm,
+}
+
 export interface ShipBlueprint {
   name: string
   model: Model
