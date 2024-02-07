@@ -61,14 +61,22 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
       rollShipByNoticeableAmount(ship)
     }
     if (ship.energy > ship.blueprint.maxAiEnergy / 2) {
+      // Tactics part 5 of 7
+      // https://www.bbcelite.com/master/main/subroutine/tactics_part_5_of_7.html
       considerFiringLasers(ship, game, resources)
     } else if (ship.energy > ship.blueprint.maxAiEnergy / 8) {
+      // Tactics part 6 of 7
+      // https://www.bbcelite.com/master/main/subroutine/tactics_part_6_of_7.html
       considerFiringMissile(ship, game, resources)
     } else {
       if (ship.hasEscapePod) {
+        // A bit more from tactics part 4 of 7
+        // https://www.bbcelite.com/master/main/subroutine/tactics_part_4_of_7.html
         considerLaunchingEscapePod(ship, game, resources)
       }
     }
+    // Tactics part 7 of 7
+    // https://www.bbcelite.com/master/main/subroutine/tactics_part_7_of_7.html
     steerShip(ship, game)
   })
 }
