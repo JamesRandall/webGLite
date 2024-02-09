@@ -22,6 +22,7 @@ export function flyTowards(ship: ShipInstance, position: vec3) {}
 export function rollShipByNoticeableAmount(ship: ShipInstance) {}
 
 export function steerShip(ship: ShipInstance, game: Game) {
+  if (ship.role === ShipRoleEnum.Station) return
   if (isFarAway(ship)) {
     // this random check basically says the more aggressive the ship
     // the more likely it is to head towards us, the less aggressive the
@@ -53,16 +54,17 @@ function headShipAwayFromPlayer(ship: ShipInstance, game: Game) {
 }
 
 function headTowards(direction: vec3, ship: ShipInstance, game: Game) {
-  const roofDotProduct = vec3.dot(direction, ship.roofOrientation)
-  if (Math.abs(roofDotProduct) > 0.1) {
+  const normalisedDirection = vec3.normalize(vec3.create(), direction)
+  const roofDotProduct = vec3.dot(normalisedDirection, ship.roofOrientation)
+  if (Math.abs(roofDotProduct) > 0.2) {
     // pull up if roof dot product is positive, dive if negative
     ship.pitch = ship.blueprint.maxPitchSpeed * (roofDotProduct > 0 ? -1 : 1)
   } else {
     ship.pitch = 0
   }
 
-  const sideDotProduct = vec3.dot(direction, ship.rightOrientation)
-  if (Math.abs(sideDotProduct) > 0.1) {
+  const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
+  if (Math.abs(sideDotProduct) > 0.2) {
     // roll right if side dot product is positive, left if negative
     ship.roll = ship.blueprint.maxPitchSpeed * (sideDotProduct > 0 ? -1 : 1)
   } else {

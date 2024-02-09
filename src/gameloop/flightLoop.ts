@@ -8,6 +8,7 @@ import { isValidDocking } from "./utilities/docking"
 import { vec3 } from "gl-matrix"
 import { spawnNPCShips } from "./utilities/spawn"
 import { Resources } from "../resources/resources"
+import { applyTactics } from "../tactics/applyTactics"
 
 export function flightLoop(resources: Resources, game: Game, timeDelta: number) {
   game.localBubble.ships.forEach((ship) => {
@@ -18,6 +19,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   updateStardust(game, timeDelta)
   handleCollisions(game)
   spawnNPCShips(resources, game, timeDelta)
+  applyTactics(game, resources, timeDelta)
 
   // Useful diagnostic when working on manual docking or with the docking computer - shows the station roll and pitch
   //stationPitchAndRoll(game)

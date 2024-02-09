@@ -5,6 +5,7 @@ import { createPregameScene } from "./pregameScene"
 import { ShipModelEnum } from "../model/shipBlueprint"
 import { createTestScene } from "./testScene"
 import { scannerRadialWorldRange } from "../constants"
+import { AttitudeEnum } from "../model/ShipInstance"
 
 export enum StartingSceneEnum {
   Pregame,
@@ -12,7 +13,10 @@ export enum StartingSceneEnum {
   NamedScene,
 }
 
-const sceneMap = new Map([["trader", soloTrader]])
+const sceneMap = new Map([
+  ["trader", soloTrader],
+  ["pirate", soloPirate],
+])
 
 export function createStartingScene(
   scene: StartingSceneEnum,
@@ -25,7 +29,7 @@ export function createStartingScene(
       return createGameScene(resources, gl, RenderEffect.None)
     case StartingSceneEnum.NamedScene:
       // eventually be good to let scenes be loaded from JSON but for now we'll just use a function map
-      const ships = sceneMap.get(namedScene!)!(resources)
+      const ships = sceneMap.get(namedScene ?? "trader")!(resources)
       return createTestScene(resources, gl, ships)
     case StartingSceneEnum.Pregame:
     default:
@@ -40,4 +44,17 @@ function soloTrader(resources: Resources) {
     [0, 0, 1],
   )
   return [trader]
+}
+
+function soloPirate(resources: Resources) {
+  const pirate = resources.ships.getInstanceOfModel(
+    ShipModelEnum.CobraMk3,
+    [0, 0, -scannerRadialWorldRange[2] / 4],
+    [0, 0, 1],
+  )
+  pirate.aiEnabled = true
+  pirate.aggressionLevel = 28
+  pirate.attitude = AttitudeEnum.Hostile
+  pirate.speed = pirate.blueprint.maxSpeed / 2
+  return [pirate]
 }
