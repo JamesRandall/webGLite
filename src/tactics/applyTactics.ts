@@ -77,6 +77,6 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     }
     // Tactics part 7 of 7
     // https://www.bbcelite.com/master/main/subroutine/tactics_part_7_of_7.html
-    steerShip(ship, game)
+    steerShip(ship, game, timeDelta)
   })
 }

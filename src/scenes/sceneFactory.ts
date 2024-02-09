@@ -5,7 +5,7 @@ import { createPregameScene } from "./pregameScene"
 import { ShipModelEnum } from "../model/shipBlueprint"
 import { createTestScene } from "./testScene"
 import { scannerRadialWorldRange } from "../constants"
-import { AttitudeEnum } from "../model/ShipInstance"
+import { AttitudeEnum, ShipRoleEnum } from "../model/ShipInstance"
 
 export enum StartingSceneEnum {
   Pregame,
@@ -48,13 +48,14 @@ function soloTrader(resources: Resources) {
 
 function soloPirate(resources: Resources) {
   const pirate = resources.ships.getInstanceOfModel(
-    ShipModelEnum.CobraMk3,
+    ShipModelEnum.Python,
     [0, 0, -scannerRadialWorldRange[2] / 4],
     [0, 0, 1],
   )
+  pirate.role = ShipRoleEnum.Pirate
   pirate.aiEnabled = true
   pirate.aggressionLevel = 28
   pirate.attitude = AttitudeEnum.Hostile
-  pirate.speed = pirate.blueprint.maxSpeed / 2
+  //pirate.speed = pirate.blueprint.maxSpeed / 2
   return [pirate]
 }

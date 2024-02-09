@@ -1,6 +1,12 @@
 import { ShipBlueprint, ShipModelEnum } from "../model/shipBlueprint"
 import { vec3 } from "gl-matrix"
-import { AttitudeEnum, ShipInstance, ShipRoleEnum } from "../model/ShipInstance"
+import {
+  AccelerationModeEnum,
+  AttitudeEnum,
+  FlyingTowardsEnum,
+  ShipInstance,
+  ShipRoleEnum,
+} from "../model/ShipInstance"
 import { loadTexture } from "./texture"
 import { loadModel } from "./models"
 import { shipMovementSpeeds, shipScaleFactor, stationScaleFactor } from "../constants"
@@ -211,6 +217,13 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
     energy: ship.maxAiEnergy,
     timeLeftFiringLasers: null,
     fixedDirectionOfMovement: ship.fixedDirectionOfMovement ? vec3.copy(vec3.create(), noseOrientation) : null,
+    acceleration: AccelerationModeEnum.None,
+    rollAcceleration: AccelerationModeEnum.None,
+    pitchAcceleration: AccelerationModeEnum.None,
+    tacticsState: {
+      timeUntilNextStateChange: 0,
+      flyingTowards: FlyingTowardsEnum.None,
+    },
   } as ShipInstance
 }
 

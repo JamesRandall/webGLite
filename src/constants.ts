@@ -71,3 +71,4 @@ export const shipMovementSpeeds = {
   maxSpeed: maxSpeed,
   speedAcceleration: maxSpeed / 3.0,
 }
+export const tacticsFrequencySeconds = 2.0
