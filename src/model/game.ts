@@ -36,6 +36,7 @@ export interface HyperspaceData {
 }
 
 export interface Game {
+  disableSpawning: boolean
   currentSystem: StarSystem
   marketItems: MarketItem[]
   player: Player

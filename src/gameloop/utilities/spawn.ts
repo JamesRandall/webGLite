@@ -13,6 +13,7 @@ import { log } from "../../gameConsole"
 const spawnSequence = [spawnDockingTrader, spawnFriendly, spawnCop, spawnEnemy]
 
 export function spawnNPCShips(resources: Resources, game: Game, timeDelta: number) {
+  if (game.disableSpawning) return
   if (game.player.isDocked) return
   // when we are jumping we spawn more often
   game.timeUntilNextSpawnChance -= timeDelta * (game.player.isJumping ? 2 : 1)

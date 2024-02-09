@@ -68,6 +68,7 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
   const stars = generateGalaxy(0, resources.textures.planets.length)
   const startingSystem = stars.find((s) => s.name === "Lave")!
   const game: Game = {
+    disableSpawning: true,
     player: getStartingPlayer(resources, startingSystem),
     stars: stars,
     localBubble: localBubble,
