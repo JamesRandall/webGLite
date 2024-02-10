@@ -71,7 +71,7 @@ function headShipAwayFromPlayer(ship: ShipInstance, game: Game) {
     ship.tacticsState.flyingTowards = FlyingTowardsEnum.Planet
     log("Trader flying towards planet")
   } else {
-    log(`${ship.role} heading away from player`)
+    //log(`${ship.role} heading away from player`)
     ship.tacticsState.flyingTowards = FlyingTowardsEnum.AwayFromPlayer
   }
   ship.acceleration = AccelerationModeEnum.Accelerating
@@ -86,28 +86,31 @@ function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
         : vec3.multiply(vec3.create(), ship.position, [-1, -1, -1]) // towards the player
   const normalisedDirection = vec3.normalize(vec3.create(), direction)
 
-  const orientationDotProduct = vec3.dot(ship.noseOrientation, direction)
+  const orientationDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.noseOrientation), normalisedDirection)
+  let angle = Math.acos(orientationDotProduct < -1 ? -1 : orientationDotProduct > 1 ? 1 : orientationDotProduct)
   const roofDotProduct = vec3.dot(normalisedDirection, ship.roofOrientation)
-  //game.diagnostics.push(`X: ${normalisedDirection[0]}`)
-  //game.diagnostics.push(`Y: ${normalisedDirection[1]}`)
-  //game.diagnostics.push(`Z: ${normalisedDirection[2]}`)
-  //game.diagnostics.push(`RDP: ${roofDotProduct}`)
-  //game.diagnostics.push(`ODP: ${orientationDotProduct}`)
-  // If we're facing away from the target direction then we always pitch, otherwise we only pitch towards our
+
+  // If we're facing away from the target direction then we always pitch, if we're facing then we only pitch towards our
   // target direction if it is not at a small angle
-  if (Math.abs(roofDotProduct) > 0.001 || orientationDotProduct < 0) {
+  if (Math.abs(roofDotProduct) > 0.005 || orientationDotProduct < 0) {
     ship.pitch += ship.blueprint.pitchAcceleration * timeDelta * (roofDotProduct > 0 ? -1 : 1)
     if (ship.pitch > ship.blueprint.maxPitchSpeed) ship.pitch = ship.blueprint.maxPitchSpeed
     else if (ship.pitch < -ship.blueprint.maxPitchSpeed) ship.pitch = -ship.blueprint.maxPitchSpeed
+
+    // this prevents the ship from oscillating around the players position when coming head on
+    if (ship.pitch > 0 && ship.pitch > angle) ship.pitch = angle
+    else if (ship.pitch < 0 && ship.pitch < angle) ship.pitch = angle
   } else {
     // otherwise we start stopping our pitch motion
+    let delta = ship.blueprint.pitchAcceleration * timeDelta
+    if (angle < delta) delta = angle
     if (ship.pitch < 0) {
-      ship.pitch += ship.blueprint.pitchAcceleration * timeDelta
+      ship.pitch += delta
       if (ship.pitch > 0) {
         ship.pitch = 0
       }
     } else if (ship.pitch > 0) {
-      ship.pitch -= ship.blueprint.pitchAcceleration * timeDelta
+      ship.pitch -= delta
       if (ship.pitch < 0) {
         ship.pitch = 0
       }
@@ -115,7 +118,6 @@ function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
   }
 
   const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
-  //game.diagnostics.push(`SDP: ${sideDotProduct}`)
   if (Math.abs(sideDotProduct) > 0.001) {
     ship.roll += ship.blueprint.rollAcceleration * timeDelta * (sideDotProduct > 0 ? -1 : 1)
     if (ship.roll > ship.blueprint.maxRollSpeed) ship.roll = ship.blueprint.maxRollSpeed
