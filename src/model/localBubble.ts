@@ -1,6 +1,7 @@
 import { vec3 } from "gl-matrix"
 import { RenderingModel } from "../resources/models"
 import { ShipInstance } from "./ShipInstance"
+import { Explosion } from "./explosion"
 
 export interface PositionedObject {
   position: vec3
@@ -25,6 +26,7 @@ export interface LocalBubble {
   planet: OrbitalBody
   clipSpaceRadius: number
   ships: ShipInstance[]
+  explosions: Explosion[]
   // the station will also be in the ship instance array but we ref it here as otherwise we are constantly
   // looking it up
   station: ShipInstance | null

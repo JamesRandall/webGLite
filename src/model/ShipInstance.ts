@@ -63,4 +63,5 @@ export interface ShipInstance extends PositionedObject {
   pitchAcceleration: AccelerationModeEnum
   rollAcceleration: AccelerationModeEnum
   tacticsState: TacticsState
+  isDestroyed: boolean
 }

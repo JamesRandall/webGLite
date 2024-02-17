@@ -62,6 +62,7 @@ export function createGameScene(resources: Resources, gl: WebGL2RenderingContext
     },
     clipSpaceRadius: clipSpaceRadius,
     ships: ships,
+    explosions: [],
     station: null,
     stardust: createStardust(),
     sunPlanetLightingDirection: [0, 0, 0],

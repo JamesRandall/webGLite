@@ -220,6 +220,7 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
     acceleration: AccelerationModeEnum.None,
     rollAcceleration: AccelerationModeEnum.None,
     pitchAcceleration: AccelerationModeEnum.None,
+    isDestroyed: false,
     tacticsState: {
       timeUntilNextStateChange: 0,
       flyingTowards: FlyingTowardsEnum.None,

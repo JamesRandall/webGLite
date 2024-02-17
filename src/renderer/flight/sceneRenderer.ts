@@ -20,6 +20,7 @@ import { createInventoryRenderer } from "../screens/inventory"
 import { LaserTypeEnum } from "../../model/player"
 import { drawCrosshairs } from "./crosshairs"
 import { createPlayerLaserRenderer } from "./playerLasers"
+import { createExplosionsRenderer } from "./explosion"
 
 export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -28,6 +29,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
   const draw2d = createPrimitiveRenderer(gl, false, resources, viewportWidth, viewportHeight)
 
   const shipRenderer = createShipsRenderer(gl, resources)
+  const explosionRenderer = createExplosionsRenderer(gl, resources)
   const stardustRenderer = createStardustRenderer(gl, resources)
   const sunRenderer = createSunRenderer(gl, resources)
   const planetRenderer = createSphericalPlanetRenderer(gl, resources)
@@ -60,6 +62,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
       case SceneEnum.Front:
         gl.enable(gl.DEPTH_TEST)
         shipRenderer(viewProjectionMatrix, game.localBubble)
+        explosionRenderer(viewProjectionMatrix, game.localBubble)
         sunRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
         planetRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
         stardustRenderer(game)

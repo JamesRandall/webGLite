@@ -61,6 +61,7 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
     },
     clipSpaceRadius: clipSpaceRadius,
     ships: ships,
+    explosions: [],
     station: null,
     stardust: createStardust(),
     sunPlanetLightingDirection: [0, 0, 0],
