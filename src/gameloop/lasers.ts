@@ -40,7 +40,7 @@ export function applyPlayerLasers(game: Game, timeDelta: number) {
     if (game.player.isLaserActive && !previousActiveState) {
       // we "fire" when the pulse turns on
       game.player.laserTemperature++
-      game.player.energyBankLevel -= 8
+      game.player.energyBankLevel -= laserEnergy
       if (game.player.laserTemperature === game.player.blueprint.maxLaserTemperature) {
         game.currentScene = SceneEnum.PlayerExploding
       }
