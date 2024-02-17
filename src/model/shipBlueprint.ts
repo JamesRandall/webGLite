@@ -35,6 +35,7 @@ export interface ShipBlueprint {
   name: string
   model: ShipModelEnum
   renderingModel: RenderingModel
+  explosion: RenderingModel[]
   rollAcceleration: number
   rollDeceleration: number
   maxRollSpeed: number

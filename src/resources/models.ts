@@ -210,7 +210,43 @@ export async function loadRawModel(path: string, scale: number) {
   return { vertices, faces }
 }
 
-export async function loadExplosionFromModel(gl: WebGL2RenderingContext, path: string, scale: number = 1.0) {}
+export async function loadExplosionFromModel(gl: WebGL2RenderingContext, path: string, scale: number = 1.0) {
+  const { vertices, faces } = await loadRawModel(path, scale)
+  const models = faces.map((face) => {
+    const positions = face.vertices.flatMap((v) => [v[0], v[1], v[2]])
+    const normals = face.normals.flatMap((fn) => [fn[0], fn[1], fn[2]])
+    const indices = [0, 1, 2]
+    const colors = face.vertices.flatMap((_) => face.color)
+
+    const positionBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
+    const normalBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW)
+    const indexBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
+    const colorBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW)
+
+    let constraints = getConstraints(face.vertices)
+
+    return {
+      position: positionBuffer,
+      color: colorBuffer,
+      indices: indexBuffer,
+      normals: normalBuffer,
+      vertexCount: indices.length,
+      textureCoords: 0,
+      texture: null,
+      boundingBox: createBoundingBox(constraints),
+      boundingBoxSize: getSizeFromConstraints(constraints),
+    } as RenderingModel
+  })
+  return models
+}
 
 export async function loadModel(gl: WebGL2RenderingContext, path: string, scale: number = 1.0) {
   const { vertices, faces } = await loadRawModel(path, scale)
