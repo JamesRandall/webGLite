@@ -145,7 +145,7 @@ function extractFromObj(
   })
 }
 
-export async function loadModel(gl: WebGL2RenderingContext, path: string, scale: number = 1.0) {
+export async function loadRawModel(path: string, scale: number) {
   const response = await fetch(path)
   const text = await response.text()
   const lines = text.split("\n")
@@ -207,6 +207,13 @@ export async function loadModel(gl: WebGL2RenderingContext, path: string, scale:
     }
     return subFaces
   })
+  return { vertices, faces }
+}
+
+export async function loadExplosionFromModel(gl: WebGL2RenderingContext, path: string, scale: number = 1.0) {}
+
+export async function loadModel(gl: WebGL2RenderingContext, path: string, scale: number = 1.0) {
+  const { vertices, faces } = await loadRawModel(path, scale)
 
   const positions = faces.flatMap((face) => face.vertices.flatMap((v) => [v[0], v[1], v[2]])) // v.entries()
   const normals = faces.flatMap((face) => face.normals.flatMap((fn) => [fn[0], fn[1], fn[2]])) // v.entries()
