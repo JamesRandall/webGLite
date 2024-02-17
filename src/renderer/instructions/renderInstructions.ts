@@ -18,6 +18,7 @@ export function createInstructionRenderer(gl: WebGL2RenderingContext, resources:
     setupGl(gl)
     if (showHelpText) {
       let row = 0
+      text.draw("A      fire", [1, row++])
       text.draw("S      dive", [1, row++])
       text.draw("X      climb", [1, row++])
       text.draw(",      roll left", [1, row++])

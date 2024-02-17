@@ -99,7 +99,8 @@ function processLaserHits(game: Game) {
     if (ship.position[2] > 0) return
     const quad = createLaserCollisionQuad(ship)
     const triangles = createTrianglesFromQuad(quad)
-    const testPoint = game.player.laserOffset
+    //const testPoint = game.player.laserOffset
+    const testPoint = vec2.fromValues(0, 0)
     if (isPointInTriangle(testPoint, triangles[0]) || isPointInTriangle(testPoint, triangles[1])) {
       ship.isDestroyed = true
     }
