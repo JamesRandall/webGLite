@@ -24,13 +24,14 @@ function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
 
 function createVertexBuffer(gl: WebGL2RenderingContext, points: vec2[]) {
   const vertexBuffer = gl.createBuffer()
-  let vertices = [points[0][0], points[0][1], points[1][0], points[1][1], points[2][0], points[2][1]]
+  //let vertices = [points[0][0], points[0][1], points[1][0], points[1][1], points[2][0], points[2][1]]
+  let vertices = [points[0][0], points[0][1], points[1][0], points[1][1]]
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
   return { buffer: vertexBuffer, vertCount: vertices.length / 2 }
 }
 
-export function createTriangleRenderer(
+export function createLineRenderer(
   gl: WebGL2RenderingContext,
   width: number,
   height: number,
@@ -51,7 +52,7 @@ export function createTriangleRenderer(
       modelViewMatrix,
       color,
     })
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.vertCount)
+    gl.drawArrays(gl.LINE_STRIP, 0, vertices.vertCount)
   }
   const dispose = () => gl.deleteBuffer(vertices.buffer)
   return { render, dispose }

@@ -3,6 +3,7 @@ import { LocalBubble } from "../../model/localBubble"
 import { mat4, quat, vec3 } from "gl-matrix"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
+import { createNpcLaserRenderer } from "./npcLasers"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.ship)
@@ -33,8 +34,11 @@ export function createShipsRenderer(
   usePreGameScaleFactor: boolean = false,
 ) {
   const programInfo = initShaderProgram(gl, resources)!
+  const npcLaser = createNpcLaserRenderer(gl, resources)
 
   return function (projectionMatrix: mat4, localBubble: LocalBubble) {
+    localBubble.ships.forEach((ship) => npcLaser(projectionMatrix, ship))
+
     // Create a perspective matrix, a special matrix that is
     // used to simulate the distortion of perspective in a camera.
     // Our field of view is 45 degrees, with a width/height

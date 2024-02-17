@@ -19,7 +19,7 @@ import { createLongRangeChartRenderer } from "../screens/galaxyChart"
 import { createInventoryRenderer } from "../screens/inventory"
 import { LaserTypeEnum } from "../../model/player"
 import { drawCrosshairs } from "./crosshairs"
-import { createLaserRenderer } from "./lasers"
+import { createPlayerLaserRenderer } from "./playerLasers"
 
 export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -40,7 +40,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
   const buyMarketItemsRenderer = createBuyMarketItemsRenderer(draw2d)
   const buyEquipmentRenderer = createBuyEquipmentRenderer(draw2d)
   const inventoryRenderer = createInventoryRenderer(draw2d)
-  const laserRenderer = createLaserRenderer(gl, resources)
+  const laserRenderer = createPlayerLaserRenderer(gl, resources)
   let flashOn = true
   let flashOnTime = 0
 

@@ -94,6 +94,7 @@ function processLaserHits(game: Game) {
   // all we are really interested in for deciding if a player has hit a ship is the intersection of the bounding
   // box of the ship onto a 2d plane. That results in a quad that we can then split into two triangles and use
   // barycentric co-ordinates to determine if the laser has hit the ship
+  // this isn't how the original did it - it used some bit tricks basically
   game.localBubble.ships.forEach((ship) => {
     const quad = createLaserCollisionQuad(ship)
     const triangles = createTrianglesFromQuad(quad)

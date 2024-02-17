@@ -4,8 +4,8 @@ import { vec2 } from "gl-matrix"
 import { Resources } from "../../resources/resources"
 import { Game } from "../../model/game"
 
-export function createLaserRenderer(gl: WebGL2RenderingContext, resources: Resources) {
-  let leftLaser = createTriangleRenderer(
+export function createPlayerLaserRenderer(gl: WebGL2RenderingContext, resources: Resources) {
+  let { render: leftLaser } = createTriangleRenderer(
     gl,
     dimensions.width,
     dimensions.mainViewHeight,
@@ -17,7 +17,7 @@ export function createLaserRenderer(gl: WebGL2RenderingContext, resources: Resou
     resources,
   )
 
-  let rightLaser = createTriangleRenderer(
+  let { render: rightLaser } = createTriangleRenderer(
     gl,
     dimensions.width,
     dimensions.mainViewHeight,
