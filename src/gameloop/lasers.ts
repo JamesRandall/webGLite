@@ -96,6 +96,7 @@ function processLaserHits(game: Game) {
   // barycentric co-ordinates to determine if the laser has hit the ship
   // this isn't how the original did it - it used some bit tricks basically
   game.localBubble.ships.forEach((ship) => {
+    if (ship.position[2] > 0) return
     const quad = createLaserCollisionQuad(ship)
     const triangles = createTrianglesFromQuad(quad)
     const testPoint = game.player.laserOffset
