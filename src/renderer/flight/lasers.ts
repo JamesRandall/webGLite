@@ -30,7 +30,7 @@ export function createLaserRenderer(gl: WebGL2RenderingContext, resources: Resou
   )
 
   return function renderLasers(game: Game) {
-    if (game.player.isLaserFiring) {
+    if (game.player.isLaserActive) {
       leftLaser(game.player.laserOffset, [1.0, 0.0, 0.0, 1.0])
       rightLaser(game.player.laserOffset, [1.0, 0.0, 0.0, 1.0])
     }

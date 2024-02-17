@@ -39,6 +39,7 @@ export enum FlyingTowardsEnum {
 export interface TacticsState {
   timeUntilNextStateChange: number
   flyingTowards: FlyingTowardsEnum
+  canApplyTactics: boolean
 }
 
 export interface ShipInstance extends PositionedObject {

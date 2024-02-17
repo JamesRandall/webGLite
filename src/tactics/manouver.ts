@@ -25,14 +25,17 @@ function isFarAway(ship: ShipInstance) {
 
 export function flyTowards(ship: ShipInstance, position: vec3) {}
 
-export function rollShipByNoticeableAmount(ship: ShipInstance) {}
+export function rollShipByNoticeableAmount(ship: ShipInstance) {
+  if (ship.roll === 0 && ship.tacticsState.canApplyTactics) {
+    log("Rolling by noticeable amount")
+    ship.roll = ship.blueprint.maxRollSpeed
+  }
+}
 
 export function steerShip(ship: ShipInstance, game: Game, timeDelta: number) {
   if (ship.role === ShipRoleEnum.Station) return
 
-  ship.tacticsState.timeUntilNextStateChange -= timeDelta
-  if (ship.tacticsState.timeUntilNextStateChange < 0) {
-    ship.tacticsState.timeUntilNextStateChange = tacticsFrequencySeconds
+  if (ship.tacticsState.canApplyTactics) {
     if (isFarAway(ship)) {
       const aiFlagValue = aiFlag(ship)
       const aiRoll = Math.floor(Math.random() * 127) + 128
@@ -62,8 +65,9 @@ function headShipTowardsPlayer(ship: ShipInstance, game: Game) {
   ship.tacticsState.flyingTowards = FlyingTowardsEnum.Player
   const minSpeed = ship.blueprint.maxSpeed / 4
   const orientationDotProduct = vec3.dot(ship.noseOrientation, [0, 0, -1])
-  if (orientationDotProduct > 0 && ship.speed > minSpeed) ship.acceleration = AccelerationModeEnum.Decelerating
-  else ship.acceleration = AccelerationModeEnum.Accelerating
+  //if (orientationDotProduct > 0 && ship.speed > minSpeed) ship.acceleration = AccelerationModeEnum.Decelerating
+  //else ship.acceleration = AccelerationModeEnum.Accelerating
+  ship.acceleration = AccelerationModeEnum.Accelerating
 }
 
 function headShipAwayFromPlayer(ship: ShipInstance, game: Game) {
@@ -103,7 +107,6 @@ function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
   } else {
     // otherwise we start stopping our pitch motion
     let delta = ship.blueprint.pitchAcceleration * timeDelta
-    if (angle < delta) delta = angle
     if (ship.pitch < 0) {
       ship.pitch += delta
       if (ship.pitch > 0) {
@@ -119,9 +122,20 @@ function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
 
   const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
   if (Math.abs(sideDotProduct) > 0.001) {
-    ship.roll += ship.blueprint.rollAcceleration * timeDelta * (sideDotProduct > 0 ? -1 : 1)
+    ship.roll += ship.blueprint.rollAcceleration * timeDelta * (sideDotProduct > 0 ? 1 : -1)
     if (ship.roll > ship.blueprint.maxRollSpeed) ship.roll = ship.blueprint.maxRollSpeed
     else if (ship.roll < -ship.blueprint.maxRollSpeed) ship.roll = -ship.blueprint.maxRollSpeed
+  } else {
+    let delta = ship.blueprint.rollAcceleration * timeDelta
+    if (ship.roll < 0) {
+      ship.roll += delta
+      if (ship.roll > 0) ship.roll = 0
+    }
+    if (ship.roll > 0) {
+      ship.roll -= delta
+      if (ship.roll < 0) ship.roll = 0
+    }
+    ship.roll = 0
   }
 
   const accelerationValue =

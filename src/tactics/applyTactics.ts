@@ -11,6 +11,7 @@ import { thargonTactics } from "./thargonTactics"
 import { ShipModelEnum } from "../model/shipBlueprint"
 import { anacondaTactics } from "./anacondaTactics"
 import { considerFiringLasers, considerFiringMissile, considerLaunchingEscapePod } from "./weapons"
+import { tacticsFrequencySeconds } from "../constants"
 
 export function applyTactics(game: Game, resources: Resources, timeDelta: number) {
   // TODO: In the original game this operated on a couple of ships from the full set each
@@ -20,6 +21,11 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
 
   game.localBubble.ships.forEach((ship) => {
     ship.energy = Math.min(ship.energy + 1, ship.blueprint.maxAiEnergy)
+    ship.tacticsState.timeUntilNextStateChange -= timeDelta
+    if (ship.tacticsState.timeUntilNextStateChange < 0) {
+      ship.tacticsState.timeUntilNextStateChange = tacticsFrequencySeconds
+      ship.tacticsState.canApplyTactics = true
+    }
 
     switch (ship.role) {
       // This is tactics part 2 of 7
@@ -57,7 +63,9 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     if (ship.blueprint.model === ShipModelEnum.Anaconda) {
       anacondaTactics(ship, game, resources)
     }
-    if (Math.random() < 0.0025) {
+    // Original game uses this percentage but its based on its loop timing system
+    // if (Math.random() < 0.0025) {
+    if (Math.random() < 0.05) {
       rollShipByNoticeableAmount(ship)
     }
     if (ship.energy > ship.blueprint.maxAiEnergy / 2) {
@@ -78,5 +86,7 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     // Tactics part 7 of 7
     // https://www.bbcelite.com/master/main/subroutine/tactics_part_7_of_7.html
     steerShip(ship, game, timeDelta)
+
+    ship.tacticsState.canApplyTactics = false
   })
 }

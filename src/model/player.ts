@@ -87,9 +87,12 @@ export interface Player {
   isJumping: boolean
   lookAt: vec3
   isLaserFiring: boolean
-  timeToLaserStateChange: number | null
+  isLaserActive: boolean
+  timeToLaserStateChange: number
   laserOffset: vec2
 }
+
+export const pulseLaserMs = 1.0 / 4.0
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem): Player {
   const cobra = resources.ships.getCobraMk3([0, 0, 0], [0, 1, 0]).blueprint
@@ -139,8 +142,9 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     disableDamping: false,
     isJumping: false,
     lookAt: vec3.fromValues(0, 0, 1),
-    isLaserFiring: false,
-    timeToLaserStateChange: null,
+    isLaserFiring: false, // true if the player is firing the laser
+    isLaserActive: false, // true if the laser is actively "pulsing" and shown
+    timeToLaserStateChange: pulseLaserMs,
     laserOffset: vec2.fromValues(0, 0),
   }
 }
