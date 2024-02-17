@@ -12,6 +12,7 @@ export interface RenderingModel {
   vertexCount: number
   boundingBox: vec3[]
   boundingBoxSize: vec3
+  faceNormal: vec3 | null
 }
 
 const materials: { [key: string]: number[] } = {
@@ -243,6 +244,7 @@ export async function loadExplosionFromModel(gl: WebGL2RenderingContext, path: s
       texture: null,
       boundingBox: createBoundingBox(constraints),
       boundingBoxSize: getSizeFromConstraints(constraints),
+      faceNormal: face.normals[0],
     } as RenderingModel
   })
   return models
@@ -284,6 +286,7 @@ export async function loadModel(gl: WebGL2RenderingContext, path: string, scale:
     texture: null,
     boundingBox: createBoundingBox(constraints),
     boundingBoxSize: getSizeFromConstraints(constraints),
+    faceNormal: null,
   } as RenderingModel
 }
 

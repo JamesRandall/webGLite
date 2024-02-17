@@ -49,7 +49,6 @@ export interface ShipInstance extends PositionedObject {
   rendering: {
     shininess: number
   }
-  boundingBox: vec3[]
   aggressionLevel: number
   hasECM: boolean
   hasEscapePod: boolean
@@ -58,7 +57,6 @@ export interface ShipInstance extends PositionedObject {
   energy: number
   missiles: number
   timeLeftFiringLasers: number | null // none null if the ship is firing lasers
-  fixedDirectionOfMovement: vec3 | null // asteroids and boulders do not change direction as they pitch and roll
   acceleration: AccelerationModeEnum
   pitchAcceleration: AccelerationModeEnum
   rollAcceleration: AccelerationModeEnum

@@ -10,6 +10,8 @@ export interface PositionedObject {
   rightOrientation: vec3
   roll: number
   pitch: number
+  fixedDirectionOfMovement: vec3 | null // asteroids and boulders do not change direction as they pitch and roll
+  boundingBox: vec3[]
 }
 
 export interface OrbitalBody extends PositionedObject {

@@ -45,6 +45,8 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
       roll: 0.0,
       surfaceTextureIndex: 0,
       model: createSquareModelWithLoadedTexture(gl, resources.textures.starmask),
+      fixedDirectionOfMovement: null,
+      boundingBox: [],
     },
     planet: {
       position: [0, 0, -clipSpaceRadius / 2],
@@ -58,6 +60,8 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
       roll: 0.0,
       surfaceTextureIndex: 0,
       model: createSquareModel(gl, [0.0, 0.0, 0.8, 1.0]),
+      fixedDirectionOfMovement: null,
+      boundingBox: [],
     },
     clipSpaceRadius: clipSpaceRadius,
     ships: ships,

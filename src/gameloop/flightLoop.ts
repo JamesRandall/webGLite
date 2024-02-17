@@ -1,4 +1,4 @@
-import { updateShipInstance } from "./updateShipInstance"
+import { updateExplosion, updateShipInstance } from "./updateShipInstance"
 import { updateStardust } from "./stardust"
 import { updateOrbitalBodies } from "./orbitalBody"
 import { Game, SceneEnum } from "../model/game"
@@ -18,6 +18,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   game.localBubble.ships.forEach((ship) => {
     updateShipInstance(ship, game.player, timeDelta)
   })
+  game.localBubble.explosions.forEach((explosion) => updateExplosion(explosion, game.player, timeDelta))
   updateStationAndSafeZone(game)
   updateOrbitalBodies(game, timeDelta)
   updateStardust(game, timeDelta)

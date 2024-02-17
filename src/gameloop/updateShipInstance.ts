@@ -7,6 +7,8 @@ import {
   rotateLocationInSpaceByPitchAndRoll,
   rotateOrientationVectorsByPitchAndRoll,
 } from "./utilities/transforms"
+import { Explosion } from "../model/explosion"
+import { PositionedObject } from "../model/localBubble"
 
 // Based on this game loop: https://www.bbcelite.com/deep_dives/program_flow_of_the_ship-moving_routine.html
 export function updateShipInstance(shipInstance: ShipInstance, player: Player, timeDelta: number) {
@@ -19,7 +21,17 @@ export function updateShipInstance(shipInstance: ShipInstance, player: Player, t
   rotateShipByPitchAndRoll(shipInstance, timeDelta)
 }
 
-function applyTactics(shipInstance: ShipInstance) {
+export function updateExplosion(explosion: Explosion, player: Player, timeDelta: number) {
+  explosion.positions.forEach((part, index) => {
+    moveExplosionBySpeed(explosion, part, explosion.componentRelativeSpeed[index], timeDelta)
+    rotateLocationInSpaceByPlayerPitchAndRoll(part, player, timeDelta)
+    moveShipByPlayerSpeed(part, player, timeDelta)
+    rotateAccordingToPlayerPitchAndRoll(part, player, timeDelta)
+    rotateShipByPitchAndRoll(part, timeDelta)
+  })
+}
+
+function applyTactics(shipInstance: PositionedObject) {
   // update the ships tactics
 }
 
@@ -34,22 +46,39 @@ function moveShipBySpeed(shipInstance: ShipInstance, timeDelta: number) {
   shipInstance.position = vec3.add(vec3.create(), shipInstance.position, transform)
 }
 
-function applyAcceleration(shipInstance: ShipInstance, timeDelta: number) {
+function moveExplosionBySpeed(
+  explosion: Explosion,
+  shipInstance: PositionedObject,
+  localSpeed: vec3,
+  timeDelta: number,
+) {
+  // move the ship by its speed along its orientation vector
+  const velocity = vec3.add(vec3.create(), explosion.overallVelocity, localSpeed)
+  const frameVelocity = vec3.multiply(vec3.create(), velocity, [timeDelta, timeDelta, timeDelta])
+  /*const transform = vec3.multiply(
+    vec3.create(),
+    shipInstance.fixedDirectionOfMovement ?? shipInstance.noseOrientation,
+    frameVelocity,
+  )*/
+  shipInstance.position = vec3.add(vec3.create(), shipInstance.position, frameVelocity)
+}
+
+function applyAcceleration(shipInstance: PositionedObject, timeDelta: number) {
   // apply acceleration if required and then zero acceleration as its a one off operation
 }
 
-function rotateLocationInSpaceByPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta: number) {
+function rotateLocationInSpaceByPlayerPitchAndRoll(shipInstance: PositionedObject, player: Player, timeDelta: number) {
   rotateLocationInSpaceByPitchAndRoll(shipInstance, player.roll * timeDelta, player.pitch * timeDelta)
 }
 
-function moveShipByPlayerSpeed(shipInstance: ShipInstance, player: Player, timeDelta: number) {
+function moveShipByPlayerSpeed(shipInstance: PositionedObject, player: Player, timeDelta: number) {
   // I want to specify the velocities in the units given in the Elite manual but want the in game velocity to be
   // accurate to the original - this fudge factor lands us in about the right ballpark
   const velocity = calculatePlayerVelocity(player, timeDelta)
   vec3.add(shipInstance.position, shipInstance.position, velocity)
 }
 
-function rotateAccordingToPlayerPitchAndRoll(shipInstance: ShipInstance, player: Player, timeDelta: number) {
+function rotateAccordingToPlayerPitchAndRoll(shipInstance: PositionedObject, player: Player, timeDelta: number) {
   const roll = player.roll * timeDelta
   const pitch = player.pitch * timeDelta
   rotateOrientationVectorsByPitchAndRoll(shipInstance, roll, pitch)
@@ -64,7 +93,7 @@ function rotateAccordingToPlayerPitchAndRoll(shipInstance: ShipInstance, player:
   }
 }
 
-function rotateShipByPitchAndRoll(shipInstance: ShipInstance, timeDelta: number) {
+function rotateShipByPitchAndRoll(shipInstance: PositionedObject, timeDelta: number) {
   // For roll we need to rotate our roof axis and right axis around our nose orientation
   const rollRotationMatrix = mat4.create()
   mat4.rotate(rollRotationMatrix, rollRotationMatrix, shipInstance.roll * timeDelta, shipInstance.noseOrientation)
