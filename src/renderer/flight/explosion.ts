@@ -57,11 +57,14 @@ export function createExplosionsRenderer(
     })
 
     localBubble.explosions.forEach((explosion) => {
-      explosion.positions.forEach((ship, index) => {
+      explosion.positions.forEach((part, index) => {
+        const offsetNoseOrientation = vec3.add(vec3.create(), part.noseOrientationDelta, part.noseOrientation)
+        const offsetRoofOrientation = vec3.add(vec3.create(), part.roofOrientationDelta, part.roofOrientation)
+
         const renderingModel = explosion.parts[index]
-        const targetToMatrix = mat4.targetTo(mat4.create(), [0, 0, 0], ship.noseOrientation, ship.roofOrientation)
+        const targetToMatrix = mat4.targetTo(mat4.create(), [0, 0, 0], offsetNoseOrientation, offsetRoofOrientation)
         const targetToQuat = mat4.getRotation(quat.create(), targetToMatrix)
-        const viewPosition = ship.position
+        const viewPosition = part.position
         const modelViewMatrix = mat4.fromRotationTranslation(mat4.create(), targetToQuat, viewPosition)
 
         const normalMatrix = mat4.create()
