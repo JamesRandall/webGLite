@@ -195,6 +195,7 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
 
         renderer(game, deltaTime, game.renderEffect)
       } else {
+        resources.soundEffects.bootUp()
         then = now * 0.001
         isFirst = false
       }

@@ -23,7 +23,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   updateOrbitalBodies(game, timeDelta)
   updateStardust(game, timeDelta)
   handleCollisions(game)
-  applyPlayerLasers(game, timeDelta)
+  applyPlayerLasers(game, resources, timeDelta)
   spawnNPCShips(resources, game, timeDelta)
   applyTactics(game, resources, timeDelta)
 

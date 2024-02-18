@@ -119,6 +119,7 @@ function createBuffers(gl: WebGL2RenderingContext, geometry: ModelGeometry): Ren
     texture: null,
     boundingBox: createBoundingBox(constraints),
     boundingBoxSize: getSizeFromConstraints(constraints),
+    faceNormal: null,
   } as RenderingModel
 }
 

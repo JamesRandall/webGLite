@@ -4,9 +4,9 @@ import { vec2, vec3 } from "gl-matrix"
 import { dimensions } from "../constants"
 import { ShipInstance } from "../model/ShipInstance"
 import { log } from "../gameConsole"
-import { soundEffect } from "../audio"
+import { Resources } from "../resources/resources"
 
-export function applyPlayerLasers(game: Game, timeDelta: number) {
+export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: number) {
   const laserEnergy = 1
 
   const previousActiveState = game.player.isLaserActive
@@ -49,7 +49,7 @@ export function applyPlayerLasers(game: Game, timeDelta: number) {
         (dimensions.crosshairSpace / 2) * Math.random() - dimensions.crosshairSpace / 4,
         (dimensions.crosshairSpace / 2) * Math.random() - dimensions.crosshairSpace / 4,
       )
-      processLaserHits(game)
+      processLaserHits(game, resources)
     }
   }
 }
@@ -58,18 +58,15 @@ function createLaserCollisionQuad(ship: ShipInstance) {
   const xy = (v: vec3) => vec2.fromValues(v[0], v[1])
   const translatedBoundingBox = ship.boundingBox.map((v) => vec3.add(vec3.create(), v, ship.position))
 
-  let leftMost = vec2.fromValues(10000, 0)
-  let rightMost = vec2.fromValues(-10000, 0)
-  let topMost = vec2.fromValues(0, -10000)
-  let bottomMost = vec2.fromValues(0, 10000)
-  translatedBoundingBox.forEach((v) => {
-    if (v[0] < leftMost[0]) leftMost = xy(v)
-    if (v[0] > rightMost[0]) rightMost = xy(v)
-    if (v[1] > topMost[1]) topMost = xy(v)
-    if (v[1] < bottomMost[1]) bottomMost = xy(v)
-  })
-
-  return [leftMost, topMost, rightMost, bottomMost]
+  return translatedBoundingBox.reduce(
+    ([leftMost, rightMost, topMost, bottomMost], v) => [
+      v[0] < leftMost[0] ? xy(v) : leftMost,
+      v[0] > rightMost[0] ? xy(v) : rightMost,
+      v[1] > topMost[1] ? xy(v) : topMost,
+      v[1] < bottomMost[1] ? xy(v) : bottomMost,
+    ],
+    [vec2.fromValues(10000, 0), vec2.fromValues(-10000, 0), vec2.fromValues(0, -10000), vec2.fromValues(0, 10000)],
+  )
 }
 
 function createTrianglesFromQuad(quad: vec2[]) {
@@ -91,7 +88,7 @@ function isPointInTriangle(point: vec2, [p1, p2, p3]: vec2[]) {
   return a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1
 }
 
-function processLaserHits(game: Game) {
+function processLaserHits(game: Game, resources: Resources) {
   // all we are really interested in for deciding if a player has hit a ship is the intersection of the bounding
   // box of the ship onto a 2d plane. That results in a quad that we can then split into two triangles and use
   // barycentric co-ordinates to determine if the laser has hit the ship
@@ -110,9 +107,9 @@ function processLaserHits(game: Game) {
     return hit
   }, null)
   if (hit === null) {
-    soundEffect.playerLaserMiss()
+    resources.soundEffects.playerLaserMiss()
   } else {
     hit.isDestroyed = true
-    soundEffect.shipExplosion()
+    resources.soundEffects.shipExplosion()
   }
 }

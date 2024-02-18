@@ -7,7 +7,6 @@ import { Resources } from "../resources/resources"
 import { ShipInstance } from "../model/ShipInstance"
 import { dimensions, scannerRadialWorldRange } from "../constants"
 import { nextEffect, previousEffect } from "../renderer/rootRenderer"
-import { soundEffect } from "../audio"
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
   const player = game.player
@@ -16,7 +15,7 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
       applyRoll(player, timeDelta)
       applyPitch(player, timeDelta)
       applyAcceleration(player, timeDelta)
-      applyJump(game)
+      applyJump(game, resources)
       applyHyperspace(game)
     }
     applyLasers(game, timeDelta)
@@ -107,10 +106,10 @@ function shipsOnEdgeOfScannerRange(ships: ShipInstance[]) {
   return false
 }
 
-function applyJump(game: Game) {
+function applyJump(game: Game, resources: Resources) {
   const shipsForcingAbort = shipsOnEdgeOfScannerRange(game.localBubble.ships)
   if (game.player.isJumping && shipsForcingAbort) {
-    soundEffect.jumpBlocked()
+    resources.soundEffects.jumpBlocked()
   }
   game.player.isJumping = game.player.controlState.jump && !shipsForcingAbort
 

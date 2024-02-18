@@ -1,7 +1,8 @@
-/*type AudioPlayer = (volume: number) => void
+type AudioPlayer = (volume?: number) => void
 
 export interface SoundEffects {
   bootUp: AudioPlayer
+  docked: AudioPlayer
   enemyLaserHit: AudioPlayer
   enemyLaserMiss: AudioPlayer
   hyperspace: AudioPlayer
@@ -10,13 +11,19 @@ export interface SoundEffects {
   playerLaserHit: AudioPlayer
   playerLaserMiss: AudioPlayer
   shipExplosion: AudioPlayer
-}*/
+}
 
-function createAudioPlayer(path: string) {
+function createSingleAudioPlayer(path: string): Promise<HTMLAudioElement> {
+  return new Promise((resolve) => {
+    const player = new Audio(path)
+    player.addEventListener("canplaythrough", () => resolve(player), false)
+  })
+}
+
+async function createAudioPlayer(path: string) {
   const players: HTMLAudioElement[] = []
   for (let i = 0; i < 4; i++) {
-    const player = new Audio(path)
-    players.push(player)
+    players.push(await createSingleAudioPlayer(path))
   }
   let currentIndex = 0
   return function (volume: number = 1.0) {
@@ -27,15 +34,17 @@ function createAudioPlayer(path: string) {
   }
 }
 
-export const soundEffect = {
-  bootUp: createAudioPlayer("audio/BBC Boot Sound.mp3"),
-  docked: createAudioPlayer("audio/Docked.mp3"),
-  enemyLaserHit: createAudioPlayer("audio/Enemy Laser Hit.mp3"),
-  enemyLaserMiss: createAudioPlayer("audio/Enemy Laser Miss.mp3"),
-  hyperspace: createAudioPlayer("audio/Hyperspace.mp3"),
-  jumpBlocked: createAudioPlayer("audio/Jump Blocked.mp3"),
-  launch: createAudioPlayer("audio/Launch.mp3"),
-  playerLaserHit: createAudioPlayer("audio/Player Laser Hit.mp3"),
-  playerLaserMiss: createAudioPlayer("audio/Player Laser Miss.mp3"),
-  shipExplosion: createAudioPlayer("audio/Ship Explosion.mp3"),
+export async function createSoundEffects() {
+  return {
+    bootUp: await createAudioPlayer("audio/BBC Boot Sound.mp3"),
+    docked: await createAudioPlayer("audio/Docked.mp3"),
+    enemyLaserHit: await createAudioPlayer("audio/Enemy Laser Hit.mp3"),
+    enemyLaserMiss: await createAudioPlayer("audio/Enemy Laser Miss.mp3"),
+    hyperspace: await createAudioPlayer("audio/Hyperspace.mp3"),
+    jumpBlocked: await createAudioPlayer("audio/Jump Blocked.mp3"),
+    launch: await createAudioPlayer("audio/Launch.mp3"),
+    playerLaserHit: await createAudioPlayer("audio/Player Laser Hit.mp3"),
+    playerLaserMiss: await createAudioPlayer("audio/Player Laser Miss.mp3"),
+    shipExplosion: await createAudioPlayer("audio/Ship Explosion.mp3"),
+  } as SoundEffects
 }

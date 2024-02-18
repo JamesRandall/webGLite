@@ -11,6 +11,7 @@ import { loadTexture } from "./texture"
 import { loadExplosionFromModel, loadModel } from "./models"
 import { shipMovementSpeeds, shipScaleFactor, stationScaleFactor } from "../constants"
 import { calculateOrientationsFromNose } from "../model/geometry"
+import { createSoundEffects, SoundEffects } from "../audio"
 
 export interface ShaderSource {
   frag: string
@@ -58,6 +59,7 @@ export interface Resources {
     vcr: ShaderSource
     motionBlur: ShaderSource
   }
+  soundEffects: SoundEffects
 }
 
 async function loadShaderSource(name: string) {
@@ -178,6 +180,7 @@ export async function loadResources(
       vcr: namedShaders.get("vcr")!,
       motionBlur: namedShaders.get("motionblur")!,
     },
+    soundEffects: await createSoundEffects(),
   }
 }
 
