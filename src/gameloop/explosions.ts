@@ -26,9 +26,10 @@ export function replaceDestroyedShipsWithExplosions(game: Game, timeDelta: numbe
             // the ships nose orientation.
             noseOrientationDelta: vec3.subtract(vec3.create(), ship.noseOrientation, noseOrientation),
             roofOrientationDelta: vec3.subtract(vec3.create(), ship.roofOrientation, roofOrientation),
+            shininess: ship.rendering.shininess,
           }
         }),
-        timeUntilDissipate: 10.0,
+        timeUntilDissipate: 30.0,
         // the explosion has an overall velocity based on the source objects velocity
         overallVelocity: vec3.fromValues(
           ship.noseOrientation[0] * ship.speed,

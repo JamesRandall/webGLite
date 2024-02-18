@@ -76,7 +76,7 @@ export function createExplosionsRenderer(
         setViewUniformLocations(gl, programInfo, {
           modelViewMatrix,
           normalMatrix,
-          shininess: 16.0,
+          shininess: part.shininess,
         })
 
         {

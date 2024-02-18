@@ -5,6 +5,7 @@ import { vec3 } from "gl-matrix"
 export interface ExplosionPart extends PositionedObject {
   noseOrientationDelta: vec3
   roofOrientationDelta: vec3
+  shininess: number
 }
 
 export interface Explosion {
