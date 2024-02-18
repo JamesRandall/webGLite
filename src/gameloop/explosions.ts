@@ -2,22 +2,26 @@ import { Game } from "../model/game"
 import { RenderingModel } from "../resources/models"
 import { PositionedObject } from "../model/localBubble"
 import { vec3 } from "gl-matrix"
+import { calculateOrientationsFromNose } from "../model/geometry"
 
 export function replaceDestroyedShipsWithExplosions(game: Game, timeDelta: number) {
   game.localBubble.ships.forEach((ship) => {
     if (ship.isDestroyed) {
       const newExplosion = {
         parts: ship.blueprint.explosion,
-        positions: ship.blueprint.explosion.map(() => ({
-          position: ship.position,
-          noseOrientation: ship.noseOrientation,
-          roofOrientation: ship.roofOrientation,
-          rightOrientation: ship.rightOrientation,
-          roll: Math.random() - 0.5,
-          pitch: Math.random() - 0.5,
-          fixedDirectionOfMovement: null,
-          boundingBox: [],
-        })),
+        positions: ship.blueprint.explosion.map((e) => {
+          const { noseOrientation, roofOrientation, sideOrientation } = calculateOrientationsFromNose(e.faceNormal!)
+          return {
+            position: ship.position,
+            noseOrientation: noseOrientation,
+            roofOrientation: roofOrientation,
+            rightOrientation: sideOrientation,
+            roll: Math.random() - 0.5,
+            pitch: Math.random() - 0.5,
+            fixedDirectionOfMovement: null,
+            boundingBox: [],
+          }
+        }),
         timeUntilDissipate: 10.0,
         // the explosion has an overall velocity based on the source objects velocity
         overallVelocity: vec3.fromValues(
