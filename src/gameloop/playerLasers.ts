@@ -4,6 +4,7 @@ import { vec2, vec3 } from "gl-matrix"
 import { dimensions } from "../constants"
 import { ShipInstance } from "../model/ShipInstance"
 import { log } from "../gameConsole"
+import { soundEffect } from "../audio"
 
 export function applyPlayerLasers(game: Game, timeDelta: number) {
   const laserEnergy = 1
@@ -108,18 +109,10 @@ function processLaserHits(game: Game) {
     }
     return hit
   }, null)
-  if (hit !== null) {
+  if (hit === null) {
+    soundEffect.playerLaserMiss()
+  } else {
     hit.isDestroyed = true
+    soundEffect.shipExplosion()
   }
-
-  /*game.localBubble.ships.forEach((ship) => {
-    if (ship.position[2] > 0) return
-    const quad = createLaserCollisionQuad(ship)
-    const triangles = createTrianglesFromQuad(quad)
-    //const testPoint = game.player.laserOffset
-    const testPoint = vec2.fromValues(0, 0)
-    if (isPointInTriangle(testPoint, triangles[0]) || isPointInTriangle(testPoint, triangles[1])) {
-      ship.isDestroyed = true
-    }
-  })*/
 }

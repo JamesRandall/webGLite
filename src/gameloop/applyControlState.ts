@@ -7,6 +7,7 @@ import { Resources } from "../resources/resources"
 import { ShipInstance } from "../model/ShipInstance"
 import { dimensions, scannerRadialWorldRange } from "../constants"
 import { nextEffect, previousEffect } from "../renderer/rootRenderer"
+import { soundEffect } from "../audio"
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
   const player = game.player
@@ -107,7 +108,11 @@ function shipsOnEdgeOfScannerRange(ships: ShipInstance[]) {
 }
 
 function applyJump(game: Game) {
-  game.player.isJumping = game.player.controlState.jump && !shipsOnEdgeOfScannerRange(game.localBubble.ships)
+  const shipsForcingAbort = shipsOnEdgeOfScannerRange(game.localBubble.ships)
+  if (game.player.isJumping && shipsForcingAbort) {
+    soundEffect.jumpBlocked()
+  }
+  game.player.isJumping = game.player.controlState.jump && !shipsForcingAbort
 
   /*if (game.player.controlState.jump) {
         const distance = vec3.length(game.localBubble.planet.position)

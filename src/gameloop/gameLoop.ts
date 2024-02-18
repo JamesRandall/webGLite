@@ -9,6 +9,7 @@ import { createHyperspaceLoop } from "./hyperspace"
 import { createDockingLoop } from "./docking"
 import { createFramerateCounter } from "../utilities"
 import { vec3 } from "gl-matrix"
+import { soundEffect } from "../audio"
 
 function applySceneSelection(game: Game) {
   if (game.player.controlState.sceneSelection === null) {
@@ -181,16 +182,19 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
       if (game.currentScene === SceneEnum.Launching) {
         if (launchingLoop === null) {
           launchingLoop = createLaunchingLoop(game, resources, () => (launchingLoop = null))
+          soundEffect.launch()
         }
         launchingLoop!(deltaTime)
       } else if (game.currentScene === SceneEnum.Hyperspace) {
         if (hyperspaceLoop === null) {
           hyperspaceLoop = createHyperspaceLoop(game, resources, () => (hyperspaceLoop = null))
+          soundEffect.hyperspace()
         }
         hyperspaceLoop!(deltaTime)
       } else if (game.currentScene === SceneEnum.Docking) {
         if (dockingLoop === null) {
           dockingLoop = createDockingLoop(game, resources, () => (dockingLoop = null))
+          soundEffect.docked()
         }
         dockingLoop!(deltaTime)
       }
