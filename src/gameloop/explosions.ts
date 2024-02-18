@@ -16,8 +16,8 @@ export function replaceDestroyedShipsWithExplosions(game: Game, timeDelta: numbe
             noseOrientation: noseOrientation,
             roofOrientation: roofOrientation,
             rightOrientation: sideOrientation,
-            roll: Math.random() - 0.5,
-            pitch: Math.random() - 0.5,
+            roll: ship.roll + Math.random() - 0.5,
+            pitch: ship.pitch + Math.random() - 0.5,
             fixedDirectionOfMovement: null,
             boundingBox: [],
           }

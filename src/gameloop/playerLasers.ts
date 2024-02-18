@@ -95,7 +95,24 @@ function processLaserHits(game: Game) {
   // box of the ship onto a 2d plane. That results in a quad that we can then split into two triangles and use
   // barycentric co-ordinates to determine if the laser has hit the ship
   // this isn't how the original did it - it used some bit tricks basically
-  game.localBubble.ships.forEach((ship) => {
+
+  const hit = game.localBubble.ships.reduce((hit: ShipInstance | null, ship) => {
+    if (ship.position[2] > 0) return hit
+    if (hit !== null && hit.position[2] > ship.position[2]) return hit
+    const quad = createLaserCollisionQuad(ship)
+    const triangles = createTrianglesFromQuad(quad)
+    //const testPoint = game.player.laserOffset
+    const testPoint = vec2.fromValues(0, 0)
+    if (isPointInTriangle(testPoint, triangles[0]) || isPointInTriangle(testPoint, triangles[1])) {
+      return ship
+    }
+    return hit
+  }, null)
+  if (hit !== null) {
+    hit.isDestroyed = true
+  }
+
+  /*game.localBubble.ships.forEach((ship) => {
     if (ship.position[2] > 0) return
     const quad = createLaserCollisionQuad(ship)
     const triangles = createTrianglesFromQuad(quad)
@@ -104,5 +121,5 @@ function processLaserHits(game: Game) {
     if (isPointInTriangle(testPoint, triangles[0]) || isPointInTriangle(testPoint, triangles[1])) {
       ship.isDestroyed = true
     }
-  })
+  })*/
 }
