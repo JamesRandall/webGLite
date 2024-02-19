@@ -19,6 +19,8 @@ function spawnLaunchingTransporterOrShuttle(station: ShipInstance, game: Game, r
 }
 
 export function stationTactics(station: ShipInstance, game: Game, resources: Resources) {
+  if (!station.tacticsState.canApplyTactics) return
+
   if (station.attitude === AttitudeEnum.Hostile) {
     if (Math.random() < 0.062) {
       // SPAWN COP FROM STATION

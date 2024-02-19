@@ -11,7 +11,7 @@ import { thargonTactics } from "./thargonTactics"
 import { ShipModelEnum } from "../model/shipBlueprint"
 import { anacondaTactics } from "./anacondaTactics"
 import { considerFiringLasers, considerFiringMissile, considerLaunchingEscapePod } from "./weapons"
-import { tacticsFrequencySeconds } from "../constants"
+import { stationTacticsFrequencySeconds, tacticsFrequencySeconds } from "../constants"
 
 export function applyTactics(game: Game, resources: Resources, timeDelta: number) {
   // TODO: In the original game this operated on a couple of ships from the full set each
@@ -23,7 +23,8 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     ship.energy = Math.min(ship.energy + 1, ship.blueprint.maxAiEnergy)
     ship.tacticsState.timeUntilNextStateChange -= timeDelta
     if (ship.tacticsState.timeUntilNextStateChange < 0) {
-      ship.tacticsState.timeUntilNextStateChange = tacticsFrequencySeconds
+      ship.tacticsState.timeUntilNextStateChange =
+        ship.role === ShipRoleEnum.Station ? stationTacticsFrequencySeconds : tacticsFrequencySeconds
       ship.tacticsState.canApplyTactics = true
     }
 
@@ -71,7 +72,7 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     if (ship.energy > ship.blueprint.maxAiEnergy / 2) {
       // Tactics part 5 of 7
       // https://www.bbcelite.com/master/main/subroutine/tactics_part_5_of_7.html
-      considerFiringLasers(ship, game, resources)
+      considerFiringLasers(ship, timeDelta, game, resources)
     } else if (ship.energy > ship.blueprint.maxAiEnergy / 8) {
       // Tactics part 6 of 7
       // https://www.bbcelite.com/master/main/subroutine/tactics_part_6_of_7.html

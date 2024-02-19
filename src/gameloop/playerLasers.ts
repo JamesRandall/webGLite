@@ -54,18 +54,20 @@ export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: n
   }
 }
 
+// TODO: this is broken - it can result in the same point being returned multiple times as part of the quad,
+// tends to occur when a box is axis aligned
 function createLaserCollisionQuad(ship: ShipInstance) {
   const xy = (v: vec3) => vec2.fromValues(v[0], v[1])
   const translatedBoundingBox = ship.boundingBox.map((v) => vec3.add(vec3.create(), v, ship.position))
 
   return translatedBoundingBox.reduce(
-    ([leftMost, rightMost, topMost, bottomMost], v) => [
-      v[0] < leftMost[0] ? xy(v) : leftMost,
-      v[0] > rightMost[0] ? xy(v) : rightMost,
-      v[1] > topMost[1] ? xy(v) : topMost,
-      v[1] < bottomMost[1] ? xy(v) : bottomMost,
+    ([topLeftMost, topRightMost, bottomLeftMost, bottomRightMost], v) => [
+      topLeftMost === null || (v[0] < topLeftMost[0] && v[1] > topLeftMost[1]) ? xy(v) : topLeftMost,
+      topRightMost === null || (v[0] > topRightMost[0] && v[1] > topRightMost[1]) ? xy(v) : topRightMost,
+      bottomLeftMost === null || (v[0] < bottomLeftMost[0] && v[1] < bottomLeftMost[1]) ? xy(v) : bottomLeftMost,
+      bottomRightMost === null || (v[0] > bottomRightMost[0] && v[1] < bottomRightMost[1]) ? xy(v) : bottomRightMost,
     ],
-    [vec2.fromValues(10000, 0), vec2.fromValues(-10000, 0), vec2.fromValues(0, -10000), vec2.fromValues(0, 10000)],
+    [null as vec2 | null, null as vec2 | null, null as vec2 | null, null as vec2 | null],
   )
 }
 

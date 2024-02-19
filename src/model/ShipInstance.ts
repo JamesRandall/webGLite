@@ -57,6 +57,7 @@ export interface ShipInstance extends PositionedObject {
   energy: number
   missiles: number
   timeLeftFiringLasers: number | null // none null if the ship is firing lasers
+  timeUntilCanFireAgain: number | null
   acceleration: AccelerationModeEnum
   pitchAcceleration: AccelerationModeEnum
   rollAcceleration: AccelerationModeEnum
