@@ -21,6 +21,8 @@ export function getConstraints(vertices: vec3[]) {
 
 export function createBoundingBox(constraints: { min: vec3; max: vec3 }) {
   const size = getSizeFromConstraints(constraints)
+  // If any of the order changes here then update playerLasers.ts - it relies on the order to determine the faces
+  // (we could consider capturing that data here)
   return [
     // Back
     vec3.fromValues(-size[0] / 2, -size[1] / 2, -size[2] / 2),

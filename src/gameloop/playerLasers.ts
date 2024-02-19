@@ -54,23 +54,6 @@ export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: n
   }
 }
 
-// TODO: this is broken - it can result in the same point being returned multiple times as part of the quad,
-// tends to occur when a box is axis aligned
-function createLaserCollisionQuad(ship: ShipInstance) {
-  const xy = (v: vec3) => vec2.fromValues(v[0], v[1])
-  const translatedBoundingBox = ship.boundingBox.map((v) => vec3.add(vec3.create(), v, ship.position))
-
-  return translatedBoundingBox.reduce(
-    ([topLeftMost, topRightMost, bottomLeftMost, bottomRightMost], v) => [
-      topLeftMost === null || (v[0] < topLeftMost[0] && v[1] > topLeftMost[1]) ? xy(v) : topLeftMost,
-      topRightMost === null || (v[0] > topRightMost[0] && v[1] > topRightMost[1]) ? xy(v) : topRightMost,
-      bottomLeftMost === null || (v[0] < bottomLeftMost[0] && v[1] < bottomLeftMost[1]) ? xy(v) : bottomLeftMost,
-      bottomRightMost === null || (v[0] > bottomRightMost[0] && v[1] < bottomRightMost[1]) ? xy(v) : bottomRightMost,
-    ],
-    [null as vec2 | null, null as vec2 | null, null as vec2 | null, null as vec2 | null],
-  )
-}
-
 function createTrianglesFromQuad(quad: vec2[]) {
   return [
     [quad[0], quad[1], quad[2]],
@@ -92,20 +75,47 @@ function isPointInTriangle(point: vec2, [p1, p2, p3]: vec2[]) {
 
 function processLaserHits(game: Game, resources: Resources) {
   // all we are really interested in for deciding if a player has hit a ship is the intersection of the bounding
-  // box of the ship onto a 2d plane. That results in a quad that we can then split into two triangles and use
-  // barycentric co-ordinates to determine if the laser has hit the ship
-  // this isn't how the original did it - it used some bit tricks basically
+  // box of the ship onto a 2d plane. To do this we take each face of the bounding box, discard the z, and look to see
+  // if our laser axis (represented by point [0,0]) falls within it by breaking the face into two and using
+  // barycentric co-ordinates to see if we are in the triangle
 
   const hit = game.localBubble.ships.reduce((hit: ShipInstance | null, ship) => {
     if (ship.position[2] > 0) return hit
     if (hit !== null && hit.position[2] > ship.position[2]) return hit
-    const quad = createLaserCollisionQuad(ship)
-    const triangles = createTrianglesFromQuad(quad)
-    //const testPoint = game.player.laserOffset
+
+    const translatedBoundingBox = ship.boundingBox
+      .map((v) => vec3.add(vec3.create(), v, ship.position))
+      .map((v) => vec2.fromValues(v[0], v[1]))
+    // This depends very much on the order that the bounding box is created in
+    const faces = [
+      // front
+      [0, 1, 2, 3],
+      // back
+      [4, 5, 6, 7],
+      // left
+      [0, 3, 4, 7],
+      // right
+      [1, 2, 5, 6],
+      // top
+      [0, 1, 5, 6],
+      // bottom
+      [2, 3, 6, 7],
+    ]
     const testPoint = vec2.fromValues(0, 0)
-    if (isPointInTriangle(testPoint, triangles[0]) || isPointInTriangle(testPoint, triangles[1])) {
-      return ship
+    for (let fi = 0; fi < faces.length; fi++) {
+      const face = faces[fi]
+      const quad = [
+        translatedBoundingBox[face[0]],
+        translatedBoundingBox[face[1]],
+        translatedBoundingBox[face[2]],
+        translatedBoundingBox[face[3]],
+      ]
+      const triangles = createTrianglesFromQuad(quad)
+      if (isPointInTriangle(testPoint, triangles[0]) || isPointInTriangle(testPoint, triangles[1])) {
+        return ship
+      }
     }
+
     return hit
   }, null)
   if (hit === null) {
