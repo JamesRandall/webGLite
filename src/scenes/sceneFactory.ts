@@ -16,6 +16,7 @@ export enum StartingSceneEnum {
 const sceneMap = new Map([
   ["trader", soloTrader],
   ["pirate", soloPirate],
+  ["pirates", pirateGroup],
 ])
 
 export function createStartingScene(
@@ -58,4 +59,39 @@ function soloPirate(resources: Resources) {
   pirate.attitude = AttitudeEnum.Hostile
   //pirate.speed = pirate.blueprint.maxSpeed / 2
   return [pirate]
+}
+
+function pirateGroup(resources: Resources) {
+  const pirate1 = resources.ships.getInstanceOfModel(
+    ShipModelEnum.Python,
+    [-scannerRadialWorldRange[2] / 4, scannerRadialWorldRange[2] / 4, -scannerRadialWorldRange[2] / 4],
+    [0, 0, 1],
+  )
+  pirate1.role = ShipRoleEnum.Pirate
+  pirate1.aiEnabled = true
+  pirate1.aggressionLevel = 28
+  pirate1.attitude = AttitudeEnum.Hostile
+
+  const pirate2 = resources.ships.getInstanceOfModel(
+    ShipModelEnum.Krait,
+    [scannerRadialWorldRange[2] / 4, -scannerRadialWorldRange[2] / 4, -scannerRadialWorldRange[2] / 4],
+    [0, 0, 1],
+  )
+  pirate2.role = ShipRoleEnum.Pirate
+  pirate2.aiEnabled = true
+  pirate2.aggressionLevel = 28
+  pirate2.attitude = AttitudeEnum.Hostile
+
+  const pirate3 = resources.ships.getInstanceOfModel(
+    ShipModelEnum.Mamba,
+    [scannerRadialWorldRange[2] / 4, scannerRadialWorldRange[2] / 4, -scannerRadialWorldRange[2] / 4],
+    [0, 0, 1],
+  )
+  pirate3.role = ShipRoleEnum.Pirate
+  pirate3.aiEnabled = true
+  pirate3.aggressionLevel = 28
+  pirate3.attitude = AttitudeEnum.Hostile
+
+  //pirate.speed = pirate.blueprint.maxSpeed / 2
+  return [pirate1, pirate2, pirate3]
 }
