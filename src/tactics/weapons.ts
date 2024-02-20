@@ -2,7 +2,7 @@ import { ShipInstance } from "../model/ShipInstance"
 import { Resources } from "../resources/resources"
 import { Game } from "../model/game"
 import { vec3 } from "gl-matrix"
-import { applyDamage, DamageLocationEnum } from "../gameloop/utilities/damage"
+import { applyDamageToPlayer, DamageLocationEnum } from "../gameloop/utilities/damage"
 import { ShipBlueprint } from "../model/shipBlueprint"
 import { pulseLaserMs } from "../model/player"
 
@@ -34,7 +34,7 @@ export function considerFiringLasers(ship: ShipInstance, timeDelta: number, game
   const nosePlayerDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.position), ship.noseOrientation)
   if (nosePlayerDotProduct < -0.99) {
     ship.timeLeftFiringLasers = 0.3
-    const location = applyDamage(game, resources, ship, calculateLaserDamage(ship.blueprint))
+    const location = applyDamageToPlayer(game, resources, ship, calculateLaserDamage(ship.blueprint))
     if (location === DamageLocationEnum.Energy) {
       resources.soundEffects.enemyLaserHit()
     } else {

@@ -71,5 +71,8 @@ export const shipMovementSpeeds = {
   maxSpeed: maxSpeed,
   speedAcceleration: maxSpeed / 3.0,
 }
-export const tacticsFrequencySeconds = 2.0
-export const stationTacticsFrequencySeconds = 0.25
+export const tacticsIntervalSeconds = 1.0
+export const stationTacticsIntervalSeconds = 0.25
+// in the original game player energy refreshes each time from the main loop but enemy ships update in pairs (see
+// applyTactics.ts) and so we use a different interval (based on 12 enemy ships) to refresh player energy
+export const playerEnergyIntervalSeconds = tacticsIntervalSeconds / 6

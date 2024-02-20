@@ -1,7 +1,7 @@
 import { AccelerationModeEnum, FlyingTowardsEnum, ShipInstance, ShipRoleEnum } from "../model/ShipInstance"
 import { vec3 } from "gl-matrix"
 import { Game } from "../model/game"
-import { scannerRadialWorldRange, tacticsFrequencySeconds } from "../constants"
+import { scannerRadialWorldRange, tacticsIntervalSeconds } from "../constants"
 import { aiFlag } from "./common"
 import { log } from "../gameConsole"
 

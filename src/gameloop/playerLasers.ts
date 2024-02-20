@@ -5,6 +5,7 @@ import { dimensions } from "../constants"
 import { ShipInstance } from "../model/ShipInstance"
 import { log } from "../gameConsole"
 import { Resources } from "../resources/resources"
+import { applyDamageToNpcWithLasers } from "./utilities/damage"
 
 export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: number) {
   const laserEnergy = 1
@@ -122,7 +123,12 @@ function processLaserHits(game: Game, resources: Resources) {
   if (hit === null) {
     resources.soundEffects.playerLaserMiss()
   } else {
-    hit.isDestroyed = true
-    resources.soundEffects.shipExplosion()
+    applyDamageToNpcWithLasers(game, resources, hit)
+    if (hit.isDestroyed) {
+      resources.soundEffects.shipExplosion()
+    } else {
+      resources.soundEffects.playerLaserHit()
+    }
+    //
   }
 }

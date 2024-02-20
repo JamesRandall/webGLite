@@ -4,6 +4,7 @@ import { Position, StarSystem } from "./starSystem"
 import { Resources } from "../resources/resources"
 import { vec2, vec3 } from "gl-matrix"
 import { Game } from "./game"
+import { playerEnergyIntervalSeconds } from "../constants"
 
 enum MissileTargettingStatusEnum {
   Normal,
@@ -90,6 +91,7 @@ export interface Player {
   isLaserActive: boolean
   timeToLaserStateChange: number
   laserOffset: vec2
+  timeToNextEnergyRecharge: number
 }
 
 export const pulseLaserMs = 1.0 / 4.0
@@ -146,5 +148,6 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     isLaserActive: false, // true if the laser is actively "pulsing" and shown
     timeToLaserStateChange: pulseLaserMs,
     laserOffset: vec2.fromValues(0, 0),
+    timeToNextEnergyRecharge: playerEnergyIntervalSeconds,
   }
 }

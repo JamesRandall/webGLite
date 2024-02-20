@@ -11,21 +11,46 @@ import { thargonTactics } from "./thargonTactics"
 import { ShipModelEnum } from "../model/shipBlueprint"
 import { anacondaTactics } from "./anacondaTactics"
 import { considerFiringLasers, considerFiringMissile, considerLaunchingEscapePod } from "./weapons"
-import { stationTacticsFrequencySeconds, tacticsFrequencySeconds } from "../constants"
+import { stationTacticsIntervalSeconds, tacticsIntervalSeconds } from "../constants"
 
 export function applyTactics(game: Game, resources: Resources, timeDelta: number) {
   // TODO: In the original game this operated on a couple of ships from the full set each
-  // time through the game loop. The percentages are all based on that. When I have the logic
-  // time need to rework this outer part a little so that it approximates the original else
-  // the world will be rather hectic
+  // time through the game loop as outlined in the MVEIT routine:
+  // https://www.bbcelite.com/cassette/main/subroutine/mveit_part_2_of_9.html
+  //                         \ Fetch the slot number of the ship we are moving, EOR
+  //  AND #7                 \ with the loop counter and apply mod 8 to the result.
+  //  BNE MV30               \ The result will be zero when "counter mod 8" matches
+  //                         \ the slot number mod 8, so this makes sure we call
+  //                         \ TACTICS 12 times every 8 main loop iterations, like
+  //                         \ this:
+  //                         \
+  //                         \   Iteration 0, apply tactics to slots 0 and 8
+  //                         \   Iteration 1, apply tactics to slots 1 and 9
+  //                         \   Iteration 2, apply tactics to slots 2 and 10
+  //                         \   Iteration 3, apply tactics to slots 3 and 11
+  //                         \   Iteration 4, apply tactics to slot 4
+  //                         \   Iteration 5, apply tactics to slot 5
+  //                         \   Iteration 6, apply tactics to slot 6
+  //                         \   Iteration 7, apply tactics to slot 7
+  //                         \   Iteration 8, apply tactics to slots 0 and 8
+  //                         \     ...
+  //                         \
+  //                         \ and so on
+  //
+  // The percentages are in the tactics are largely based on the originals and assume the timing above.
+  // Therefore we need a way of evaluating the tactics at approximately the same rate as the original game.
+  // The original game has a highly variable framerate so the number of times through the main loop per second
+  // varies massively.
+  //
+  // At the moment we run the tactics routine once a second.
 
   game.localBubble.ships.forEach((ship) => {
-    ship.energy = Math.min(ship.energy + 1, ship.blueprint.maxAiEnergy)
     ship.tacticsState.timeUntilNextStateChange -= timeDelta
     if (ship.tacticsState.timeUntilNextStateChange < 0) {
       ship.tacticsState.timeUntilNextStateChange =
-        ship.role === ShipRoleEnum.Station ? stationTacticsFrequencySeconds : tacticsFrequencySeconds
+        ship.role === ShipRoleEnum.Station ? stationTacticsIntervalSeconds : tacticsIntervalSeconds
       ship.tacticsState.canApplyTactics = true
+      ship.energy = Math.min(ship.energy + 1, ship.blueprint.maxAiEnergy)
     }
 
     switch (ship.role) {
