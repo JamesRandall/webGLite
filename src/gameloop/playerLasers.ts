@@ -83,9 +83,10 @@ function processLaserHits(game: Game, resources: Resources) {
     if (ship.position[2] > 0) return hit
     if (hit !== null && hit.position[2] > ship.position[2]) return hit
 
-    const translatedBoundingBox = ship.boundingBox
-      .map((v) => vec3.add(vec3.create(), v, ship.position))
-      .map((v) => vec2.fromValues(v[0], v[1]))
+    const translatedBoundingBox = ship.boundingBox.map((v) => {
+      const v2 = vec3.add(vec3.create(), v, ship.position)
+      return vec2.fromValues(v2[0], v2[1])
+    })
     // This depends very much on the order that the bounding box is created in
     const faces = [
       // front
