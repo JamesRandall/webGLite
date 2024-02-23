@@ -1,7 +1,7 @@
-import { AttitudeEnum, ShipInstance } from "../model/ShipInstance"
-import { Game } from "../model/game"
-import { ShipModelEnum } from "../model/shipBlueprint"
-import { Resources } from "../resources/resources"
+import { AttitudeEnum, ShipInstance } from "../../model/ShipInstance"
+import { Game } from "../../model/game"
+import { ShipModelEnum } from "../../model/shipBlueprint"
+import { Resources } from "../../resources/resources"
 
 export function anacondaTactics(ship: ShipInstance, game: Game, resources: Resources) {
   if (!ship.tacticsState.canApplyTactics) return

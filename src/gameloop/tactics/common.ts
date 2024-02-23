@@ -1,4 +1,4 @@
-import { AttitudeEnum, ShipInstance } from "../model/ShipInstance"
+import { AttitudeEnum, ShipInstance } from "../../model/ShipInstance"
 
 export function aiFlag(player: ShipInstance) {
   // The original game stores various bits of info in a single byte but then also uses the total value of the byte in

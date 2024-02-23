@@ -1,6 +1,6 @@
-import { Game } from "../model/game"
-import { Resources } from "../resources/resources"
-import { AttitudeEnum, ShipRoleEnum } from "../model/ShipInstance"
+import { Game } from "../../model/game"
+import { Resources } from "../../resources/resources"
+import { AttitudeEnum, ShipRoleEnum } from "../../model/ShipInstance"
 import { missileTactics } from "./missileTactics"
 import { stationTactics } from "./stationTactics"
 import { rockHermitTactics } from "./rockHermitTactics"
@@ -8,10 +8,10 @@ import { traderTactics } from "./traderTactics"
 import { bountyHunterTactics } from "./bountyHunterTactics"
 import { flyTowards, rollShipByNoticeableAmount, steerShip } from "./manouver"
 import { thargonTactics } from "./thargonTactics"
-import { ShipModelEnum } from "../model/shipBlueprint"
+import { ShipModelEnum } from "../../model/shipBlueprint"
 import { anacondaTactics } from "./anacondaTactics"
 import { considerFiringLasers, considerFiringMissile, considerLaunchingEscapePod } from "./weapons"
-import { stationTacticsIntervalSeconds, tacticsIntervalSeconds } from "../constants"
+import { stationTacticsIntervalSeconds, tacticsIntervalSeconds } from "../../constants"
 
 export function applyTactics(game: Game, resources: Resources, timeDelta: number) {
   // TODO: In the original game this operated on a couple of ships from the full set each
@@ -42,7 +42,7 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
   // The original game has a highly variable framerate so the number of times through the main loop per second
   // varies massively.
   //
-  // At the moment we run the tactics routine once a second.
+  // At the moment we run the tactics routine once a second for each ship.
 
   game.localBubble.ships.forEach((ship) => {
     ship.tacticsState.timeUntilNextStateChange -= timeDelta
@@ -52,6 +52,10 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
       ship.tacticsState.canApplyTactics = true
       ship.energy = Math.min(ship.energy + 1, ship.blueprint.maxAiEnergy)
     }
+
+    // we always evaluate trader tactics as their "tactic" is essentially become ai enabled in some scenarios
+    if (ship.role === ShipRoleEnum.Trader) traderTactics(ship, game)
+    if (!ship.aiEnabled) return
 
     switch (ship.role) {
       // This is tactics part 2 of 7
@@ -69,9 +73,6 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
       // https://www.bbcelite.com/master/main/subroutine/tactics_part_3_of_7.html
       case ShipRoleEnum.Thargon:
         thargonTactics(ship, game, resources)
-        break
-      case ShipRoleEnum.Trader:
-        traderTactics(ship, game)
         break
       case ShipRoleEnum.BountyHunter:
         bountyHunterTactics(ship, game)

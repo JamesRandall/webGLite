@@ -1,7 +1,7 @@
-import { Game } from "../model/game"
-import { Resources } from "../resources/resources"
-import { AttitudeEnum, ShipInstance, ShipRoleEnum } from "../model/ShipInstance"
-import { log } from "../gameConsole"
+import { Game } from "../../model/game"
+import { Resources } from "../../resources/resources"
+import { AttitudeEnum, ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
+import { log } from "../../gameConsole"
 
 function spawnLaunchingTransporterOrShuttle(station: ShipInstance, game: Game, resources: Resources) {
   if (!game.player.isInSafeZone || game.localBubble.station === null) return false

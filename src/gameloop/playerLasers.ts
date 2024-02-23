@@ -2,8 +2,7 @@ import { Game, SceneEnum } from "../model/game"
 import { pulseLaserMs } from "../model/player"
 import { vec2, vec3 } from "gl-matrix"
 import { dimensions } from "../constants"
-import { ShipInstance } from "../model/ShipInstance"
-import { log } from "../gameConsole"
+import { AttitudeEnum, ShipInstance } from "../model/ShipInstance"
 import { Resources } from "../resources/resources"
 import { applyDamageToNpcWithLasers } from "./utilities/damage"
 
@@ -124,6 +123,14 @@ function processLaserHits(game: Game, resources: Resources) {
     resources.soundEffects.playerLaserMiss()
   } else {
     applyDamageToNpcWithLasers(game, resources, hit)
+    if (hit.attitude === AttitudeEnum.Friendly) {
+      // if we've hit a friendly ship make it hostile and aggressive
+      hit.attitude = AttitudeEnum.Hostile
+      hit.aiEnabled = true
+      if (hit.aggressionLevel < 20) {
+        hit.aggressionLevel = 20 + Math.floor(Math.random() * 11)
+      }
+    }
     if (hit.isDestroyed) {
       resources.soundEffects.shipExplosion()
     } else {

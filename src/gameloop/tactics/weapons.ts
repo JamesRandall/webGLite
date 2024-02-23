@@ -1,11 +1,11 @@
-import { ShipInstance } from "../model/ShipInstance"
-import { Resources } from "../resources/resources"
-import { Game } from "../model/game"
+import { ShipInstance } from "../../model/ShipInstance"
+import { Resources } from "../../resources/resources"
+import { Game } from "../../model/game"
 import { vec3 } from "gl-matrix"
-import { applyDamageToPlayer, DamageLocationEnum } from "../gameloop/utilities/damage"
-import { ShipBlueprint } from "../model/shipBlueprint"
-import { pulseLaserMs } from "../model/player"
-import { scannerRadialWorldRange } from "../constants"
+import { applyDamageToPlayer, DamageLocationEnum } from "../utilities/damage"
+import { ShipBlueprint } from "../../model/shipBlueprint"
+import { pulseLaserMs } from "../../model/player"
+import { scannerRadialWorldRange } from "../../constants"
 
 function calculateLaserDamage(blueprint: ShipBlueprint) {
   // this replicates byte 19 of the ship blueprint in the original game

@@ -10,7 +10,8 @@ import { log } from "../../gameConsole"
 // this is heavily based on the main loop in the original game amazingly documented here by Mark Moxon:
 // https://www.bbcelite.com/master/main/subroutine/main_game_loop_part_2_of_6.html
 
-const spawnSequence = [spawnDockingTrader, spawnFriendly, spawnCop, spawnEnemy]
+//const spawnSequence = [spawnDockingTrader, spawnFriendly, spawnCop, spawnEnemy]
+const spawnSequence = [spawnFriendly]
 
 export function spawnNPCShips(resources: Resources, game: Game, timeDelta: number) {
   if (game.disableSpawning) return
@@ -38,7 +39,7 @@ function spawnDockingTrader(resources: Resources, game: Game) {
 
 function spawnFriendly(resources: Resources, game: Game) {
   log("Chance to spawn friendly")
-  if (Math.random() > 0.13) return false
+  //if (Math.random() > 0.13) return false
   if (countOfJunkInLocalBubble(game) >= 3) return false
 
   // we place a friendly object roughly in front of the player heading towards the player just outside of the scanner range
@@ -130,6 +131,7 @@ function spawnInstanceOfTrader(resources: Resources, game: Game, position: vec3,
   ship.roll = Math.random() * (ship.blueprint.maxRollSpeed / 4)
   ship.role = ShipRoleEnum.Trader
   ship.missiles = Math.random() > 0.5 ? 1 : 0
+  ship.aiEnabled = false
 
   game.localBubble.ships.push(ship)
   return ship

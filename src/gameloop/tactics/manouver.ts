@@ -1,9 +1,9 @@
-import { AccelerationModeEnum, FlyingTowardsEnum, ShipInstance, ShipRoleEnum } from "../model/ShipInstance"
+import { AccelerationModeEnum, FlyingTowardsEnum, ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
 import { vec3 } from "gl-matrix"
-import { Game } from "../model/game"
-import { scannerRadialWorldRange, tacticsIntervalSeconds } from "../constants"
+import { Game } from "../../model/game"
+import { scannerRadialWorldRange, tacticsIntervalSeconds } from "../../constants"
 import { aiFlag } from "./common"
-import { log } from "../gameConsole"
+import { log } from "../../gameConsole"
 
 // Elite far away check looks at the high byte of Z being greater than 3 so a distance >= 768
 // The Elite scanner range in the original game is 13056 (0x3300). 768 is = 768/13056 of that (as in 0.0588)
