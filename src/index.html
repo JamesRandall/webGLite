@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <title>webGLite</title>
 </head>
-<body style="background-color: black; overflow: hidden;">
+<body style="margin: 0; padding: 0; background-color: black; overflow: hidden;">
     <!-- in the original Elite the space view is 256x192 pixels and the scanner is 256x56 pixels -->
-    <div style="display: grid; grid-template-columns: 800px 400px;">
+    <div style="display: flex; flex-flow: row; justify-content: center; align-items: center; height: 100vh;">
         <canvas width="800" height="760" id="viewcanvas" style="display: block; width: 800px; height: 760px;"></canvas>
-        <canvas width="480" height="760" id="doccanvas" style="display: block; width: 480px; height: 760px;"></canvas>
-        <div id="game-console" style="margin-top: 1em; display:block; grid-column: 1/-1; background-color: black; border: solid 1px green; overflow-y: auto; height: 200px; max-height: 200px;">
-            <div style="padding: 3px; color: rgb(0,255,0);">&gt; Game started</div>
-        </div>
     </div>
+
+
+    <canvas width="480" height="760" id="doccanvas" style="display: none; width: 480px; height: 760px;"></canvas>
+    <div id="game-console" style="margin-top: 1em; display:none; grid-column: 1/-1; background-color: black; border: solid 1px green; overflow-y: auto; height: 200px; max-height: 200px;">
+        <div style="padding: 3px; color: rgb(0,255,0);">&gt; Game started</div>
+    </div>
+
     <script>var exports = {};</script>
     <script type="module" src="launch.ts"></script>
 </body>

@@ -5,6 +5,7 @@ import { economyText, governmentText, StarSystem } from "../../model/starSystem"
 import { vec2, vec4 } from "gl-matrix"
 import { getNearestSystemToCursor } from "../../gameloop/utilities/map"
 import { availableCargoSpace } from "../../gameloop/utilities/cargo"
+import { drawHeader } from "./screenUtilities"
 
 export function createBuyMarketItemsRenderer(draw2d: Primitives) {
   return function renderMarketPlace(game: Game, priceListOnly: boolean) {
@@ -57,8 +58,7 @@ export function createBuyMarketItemsRenderer(draw2d: Primitives) {
     }
 
     if (priceListOnly) {
-      draw2d.text.draw(`${game.currentSystem.name.toUpperCase()} MARKET PRICES`, [5, 0.5])
-      draw2d.rect([0, 40], [draw2d.size().width, frameWidth], frameColor)
+      drawHeader(draw2d, `${game.currentSystem.name.toUpperCase()} MARKET PRICES`)
     }
 
     draw2d.text.draw("PRODUCT", [2, y + 1])

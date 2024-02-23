@@ -2,6 +2,7 @@ import { Primitives } from "../primitives/primitives"
 import { Game } from "../../model/game"
 import { frameColor, frameWidth } from "../../constants"
 import { CombatRatingEnum, LaserTypeEnum, LegalStatusEnum } from "../../model/player"
+import { drawHeader } from "./screenUtilities"
 
 function legalStatusText(value: LegalStatusEnum) {
   switch (value) {
@@ -57,9 +58,7 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
     const equipment = player.equipment
     let equipmentLine = 12
 
-    const title = `COMMANDER ${player.name}`
-    draw2d.text.draw(title, [19 - title.length / 2, 0.5])
-    draw2d.rect([0, 40], [draw2d.size().width, frameWidth], frameColor)
+    drawHeader(draw2d, `COMMANDER ${player.name}`)
 
     draw2d.text.draw(`Present System          :${game.currentSystem.name}`, [1, 3])
     draw2d.text.draw(`Hyperspace System       :${player.selectedSystem.name}`, [1, 4])

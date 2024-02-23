@@ -42,13 +42,24 @@ export const planetScaleFactor = 0.75
 // every 256 times through the original game loop, based on an average frame rate of 15fps, will see how it feels
 export const averageSpawnTimeInSecond = 256.0 / 15.0
 
-export const dimensions = {
+export let dimensions = {
   width: 800,
   mainViewHeight: 560,
   dashboardHeight: 200,
   totalHeight: 760,
   crosshairLength: 32,
   crosshairSpace: 20,
+}
+export function setDimensions(width: number, height: number) {
+  const dashboardHeight = 200 // always 200, fixed height
+  dimensions = {
+    width: width,
+    mainViewHeight: height - dashboardHeight,
+    totalHeight: height,
+    crosshairSpace: 20,
+    crosshairLength: 32,
+    dashboardHeight: dashboardHeight,
+  }
 }
 
 // measured in BBC Elite:

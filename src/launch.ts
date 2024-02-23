@@ -4,10 +4,32 @@ import { createPregameScene } from "./scenes/pregameScene"
 import { RenderEffect } from "./renderer/rootRenderer"
 import { createInstructionRenderer } from "./renderer/instructions/renderInstructions"
 import { createStartingScene, StartingSceneEnum } from "./scenes/sceneFactory"
+import { setDimensions } from "./constants"
 
 require("./extensions.ts")
 
 async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement) {
+  const retroRatio = 800 / 760
+  const wideScreenRatio = 16 / 9
+
+  const urlSearchParams = new URLSearchParams(window.location.search)
+  const isWidescreen = urlSearchParams.get("widescreen") !== null
+  const aspectRatio = isWidescreen ? wideScreenRatio : retroRatio
+  const targetAspectRatio = window.innerWidth / window.innerHeight
+
+  const minSizeRatio = window.innerWidth < 800 ? 800 / window.innerWidth : 1
+  const [newWidth, newHeight] = (
+    targetAspectRatio > aspectRatio
+      ? [window.innerHeight * aspectRatio * minSizeRatio, window.innerHeight * minSizeRatio]
+      : [window.innerWidth * minSizeRatio, (window.innerWidth / aspectRatio) * minSizeRatio]
+  ).map(Math.floor)
+
+  viewCanvas.width = newWidth
+  viewCanvas.height = newHeight
+  viewCanvas.style.width = `${newWidth}px`
+  viewCanvas.style.height = `${newHeight}px`
+  setDimensions(newWidth, newHeight)
+
   const gl = viewCanvas.getContext("webgl2")
   if (gl === null) {
     console.error("Your browser doesn't support WebGL")
@@ -25,7 +47,6 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
 
   const resources = await loadResources(gl, docGl)
   const renderInstructions = createInstructionRenderer(docGl, resources)
-  const urlSearchParams = new URLSearchParams(window.location.search)
   const isSkipStart = urlSearchParams.get("skipStart") !== null
   const namedScene = urlSearchParams.get("namedScene")
   let scene = createStartingScene(

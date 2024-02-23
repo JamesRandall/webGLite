@@ -4,14 +4,17 @@ import { isPointInRect } from "../../model/geometry"
 import { vec2, vec4 } from "gl-matrix"
 import { StarSystem } from "../../model/starSystem"
 import { frameColor, frameWidth, galaxySize } from "../../constants"
+import { drawHeader } from "./screenUtilities"
 
 export function createLocalChartRenderer(draw2d: Primitives) {
+  const width = Math.min(draw2d.size().width, draw2d.size().height)
+
   const xMax = 25 * (galaxySize.width / 256.0)
   const yMax = 50 * (galaxySize.height / 256.0)
   const xRange = xMax * 2
   const yRange = yMax * 2
-  const xScale = draw2d.size().width / xRange / 1.4
-  const yScale = draw2d.size().width / xRange / 1.4
+  const xScale = width / xRange
+  const yScale = width / xRange
   const xOffset = -1
   const yOffset = -1
 
@@ -77,8 +80,7 @@ export function createLocalChartRenderer(draw2d: Primitives) {
       }
     })
 
-    draw2d.text.draw("SHORT RANGE CHART", [10, 0.5])
-    draw2d.rect([0, 40], [draw2d.size().width, frameWidth], frameColor)
+    drawHeader(draw2d, "SHORT RANGE SCANNER")
 
     draw2d.rect([currentCursor[0] - 1.5, currentCursor[1] - 10], [3, -30], [1.0, 1.0, 1.0, 1.0])
     draw2d.rect([currentCursor[0] - 1.5, currentCursor[1] + 10], [3, 30], [1.0, 1.0, 1.0, 1.0])

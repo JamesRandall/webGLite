@@ -32,13 +32,22 @@ function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
   }
 }
 
+function getFontSize(width: number, height: number, characterWidth?: number) {
+  if (characterWidth === undefined) {
+    const characterHeight = height / 23.0
+    //characterWidth = width / 40.0
+    return [characterHeight / 1.2, characterHeight]
+  }
+  return [characterWidth, characterWidth * 1.2]
+}
+
 export function createTextRenderer(
   gl: WebGL2RenderingContext,
   width: number,
   height: number,
   flippedY: boolean,
   resources: Resources,
-  characterWidth?: number,
+  optionalCharacterWidth?: number,
   font?: WebGLTexture,
 ) {
   const programInfo = initShaderProgram(gl, resources)!
@@ -50,10 +59,7 @@ export function createTextRenderer(
   )
   const projectionMatrix = mat4.create()
   mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
-  if (characterWidth === undefined) {
-    characterWidth = width / 40.0
-  }
-  const characterHeight = characterWidth * 1.2
+  const [characterWidth, characterHeight] = getFontSize(width, height, optionalCharacterWidth)
   const spacing = 1.0
   const yMultiplier = flippedY ? -1 : 1
 
@@ -135,5 +141,18 @@ export function createTextRenderer(
     drawCharacters(text, displayPosition, cw, ch, color, spacing)
   }
 
-  return { convertToPosition, convertToCharacterCoordinates, draw, measure, drawAtSize }
+  const center = (text: string, row: number, color: vec4 = vec4.fromValues(1.0, 1.0, 1.0, 1.0)) => {
+    const sz = measure(text)
+    draw(text, [width / 2 - sz.width / 2, row * characterHeight], false)
+  }
+
+  return {
+    convertToPosition,
+    convertToCharacterCoordinates,
+    draw,
+    measure,
+    drawAtSize,
+    center,
+    fontSize: { width: characterWidth, height: characterHeight },
+  }
 }

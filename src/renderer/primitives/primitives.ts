@@ -16,6 +16,8 @@ export interface Primitives {
     convertToCharacterCoordinates: (position: vec2) => vec2
     convertToPosition: (characterPosition: vec2) => vec2
     drawAtSize: (text: string, position: vec2, cw: number, ch: number, spacing: number, color: vec4) => void
+    center: (text: string, row: number, color?: vec4) => void
+    fontSize: { width: number; height: number }
   }
   size: () => Size
 }

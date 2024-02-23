@@ -6,6 +6,8 @@ import { createScannerBackgroundRenderer } from "./scannerBackground"
 import { createScannerShipRenderer } from "./scannerShips"
 import { Resources } from "../../resources/resources"
 
+const sidePanelWidth = 800 / 5.0 //width / 5.0
+
 function setup(gl: WebGL2RenderingContext) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0)
   gl.clearDepth(1.0)
@@ -45,7 +47,6 @@ function drawCompass(width: number, sidePanelWidth: number, draw2d: Primitives, 
 }
 
 function drawHud(draw2d: Primitives, width: number, height: number, game: Game) {
-  const sidePanelWidth = width / 5.0
   const barHeight = (height - frameWidth) / 7
   const barSpacing = 8
   const leftStartBarX = (sidePanelWidth / 7) * 2
@@ -170,8 +171,8 @@ function drawFrame(draw2d: Primitives, width: number, height: number) {
   draw2d.rect([0, 0], [frameWidth, height], frameColor)
   draw2d.rect([0, height - frameWidth], [width, height - frameWidth], frameColor)
   draw2d.rect([width - frameWidth, 0], [frameWidth, height], frameColor)
-  draw2d.rect([width / 5, 0], [frameWidth, height], frameColor)
-  draw2d.rect([width - width / 5 - frameWidth, 0], [frameWidth, height], frameColor)
+  draw2d.rect([sidePanelWidth, 0], [frameWidth, height], frameColor)
+  draw2d.rect([width - sidePanelWidth - frameWidth, 0], [frameWidth, height], frameColor)
 }
 
 export function createDashboardRenderer(

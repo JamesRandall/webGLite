@@ -5,6 +5,7 @@ import { vec3 } from "gl-matrix"
 import { applyDamageToPlayer, DamageLocationEnum } from "../gameloop/utilities/damage"
 import { ShipBlueprint } from "../model/shipBlueprint"
 import { pulseLaserMs } from "../model/player"
+import { scannerRadialWorldRange } from "../constants"
 
 function calculateLaserDamage(blueprint: ShipBlueprint) {
   // this replicates byte 19 of the ship blueprint in the original game
@@ -31,18 +32,21 @@ export function considerFiringLasers(ship: ShipInstance, timeDelta: number, game
     }
     return
   }
-  const nosePlayerDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.position), ship.noseOrientation)
-  if (nosePlayerDotProduct < -0.99) {
-    ship.timeLeftFiringLasers = 0.3
-    const location = applyDamageToPlayer(game, resources, ship, calculateLaserDamage(ship.blueprint))
-    if (location === DamageLocationEnum.Energy) {
-      resources.soundEffects.enemyLaserHit()
-    } else {
+  const distance = vec3.length(ship.position)
+  if (distance < scannerRadialWorldRange[0] / 2) {
+    const nosePlayerDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.position), ship.noseOrientation)
+    if (nosePlayerDotProduct < -0.99) {
+      ship.timeLeftFiringLasers = 0.3
+      const location = applyDamageToPlayer(game, resources, ship, calculateLaserDamage(ship.blueprint))
+      if (location === DamageLocationEnum.Energy) {
+        resources.soundEffects.enemyLaserHit()
+      } else {
+        resources.soundEffects.enemyLaserMiss()
+      }
+    } else if (nosePlayerDotProduct < -0.97) {
+      ship.timeLeftFiringLasers = 0.3
       resources.soundEffects.enemyLaserMiss()
     }
-  } else if (nosePlayerDotProduct < -0.97) {
-    ship.timeLeftFiringLasers = 0.3
-    resources.soundEffects.enemyLaserMiss()
   }
 }
 

@@ -7,6 +7,7 @@ import { getNearestSystemToCursor } from "../../gameloop/utilities/map"
 import { availableCargoSpace } from "../../gameloop/utilities/cargo"
 import { equipment, equipmentForTechLevel } from "../../model/equipment"
 import { Player, PlayerEquipment } from "../../model/player"
+import { drawHeader } from "./screenUtilities"
 
 function calculateFuelPrice(player: Player) {
   return ((player.blueprint.maxFuel - player.fuel) / player.blueprint.maxFuel) * 14.0
@@ -94,8 +95,7 @@ export function createBuyEquipmentRenderer(draw2d: Primitives) {
       }
     }
 
-    draw2d.text.draw("EQUIP SHIP", [14, 0.5])
-    draw2d.rect([0, 40], [draw2d.size().width, frameWidth], frameColor)
+    drawHeader(draw2d, "EQUIP SHIP")
 
     items
       .map((item, index) => ({ item, index }))

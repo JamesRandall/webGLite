@@ -160,6 +160,7 @@ function spawnInstanceOfPirate(resources: Resources, game: Game, position: vec3,
   ship.roll = Math.random() * (ship.blueprint.maxRollSpeed / 4)
   ship.role = ShipRoleEnum.Pirate
   ship.hasECM = Math.random() < 0.22
+  ship.aiEnabled = true
 
   game.localBubble.ships.push(ship)
   return ship

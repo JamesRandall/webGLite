@@ -3,7 +3,7 @@ import { ControlState } from "./controlState"
 import { vec2 } from "gl-matrix"
 
 export function bindMouse(controlState: ControlState) {
-  const mouseMove = (e: MouseEvent) => (controlState.mousePosition = vec2.fromValues(e.x, e.y))
+  const mouseMove = (e: MouseEvent) => (controlState.mousePosition = vec2.fromValues(e.offsetX, e.offsetY))
   const mouseDown = () => (controlState.mouseDown = true)
   const mouseUp = () => (controlState.mouseDown = false)
 
