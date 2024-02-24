@@ -89,10 +89,24 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
     extraVesselsSpawningDelay: 0,
   }
 
-  const sceneRenderer = createPregameSceneRenderer(gl, resources)
-  const dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
-  const rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
-  return createPregameLoop(game, gl, resources, rootRenderer)
+  let rootRenderer = createRootRenderer(
+    gl,
+    resources,
+    createPregameSceneRenderer(gl, resources),
+    createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight),
+  )
+  return {
+    resize: (gl: WebGL2RenderingContext) => {
+      console.log(gl.canvas.width)
+      rootRenderer = createRootRenderer(
+        gl,
+        resources,
+        createPregameSceneRenderer(gl, resources),
+        createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight),
+      )
+    },
+    update: createPregameLoop(game, gl, resources, rootRenderer),
+  }
 }
 
 function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Resources, renderer: RendererEffectFunc) {
@@ -158,49 +172,46 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
 
   let isFirst = true
 
-  const scene: Scene = {
-    update: (now: number, viewportExtent: Size) => {
-      // we skip the first frame of the pregame screen as the time we will be given is based on the render time
-      // and that initial number is large, if its used for the frame time then the initial ship will appear past the
-      // camera
-      if (!isFirst) {
-        if (startGame) {
-          window.removeEventListener("keydown", keyDown)
-          return createGameScene(resources, gl, game.renderEffect)
-        }
-
-        now *= 0.001 // convert to seconds
-        deltaTime = now - then
-        then = now
-
-        updateShipInstance(game.localBubble.ships[0], game.player, deltaTime)
-
-        // we can't use the ships speed to move it in as that follows the direction of the nose orientation
-        if (isMovingIn) {
-          game.localBubble.ships[0].position[2] -= speed * deltaTime
-          if (game.localBubble.ships[0].position[2] >= targetZ) {
-            isMovingIn = false
-            timeSinceMovedIn = now
-          }
-        } else if (isMovingOut) {
-          game.localBubble.ships[0].position[2] += speed * deltaTime
-          if (game.localBubble.ships[0].position[2] <= startingZ) {
-            nextShip()
-            isMovingIn = true
-            isMovingOut = false
-          }
-        } else if (now > timeSinceMovedIn + timeToStay) {
-          isMovingOut = true
-        }
-
-        renderer(game, deltaTime, game.renderEffect)
-      } else {
-        resources.soundEffects.bootUp()
-        then = now * 0.001
-        isFirst = false
+  return (now: number, viewportExtent: Size) => {
+    // we skip the first frame of the pregame screen as the time we will be given is based on the render time
+    // and that initial number is large, if its used for the frame time then the initial ship will appear past the
+    // camera
+    if (!isFirst) {
+      if (startGame) {
+        window.removeEventListener("keydown", keyDown)
+        return createGameScene(resources, gl, game.renderEffect)
       }
-      return null
-    },
+
+      now *= 0.001 // convert to seconds
+      deltaTime = now - then
+      then = now
+
+      updateShipInstance(game.localBubble.ships[0], game.player, deltaTime)
+
+      // we can't use the ships speed to move it in as that follows the direction of the nose orientation
+      if (isMovingIn) {
+        game.localBubble.ships[0].position[2] -= speed * deltaTime
+        if (game.localBubble.ships[0].position[2] >= targetZ) {
+          isMovingIn = false
+          timeSinceMovedIn = now
+        }
+      } else if (isMovingOut) {
+        game.localBubble.ships[0].position[2] += speed * deltaTime
+        if (game.localBubble.ships[0].position[2] <= startingZ) {
+          nextShip()
+          isMovingIn = true
+          isMovingOut = false
+        }
+      } else if (now > timeSinceMovedIn + timeToStay) {
+        isMovingOut = true
+      }
+
+      renderer(game, deltaTime, game.renderEffect)
+    } else {
+      resources.soundEffects.bootUp()
+      then = now * 0.001
+      isFirst = false
+    }
+    return null
   }
-  return scene
 }

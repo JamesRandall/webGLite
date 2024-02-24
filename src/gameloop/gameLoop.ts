@@ -164,48 +164,47 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
   let frameRateCounter = createFramerateCounter()
   let applyCameraShake = createApplyCameraShake()
 
-  const scene: Scene = {
-    update: (now: number, _: Size) => {
-      now *= 0.001 // convert to seconds
-      deltaTime = now - then
-      then = now
-      game.diagnostics = []
-      hyperspaceClock = applyHyperspaceCountdown(game, hyperspaceClock, deltaTime)
-      applySceneSelection(game)
-      applyControlState(game, resources, deltaTime)
+  const update = (now: number, _: Size) => {
+    now *= 0.001 // convert to seconds
+    deltaTime = now - then
+    then = now
+    game.diagnostics = []
+    hyperspaceClock = applyHyperspaceCountdown(game, hyperspaceClock, deltaTime)
+    applySceneSelection(game)
+    applyControlState(game, resources, deltaTime)
 
-      if (shouldRunFlightLoop(game)) {
-        flightLoop(resources, game, deltaTime)
-        applyCameraShake(game, deltaTime)
+    if (shouldRunFlightLoop(game)) {
+      flightLoop(resources, game, deltaTime)
+      applyCameraShake(game, deltaTime)
+    }
+    if (game.currentScene === SceneEnum.Launching) {
+      if (launchingLoop === null) {
+        launchingLoop = createLaunchingLoop(game, resources, () => (launchingLoop = null))
+        resources.soundEffects.launch()
       }
-      if (game.currentScene === SceneEnum.Launching) {
-        if (launchingLoop === null) {
-          launchingLoop = createLaunchingLoop(game, resources, () => (launchingLoop = null))
-          resources.soundEffects.launch()
-        }
-        launchingLoop!(deltaTime)
-      } else if (game.currentScene === SceneEnum.Hyperspace) {
-        if (hyperspaceLoop === null) {
-          hyperspaceLoop = createHyperspaceLoop(game, resources, () => (hyperspaceLoop = null))
-          resources.soundEffects.hyperspace()
-        }
-        hyperspaceLoop!(deltaTime)
-      } else if (game.currentScene === SceneEnum.Docking) {
-        if (dockingLoop === null) {
-          dockingLoop = createDockingLoop(game, resources, () => (dockingLoop = null))
-          resources.soundEffects.docked()
-        }
-        dockingLoop!(deltaTime)
+      launchingLoop!(deltaTime)
+    } else if (game.currentScene === SceneEnum.Hyperspace) {
+      if (hyperspaceLoop === null) {
+        hyperspaceLoop = createHyperspaceLoop(game, resources, () => (hyperspaceLoop = null))
+        resources.soundEffects.hyperspace()
       }
+      hyperspaceLoop!(deltaTime)
+    } else if (game.currentScene === SceneEnum.Docking) {
+      if (dockingLoop === null) {
+        dockingLoop = createDockingLoop(game, resources, () => (dockingLoop = null))
+        resources.soundEffects.docked()
+      }
+      dockingLoop!(deltaTime)
+    }
 
-      if (game.isFPSEnabled) {
-        game.diagnostics.push(`FPS: ${frameRateCounter(deltaTime)}`)
-      }
+    if (game.isFPSEnabled) {
+      game.diagnostics.push(`FPS: ${frameRateCounter(deltaTime)}`)
+    }
 
-      renderer(game, deltaTime, game.renderEffect)
-      game.player.previousControlState = { ...game.player.controlState }
-      return null
-    },
+    renderer(game, deltaTime, game.renderEffect)
+    game.player.previousControlState = { ...game.player.controlState }
+    return null
   }
-  return scene
+
+  return update
 }

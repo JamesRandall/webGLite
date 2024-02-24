@@ -101,5 +101,8 @@ export function createGameScene(resources: Resources, gl: WebGL2RenderingContext
   const sceneRenderer = createSceneRenderer(gl, resources)
   const dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
   const rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
-  return createGameLoop(resources, game, rootRenderer)
+  return {
+    resize: () => {},
+    update: createGameLoop(resources, game, rootRenderer),
+  }
 }

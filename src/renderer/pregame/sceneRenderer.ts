@@ -21,9 +21,9 @@ export function createPregameSceneRenderer(gl: WebGL2RenderingContext, resources
     shipRenderer(projectionMatrix, game.localBubble)
     gl.disable(gl.DEPTH_TEST)
     drawFrame(draw2d)
-    draw2d.text.draw("---- webGLite ----", [10, 1])
-    draw2d.text.draw("based on Elite", [12, 2.5])
-    draw2d.text.draw("by Ian Bell and David Braben", [4.5, 4])
-    draw2d.text.draw("Press Space Or Fire, Commander", [3.5, 21])
+    draw2d.text.center("---- webGLite ----", 1)
+    draw2d.text.center("based on Elite", 2.5)
+    draw2d.text.center("by Ian Bell and David Braben", 4)
+    draw2d.text.center("Press Space Or Fire, Commander", 21)
   }
 }

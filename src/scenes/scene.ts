@@ -4,6 +4,7 @@ import { RenderEffect } from "../renderer/rootRenderer"
 
 export interface Scene {
   update: (now: number, viewportExtent: Size) => Scene | null
+  resize: (gl: WebGL2RenderingContext) => void
 }
 
 export type RendererFunc = (game: Game, timeDelta: number) => void
