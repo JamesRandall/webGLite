@@ -83,6 +83,9 @@ export function createTestScene(resources: Resources, gl: WebGL2RenderingContext
     isFPSEnabled: false,
     timeUntilNextSpawnChance: randomiseSpawnDelta(),
     extraVesselsSpawningDelay: 0,
+    flashMessage: "",
+    flashMessageIntervals: [],
+    message: null,
   }
   game.player.isDocked = false
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
@@ -96,8 +99,10 @@ export function createTestScene(resources: Resources, gl: WebGL2RenderingContext
   const sceneRenderer = createSceneRenderer(gl, resources)
   const dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
   const rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
+  const gameLoop = createGameLoop(resources, rootRenderer, () => {})
+
   return {
     resize: () => {},
-    update: createGameLoop(resources, game, rootRenderer),
+    update: (now: number) => gameLoop(now, game),
   }
 }

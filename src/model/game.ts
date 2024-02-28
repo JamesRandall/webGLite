@@ -50,4 +50,13 @@ export interface Game {
   isFPSEnabled: boolean
   timeUntilNextSpawnChance: number
   extraVesselsSpawningDelay: number
+  flashMessage: string
+  flashMessageIntervals: number[]
+  message: string | null
+}
+export function flashMessage(game: Game, message: string) {
+  const flashSpeed = 0.5
+  game.message = null
+  game.flashMessage = message
+  game.flashMessageIntervals = [flashSpeed, flashSpeed, flashSpeed, flashSpeed, flashSpeed, flashSpeed]
 }

@@ -15,6 +15,7 @@ import { updateShipInstance } from "../gameloop/updateShipInstance"
 import { createGameScene } from "./gameScene"
 import { generateMarketItems } from "../proceduralGeneration/marketItems"
 import { createRootRenderer, nextEffect, previousEffect, RenderEffect } from "../renderer/rootRenderer"
+import { doesSaveExist, loadGame } from "../persistence"
 
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
@@ -87,6 +88,9 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
     isFPSEnabled: false,
     timeUntilNextSpawnChance: 0,
     extraVesselsSpawningDelay: 0,
+    flashMessage: "",
+    flashMessageIntervals: [],
+    message: null,
   }
 
   let rootRenderer = createRootRenderer(
@@ -119,6 +123,8 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
   let currentShipIndex = 0
   let speed = startingZ / 1.5
   let startGame = false
+  let askingToLoad = false
+  let loadGameFromStorage = false
 
   function createShip() {
     game.localBubble.ships[0] = resources.ships.getIndexedShip(
@@ -154,12 +160,21 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
       nextShip()
     } else if (e.key === "ArrowLeft") {
       previousShip()
-    } else if (e.key === " ") {
-      startGame = true
+    } else if (e.key === " " || e.key === "S" || e.key === "s") {
+      if (doesSaveExist()) {
+        game.message = "Load existing commander (Y/N)?"
+        askingToLoad = true
+      } else {
+        startGame = true
+      }
     } else if (e.key === "]") {
       game.renderEffect = nextEffect(game.renderEffect)
     } else if (e.key === "[") {
       game.renderEffect = previousEffect(game.renderEffect)
+    } else if ((e.key === "Y" || e.key === "y") && askingToLoad) {
+      loadGameFromStorage = true
+    } else if ((e.key === "N" || e.key === "n") && askingToLoad) {
+      startGame = true
     }
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
       game.localBubble.ships[0].position = existingPosition
@@ -171,15 +186,16 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
   window.addEventListener("keydown", keyDown)
 
   let isFirst = true
+  game.message = "Press Space Or Fire, Commander"
 
   return (now: number, viewportExtent: Size) => {
     // we skip the first frame of the pregame screen as the time we will be given is based on the render time
     // and that initial number is large, if its used for the frame time then the initial ship will appear past the
     // camera
     if (!isFirst) {
-      if (startGame) {
+      if (startGame || loadGameFromStorage) {
         window.removeEventListener("keydown", keyDown)
-        return createGameScene(resources, gl, game.renderEffect)
+        return createGameScene(resources, gl, loadGameFromStorage ? loadGame(gl, resources) ?? null : null)
       }
 
       now *= 0.001 // convert to seconds

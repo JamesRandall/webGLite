@@ -3,6 +3,7 @@ import { Game } from "../../model/game"
 import { frameColor, frameWidth } from "../../constants"
 import { CombatRatingEnum, LaserTypeEnum, LegalStatusEnum } from "../../model/player"
 import { drawHeader } from "./screenUtilities"
+import { doesSaveExist } from "../../persistence"
 
 function legalStatusText(value: LegalStatusEnum) {
   switch (value) {
@@ -100,6 +101,14 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
     }
     if (equipment.galacticHyperdrive) {
       draw2d.text.draw(`Galactic Hyperdrive`, [6, equipmentLine++])
+    }
+
+    if (game.flashMessageIntervals.length === 0) {
+      if (doesSaveExist()) {
+        draw2d.text.center("(S)ave or (L)oad game", 21.5)
+      } else {
+        draw2d.text.center("(S)ave game", 21.5)
+      }
     }
   }
 }

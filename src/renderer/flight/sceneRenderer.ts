@@ -119,11 +119,13 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
     if (game.hyperspace !== null && game.hyperspace.countdown > 0) {
       draw2d.text.draw(game.hyperspace.countdown.toString(), [0.5, 0.5])
       const hyperspaceText = `HYPERSPACE - ${game.player.selectedSystem.name}`
-      const xPos = 38 / 2 - hyperspaceText.length / 2
-      draw2d.text.draw(hyperspaceText, [xPos, 21.5])
+      draw2d.text.center(hyperspaceText, 21.5)
     }
     if (game.player.dockingComputerFlightExecuter !== null && flashOn) {
-      draw2d.text.draw("DOCKING COMPUTER ON", [9.5, 21.5])
+      draw2d.text.center("DOCKING COMPUTER ON", 21.5)
+    }
+    if (game.flashMessageIntervals.length > 0 && game.flashMessageIntervals.length % 2 == 0) {
+      draw2d.text.center(game.flashMessage, 21.5)
     }
 
     game.diagnostics

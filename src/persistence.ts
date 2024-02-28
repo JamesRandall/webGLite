@@ -1,4 +1,4 @@
-import { Game, SceneEnum } from "./model/game"
+import { flashMessage, Game, SceneEnum } from "./model/game"
 import { generateMarketItems, MarketItem } from "./proceduralGeneration/marketItems"
 import { ShipModelEnum } from "./model/shipBlueprint"
 import { CombatRatingEnum, getStartingPlayer, LegalStatusEnum, PlayerEquipment } from "./model/player"
@@ -53,6 +53,9 @@ export function saveGame(game: Game) {
     },
   }
   localStorage.setItem("save", JSON.stringify(state))
+  if (game.currentScene === SceneEnum.PlayerDetails) {
+    flashMessage(game, "Game saved")
+  }
 }
 
 export function loadGame(gl: WebGL2RenderingContext, resources: Resources) {
@@ -80,6 +83,8 @@ export function loadGame(gl: WebGL2RenderingContext, resources: Resources) {
   game.player.missiles.currentNumber = state.player.currentNumberOfMissiles
   game.player.equipment = state.player.equipment
   game.player.cargoHoldContents = state.player.cargoHoldContents
+  flashMessage(game, "Game loaded")
+  return game
 }
 
 export function doesSaveExist() {
@@ -148,6 +153,9 @@ export function newGame(gl: WebGL2RenderingContext, resources: Resources) {
     isFPSEnabled: false,
     timeUntilNextSpawnChance: randomiseSpawnDelta(),
     extraVesselsSpawningDelay: 0,
+    flashMessage: "",
+    flashMessageIntervals: [],
+    message: null,
   }
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
 

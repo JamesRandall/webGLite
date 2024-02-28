@@ -11,6 +11,9 @@ export function bindKeys(controlState: ControlState) {
 
     let handled = true
     switch (e.key) {
+      case "l":
+      case "L":
+        controlState.loading = newState
       case "a":
       case "A":
         controlState.firing = newState
@@ -24,6 +27,7 @@ export function bindKeys(controlState: ControlState) {
       case "s":
       case "S":
         controlState.pitchDown = newState
+        controlState.saving = newState
         break
       case "x":
       case "X":

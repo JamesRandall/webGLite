@@ -9,6 +9,7 @@ import { createHyperspaceLoop } from "./hyperspace"
 import { createDockingLoop } from "./docking"
 import { createFramerateCounter } from "../utilities"
 import { vec3 } from "gl-matrix"
+import { loadGame, saveGame } from "../persistence"
 
 function applySceneSelection(game: Game) {
   if (game.player.controlState.sceneSelection === null) {
@@ -154,7 +155,7 @@ function createApplyCameraShake() {
   }
 }
 
-export function createGameLoop(resources: Resources, game: Game, renderer: RendererEffectFunc) {
+export function createGameLoop(resources: Resources, renderer: RendererEffectFunc, loadGameHandler: () => void) {
   let then = 0
   let deltaTime = 0
   let launchingLoop: ((deltaTime: number) => void) | null = null
@@ -164,7 +165,7 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
   let frameRateCounter = createFramerateCounter()
   let applyCameraShake = createApplyCameraShake()
 
-  const update = (now: number, _: Size) => {
+  const update = (now: number, game: Game) => {
     now *= 0.001 // convert to seconds
     deltaTime = now - then
     then = now
@@ -172,6 +173,13 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
     hyperspaceClock = applyHyperspaceCountdown(game, hyperspaceClock, deltaTime)
     applySceneSelection(game)
     applyControlState(game, resources, deltaTime)
+    if (game.currentScene === SceneEnum.PlayerDetails && game.player.isDocked) {
+      if (game.player.controlState.saving && !game.player.previousControlState.saving) {
+        saveGame(game)
+      } else if (game.player.controlState.loading && !game.player.previousControlState.loading) {
+        loadGameHandler()
+      }
+    }
 
     if (shouldRunFlightLoop(game)) {
       flightLoop(resources, game, deltaTime)
@@ -199,6 +207,13 @@ export function createGameLoop(resources: Resources, game: Game, renderer: Rende
 
     if (game.isFPSEnabled) {
       game.diagnostics.push(`FPS: ${frameRateCounter(deltaTime)}`)
+    }
+
+    if (game.flashMessageIntervals.length > 0) {
+      game.flashMessageIntervals[game.flashMessageIntervals.length - 1] -= deltaTime
+      if (game.flashMessageIntervals[game.flashMessageIntervals.length - 1] < 0) {
+        game.flashMessageIntervals = game.flashMessageIntervals.slice(0, game.flashMessageIntervals.length - 1)
+      }
     }
 
     renderer(game, deltaTime, game.renderEffect)

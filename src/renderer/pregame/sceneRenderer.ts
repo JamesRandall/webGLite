@@ -24,6 +24,8 @@ export function createPregameSceneRenderer(gl: WebGL2RenderingContext, resources
     draw2d.text.center("---- webGLite ----", 1)
     draw2d.text.center("based on Elite", 2.5)
     draw2d.text.center("by Ian Bell and David Braben", 4)
-    draw2d.text.center("Press Space Or Fire, Commander", 21)
+    if (game.message !== null) {
+      draw2d.text.center(game.message, 21)
+    }
   }
 }

@@ -106,7 +106,7 @@ export function createBuyEquipmentRenderer(draw2d: Primitives) {
           maximumFractionDigits: 1,
           minimumFractionDigits: 1,
         })
-        draw2d.text.draw(itemPrice, [37 - itemPrice.length, top + index], true, color)
+        draw2d.text.draw(itemPrice, [36 - itemPrice.length, top + index], true, color)
       })
     draw2d.text.draw(
       `Cash: ${game.player.cash.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} Cr`,

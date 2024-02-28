@@ -5,11 +5,12 @@ import { getNearestSystemToCursor } from "./utilities/map"
 import { createDockingComputer } from "./utilities/dockingComputer"
 import { Resources } from "../resources/resources"
 import { ShipInstance } from "../model/ShipInstance"
-import { dimensions, scannerRadialWorldRange } from "../constants"
+import { scannerRadialWorldRange } from "../constants"
 import { nextEffect, previousEffect } from "../renderer/rootRenderer"
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
   const player = game.player
+
   if (!player.isDocked) {
     if (!applyDockingComputer(game, resources, timeDelta)) {
       applyRoll(player, timeDelta)

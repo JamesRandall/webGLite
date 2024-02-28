@@ -1,33 +1,35 @@
-import { getStartingPlayer } from "../model/player"
 import { bindKeys } from "../controls/bindKeys"
 import { createSceneRenderer } from "../renderer/flight/sceneRenderer"
-import { createStardust } from "../gameloop/stardust"
-import { LocalBubble } from "../model/localBubble"
-import { createSquareModel, createSquareModelWithLoadedTexture } from "../resources/models"
-import { generateGalaxy } from "../proceduralGeneration/starSystems"
-import { Game, SceneEnum } from "../model/game"
 import { createGameLoop } from "../gameloop/gameLoop"
 import { createDashboardRenderer } from "../renderer/dashboard/dashboard"
 import { Resources } from "../resources/resources"
-import { ShipInstance } from "../model/ShipInstance"
-import { vec3 } from "gl-matrix"
-import { dimensions, worldSize } from "../constants"
-import { generateMarketItems } from "../proceduralGeneration/marketItems"
+import { dimensions } from "../constants"
 import { bindMouse } from "../controls/bindMouse"
 import { createRootRenderer, RenderEffect } from "../renderer/rootRenderer"
-import { randomiseSpawnDelta } from "../utilities"
-import { newGame } from "../persistence"
+import { loadGame, newGame, saveGame } from "../persistence"
+import { Size } from "../model/geometry"
+import { Scene } from "./scene"
+import { Game } from "../model/game"
 
-export function createGameScene(resources: Resources, gl: WebGL2RenderingContext, renderEffect: RenderEffect) {
-  const game = newGame(gl, resources)
+export const createGameScene = (resources: Resources, gl: WebGL2RenderingContext, loadedGame: Game | null): Scene => {
+  let game = loadedGame ?? newGame(gl, resources)
 
-  bindKeys(game.player.controlState)
-  bindMouse(game.player.controlState)
+  let unbindKeys = bindKeys(game.player.controlState)
+  let unbindMouse = bindMouse(game.player.controlState)
   const sceneRenderer = createSceneRenderer(gl, resources)
   const dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
   const rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
+
+  let update = createGameLoop(resources, rootRenderer, () => {
+    game = loadGame(gl, resources) ?? game
+    unbindKeys()
+    unbindMouse()
+    bindKeys(game.player.controlState)
+    bindMouse(game.player.controlState)
+  })
+
   return {
     resize: () => {},
-    update: createGameLoop(resources, game, rootRenderer),
+    update: (now: number, sz: Size) => update(now, game),
   }
 }

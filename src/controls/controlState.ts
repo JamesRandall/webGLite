@@ -23,6 +23,8 @@ export interface ControlState {
   shiftPressed: boolean
   nextEffectPressed: boolean
   previousEffectPressed: boolean
+  saving: boolean
+  loading: boolean
 }
 
 export function getEmptyControlState() {
@@ -47,5 +49,7 @@ export function getEmptyControlState() {
     shiftPressed: false,
     nextEffectPressed: false,
     previousEffectPressed: false,
+    saving: false,
+    loading: false,
   }
 }
