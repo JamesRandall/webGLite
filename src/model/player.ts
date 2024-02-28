@@ -65,6 +65,7 @@ export interface Player {
   name: string
   legalStatus: LegalStatusEnum
   combatRating: CombatRatingEnum
+  numberOfKills: number
   isDocked: boolean
   dockingComputerFlightExecuter: ((game: Game, timeDelta: number) => void) | null
   fuel: number
@@ -109,6 +110,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     name: "Jameson",
     legalStatus: LegalStatusEnum.Clean,
     combatRating: CombatRatingEnum.Harmless,
+    numberOfKills: 0,
     isDocked: true,
     dockingComputerFlightExecuter: null,
     fuel: cobra.maxFuel, // 70 is a full tank, goes 7 lightyears

@@ -25,7 +25,7 @@ export interface Resources {
     bountyHunterIndexes: number[]
     pirateIndexes: number[]
     rockHermitIndexes: number[]
-    getRandomShip: () => ShipBlueprint
+    getBlueprint: (model: ShipModelEnum) => ShipBlueprint
     getInstanceOfModel: (model: ShipModelEnum, position: vec3, noseOrientation: vec3) => ShipInstance
     getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) => ShipInstance
     getCobraMk3: (position: vec3, noseOrientation: vec3) => ShipInstance
@@ -137,7 +137,7 @@ export async function loadResources(
       rockHermitIndexes,
       getInstanceOfModel: (model: ShipModelEnum, position: vec3, noseOrientation: vec3) =>
         toInstance(ships.filter((s) => s.model === model)[0], position, noseOrientation),
-      getRandomShip: () => getRandomShip(ships),
+      getBlueprint: (model: ShipModelEnum) => ships.filter((s) => s.model === model)[0],
       getIndexedShip: (index: number, position: vec3, noseOrientation: vec3) =>
         toInstance(ships[index], position, noseOrientation),
       getCobraMk3: (position: vec3, noseOrientation: vec3) =>
