@@ -155,7 +155,7 @@ function setColorAttribute(gl: WebGL2RenderingContext, colorsBuffer: WebGLBuffer
   gl.enableVertexAttribArray(vertexColor)
 }
 
-function setPositionAttribute(
+export function setPositionAttribute(
   gl: WebGL2RenderingContext,
   vertexBuffer: WebGLBuffer,
   vertexPosition: number,

@@ -27,7 +27,7 @@ export function createStartingScene(
 ) {
   switch (scene) {
     case StartingSceneEnum.Docked:
-      return createGameScene(resources, gl, RenderEffect.None)
+      return createGameScene(resources, gl, null)
     case StartingSceneEnum.NamedScene:
       // eventually be good to let scenes be loaded from JSON but for now we'll just use a function map
       const ships = sceneMap.get(namedScene ?? "trader")!(resources)

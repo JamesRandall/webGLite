@@ -28,7 +28,9 @@ async function createAudioPlayer(path: string) {
   let currentIndex = 0
   return function (volume: number = 1.0) {
     players[currentIndex].volume = volume
-    players[currentIndex].play()
+    try {
+      players[currentIndex].play()
+    } catch {}
     currentIndex++
     if (currentIndex >= players.length) currentIndex = 0
   }

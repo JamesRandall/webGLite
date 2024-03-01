@@ -1,10 +1,12 @@
 import { createGameScene } from "./scenes/gameScene"
-import { loadResources } from "./resources/resources"
+import { loadResources, Resources } from "./resources/resources"
 import { createPregameScene } from "./scenes/pregameScene"
 import { RenderEffect } from "./renderer/rootRenderer"
 import { createInstructionRenderer } from "./renderer/instructions/renderInstructions"
 import { createStartingScene, StartingSceneEnum } from "./scenes/sceneFactory"
 import { dimensions, setDimensions } from "./constants"
+import { createLoadingScreenRenderer } from "./renderer/loadingScreen/loadingScreen"
+import { Scene } from "./scenes/scene"
 
 require("./extensions.ts")
 
@@ -50,37 +52,44 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
   const docGl = docCanvas.getContext("webgl2")!
   const viewportExtent = { width: gl.canvas.width, height: gl.canvas.height }
 
-  const resources = await loadResources(gl, docGl)
-  const renderInstructions = createInstructionRenderer(docGl, resources)
-  const isSkipStart = urlSearchParams.get("skipStart") !== null
-  const namedScene = urlSearchParams.get("namedScene")
-  let scene = createStartingScene(
-    isSkipStart
-      ? StartingSceneEnum.Docked
-      : namedScene !== null
-        ? StartingSceneEnum.NamedScene
-        : StartingSceneEnum.Pregame,
-    resources,
-    gl,
-    namedScene,
-  )
+  let resources: Resources | null = null
+  let renderInstructions: ((showInstructions: boolean) => void) | null = null
 
-  let resizeDebounce: ReturnType<typeof setTimeout> | undefined = undefined
-  window.addEventListener("resize", (ev) => {
-    clearTimeout(resizeDebounce)
-    resizeDebounce = setTimeout(() => {
-      setSize()
-      const newGl = viewCanvas.getContext("webgl2")!
-      scene.resize(newGl)
-    }, 100)
-  })
-
+  const loadingScreen: ((now: number, resourcesReady: boolean) => boolean) | null = createLoadingScreenRenderer(gl)
+  let scene: Scene | null = null
+  function renderGame(now: number) {
+    if (scene !== null) {
+      scene = scene.update(now, viewportExtent) ?? scene
+      renderInstructions!(showHelpText)
+    } else if (resources !== null) {
+      renderInstructions = createInstructionRenderer(docGl, resources)
+      const isSkipStart = urlSearchParams.get("skipStart") !== null
+      const namedScene = urlSearchParams.get("namedScene")
+      scene = createStartingScene(
+        isSkipStart
+          ? StartingSceneEnum.Docked
+          : namedScene !== null
+            ? StartingSceneEnum.NamedScene
+            : StartingSceneEnum.Pregame,
+        resources,
+        gl!,
+        namedScene,
+      )
+    }
+    requestAnimationFrame(renderGame)
+  }
   function render(now: number) {
-    scene = scene.update(now, viewportExtent) ?? scene
+    if (loadingScreen !== null) {
+      if (loadingScreen(now, resources !== null) && resources !== null) {
+        requestAnimationFrame(renderGame)
+        return
+      }
+    }
     requestAnimationFrame(render)
-    renderInstructions(showHelpText)
   }
   requestAnimationFrame(render)
+
+  resources = await loadResources(gl, docGl)
 }
 
 mount(

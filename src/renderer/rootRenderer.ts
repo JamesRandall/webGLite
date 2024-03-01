@@ -128,7 +128,6 @@ export function createRootRenderer(
   sceneRenderer: RendererFunc,
   dashboardRenderer: RendererFunc,
 ) {
-  console.log(dimensions)
   // This sets up a frame buffer that will render to a texture and attaches a depth buffer to it
   const [frameBuffer, frameBufferTexture] = createFrameBuffer(gl, dimensions.width, dimensions.totalHeight)
   const [flightSceneFrameBuffer, flightSceneFrameBufferTexture] = createFrameBuffer(
