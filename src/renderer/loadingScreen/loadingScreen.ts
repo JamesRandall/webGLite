@@ -121,6 +121,10 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   // we probably want to set the height based on the aspect ratio
   mat4.ortho(projectionMatrix, -width / 2, width / 2, -height / 2, height / 2, 10, -10)
 
+  const scale = width > height ? height / 256 : width / 256
+  const logoScale = width > height ? height / 1000 : width / 1000
+  console.log(`Logo scale: ${logoScale}`)
+
   const shaderProgram = compileShaderProgram2(gl, { frag: fragmentShader, vert: vertexShader })!
   const positionLocation = gl.getAttribLocation(shaderProgram, "position")!
   const projectionMatrixLocation = gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!
@@ -132,19 +136,35 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
 
   const logoTexture = await loadTexture(gl, "./logo.png")
   const logo = createSquareModelWithLoadedTexture(gl, logoTexture)
-  const logoRenderer = createImageRenderer(gl, logo, projectionMatrix, [0, 128 * 4 - 46 * 1.5], [239, 46])
+  const logoRenderer = createImageRenderer(
+    gl,
+    logo,
+    projectionMatrix,
+    [0, 128 * scale - 46 * logoScale * 1.5],
+    [239 * logoScale, 46 * logoScale],
+  )
   // 964x30
   const startTexture = await loadTexture(gl, "./start.png")
   const start = createSquareModelWithLoadedTexture(gl, startTexture)
-  const startRenderer = createImageRenderer(gl, start, projectionMatrix, [0, -128 * 4 + 46], [723 / 2, 23 / 2])
+  const startRenderer = createImageRenderer(
+    gl,
+    start,
+    projectionMatrix,
+    [0, -128 * scale + 46 * logoScale],
+    [(723 / 2) * logoScale, (23 / 2) * logoScale],
+  )
 
   let previousTime = 0
   let isFirst = true
   let logoAlpha = 0.0
   let canProceed = false
   let proceed = false
+  let canStart = false
 
-  const proceedHandler = () => (proceed = canProceed && true)
+  const proceedHandler = () => {
+    canStart = true
+    proceed = canProceed && true
+  }
   window.addEventListener("keydown", proceedHandler)
   window.addEventListener("mousedown", proceedHandler)
 
@@ -152,7 +172,9 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
     now *= 0.001
     if (isFirst) {
       previousTime = now
-      isFirst = false
+      if (canStart) {
+        isFirst = false
+      }
       return false
     }
     const delta = now - previousTime
@@ -175,8 +197,8 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
         const y = Math.round(Math.random() * 256) - 128
         const cd = x * x + y * y
         if (cd < planetBias) {
-          const offsetX = Math.sqrt(planetBias - cd) * 2
-          const offsetY = -y * 2
+          const offsetX = (Math.sqrt(planetBias - cd) * scale) / 2
+          const offsetY = (-y * scale) / 2
           planetPoints.push(offsetX) // x
           planetPoints.push(offsetY) // y
           planetPoints.push(-1) // z
@@ -191,8 +213,8 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
         const dist = (x * x + y * y) / 256
         const ellipseCheck = (17 * (x * x + y * y) - 32 * x * y) / 256
         if (ellipseCheck < 80 && ellipseCheck > 32 && (xBase < 0 || dist > 16)) {
-          ringPoints.push(x * 4)
-          ringPoints.push(-y * 4)
+          ringPoints.push(x * scale)
+          ringPoints.push(-y * scale)
           ringPoints.push(-1)
         }
       }
@@ -203,8 +225,8 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
         const y = Math.random() * 256 - 128
         const dist = (x * x + y * y) / 256
         if (dist > 17) {
-          starPoints.push(x * 4)
-          starPoints.push(-y * 4)
+          starPoints.push(x * scale)
+          starPoints.push(-y * scale)
           starPoints.push(-1)
         }
       }
@@ -238,7 +260,12 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
     logoRenderer(logoAlpha)
     startRenderer(logoAlpha)
 
-    if (planetPoints.length >= numberOfPlanetPoints && ringPoints.length >= numberOfRingPoints && resourcesReady) {
+    if (
+      planetPointVisits >= numberOfPlanetPoints &&
+      ringPointVisits >= numberOfRingPoints &&
+      starPointVisits >= numberOfStarPoints &&
+      resourcesReady
+    ) {
       canProceed = true
       if (proceed) {
         window.removeEventListener("keydown", proceedHandler)
