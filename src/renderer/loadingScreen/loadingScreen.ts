@@ -177,7 +177,12 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
     const delta = now - previousTime
     previousTime = now
 
-    if (planetPoints.length >= numberOfPlanetPoints && ringPoints.length >= numberOfRingPoints && logoAlpha < 1.0) {
+    if (
+      planetPointVisits >= numberOfPlanetPoints &&
+      ringPointVisits >= numberOfRingPoints &&
+      starPointVisits >= numberOfStarPoints &&
+      logoAlpha < 1.0
+    ) {
       logoAlpha += delta
     }
 
