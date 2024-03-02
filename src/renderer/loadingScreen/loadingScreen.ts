@@ -189,6 +189,7 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       planetPointVisits >= numberOfPlanetPoints &&
       ringPointVisits >= numberOfRingPoints &&
       starPointVisits >= numberOfStarPoints &&
+      resourcesReady &&
       logoAlpha < 1.0
     ) {
       logoAlpha += delta
