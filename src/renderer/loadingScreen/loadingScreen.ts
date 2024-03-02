@@ -174,6 +174,14 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
 
       return false
     }
+    if (proceed) {
+      window.removeEventListener("keydown", proceedHandler)
+      window.removeEventListener("mousedown", proceedHandler)
+      gl.deleteBuffer(planetVertexBuffer)
+      gl.deleteBuffer(starVertexBuffer)
+      gl.deleteBuffer(ringVertexBuffer)
+      return true
+    }
     const delta = now - previousTime
     previousTime = now
 
@@ -269,15 +277,6 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       resourcesReady
     ) {
       canProceed = true
-      if (proceed) {
-        window.removeEventListener("keydown", proceedHandler)
-        window.removeEventListener("mousedown", proceedHandler)
-      }
-      return proceed
-      // TODO: wait for play to be pressed
-      //gl.deleteBuffer(planetVertexBuffer)
-      //gl.deleteBuffer(ringVertexBuffer)
-      //return true
     }
     return false
   }
