@@ -71,10 +71,7 @@ async function loadShaderSource(name: string) {
   }
 }
 
-export async function loadResources(
-  gl: WebGL2RenderingContext,
-  instructionsGl: WebGL2RenderingContext,
-): Promise<Resources> {
+export async function loadResources(gl: WebGL2RenderingContext): Promise<Resources> {
   const ships = await loadShipSpecifications(gl)
   const shaderNames = [
     "stardust",
@@ -111,7 +108,7 @@ export async function loadResources(
   const textureNames = ["noise", "font", "starmask", "scanner"]
   const loadedTextures = await Promise.all(textureNames.map((tn) => loadTexture(gl, `./${tn}.png`)))
   const textures = new Map<string, WebGLTexture>(loadedTextures.map((t, i) => [textureNames[i], t]))
-  const instructionFont = await loadTexture(instructionsGl, "font.png")
+  const instructionFont = await loadTexture(gl, "font.png")
   const traderIndexes = ships
     .map((s, i) => ({ s, i }))
     .filter(({ s }) => s.canBeTrader)

@@ -10,7 +10,7 @@ import { Scene } from "./scenes/scene"
 
 require("./extensions.ts")
 
-async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement) {
+async function mount(viewCanvas: HTMLCanvasElement) {
   const retroRatio = 800 / 760
   const wideScreenRatio = 16 / 9
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -49,11 +49,9 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
       showHelpText = !showHelpText
     }
   })
-  const docGl = docCanvas.getContext("webgl2")!
   const viewportExtent = { width: gl.canvas.width, height: gl.canvas.height }
 
   let resources: Resources | null = null
-  let renderInstructions: ((showInstructions: boolean) => void) | null = null
 
   const loadingScreen: ((now: number, resourcesReady: boolean) => boolean) | null =
     await createLoadingScreenRenderer(gl)
@@ -61,9 +59,7 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
   function renderGame(now: number) {
     if (scene !== null) {
       scene = scene.update(now, viewportExtent) ?? scene
-      renderInstructions!(showHelpText)
     } else if (resources !== null) {
-      renderInstructions = createInstructionRenderer(docGl, resources)
       const isSkipStart = urlSearchParams.get("skipStart") !== null
       const namedScene = urlSearchParams.get("namedScene")
       scene = createStartingScene(
@@ -88,12 +84,14 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
     }
     requestAnimationFrame(render)
   }
-  requestAnimationFrame(render)
 
-  resources = await loadResources(gl, docGl)
+  if (urlSearchParams.get("skipStart") !== null || urlSearchParams.get("namedScene") !== null) {
+    requestAnimationFrame(renderGame)
+  } else {
+    requestAnimationFrame(render)
+  }
+
+  resources = await loadResources(gl)
 }
 
-mount(
-  document.getElementById("viewcanvas") as HTMLCanvasElement,
-  document.getElementById("doccanvas") as HTMLCanvasElement,
-)
+mount(document.getElementById("viewcanvas") as HTMLCanvasElement)

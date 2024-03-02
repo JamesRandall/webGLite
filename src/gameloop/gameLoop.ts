@@ -1,7 +1,6 @@
 import { Game, SceneEnum } from "../model/game"
-import { Size } from "../model/geometry"
 import { flightLoop } from "./flightLoop"
-import { RendererEffectFunc, Scene } from "../scenes/scene"
+import { RendererEffectFunc } from "../scenes/scene"
 import { createLaunchingLoop } from "./launching"
 import { applyControlState } from "./applyControlState"
 import { Resources } from "../resources/resources"
@@ -9,9 +8,18 @@ import { createHyperspaceLoop } from "./hyperspace"
 import { createDockingLoop } from "./docking"
 import { createFramerateCounter } from "../utilities"
 import { vec3 } from "gl-matrix"
-import { loadGame, saveGame } from "../persistence"
+import { saveGame } from "../persistence"
 
 function applySceneSelection(game: Game) {
+  if (
+    game.currentScene === SceneEnum.PlayerDetails &&
+    game.player.controlState.instructions &&
+    !game.player.previousControlState.instructions
+  ) {
+    game.currentScene = SceneEnum.Instructions
+    return
+  }
+
   if (game.player.controlState.sceneSelection === null) {
     return
   }

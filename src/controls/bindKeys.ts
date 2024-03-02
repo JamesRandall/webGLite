@@ -11,6 +11,10 @@ export function bindKeys(controlState: ControlState) {
 
     let handled = true
     switch (e.key) {
+      case "i":
+      case "I":
+        controlState.instructions = newState
+        break
       case "l":
       case "L":
         controlState.loading = newState

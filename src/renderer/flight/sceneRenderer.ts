@@ -1,7 +1,7 @@
 import { createShipsRenderer } from "./ships"
 import { createStardustRenderer } from "./stardust"
 import { createSunRenderer } from "./sun"
-import { createPrimitiveRenderer, Primitives } from "../primitives/primitives"
+import { createPrimitiveRenderer } from "../primitives/primitives"
 import { Game, SceneEnum } from "../../model/game"
 import { createLocalChartRenderer } from "../screens/localChart"
 import { createSystemDetailsRenderer } from "../screens/systemDetails"
@@ -12,15 +12,15 @@ import { createHyperspaceRenderer } from "../screens/hyperspace"
 import { createSphericalPlanetRenderer } from "./sphericalPlanet"
 import { Resources } from "../../resources/resources"
 import { createBuyMarketItemsRenderer } from "../screens/buyMarketItems"
-import { dimensions, frameColor, frameWidth } from "../../constants"
+import { dimensions } from "../../constants"
 import { mat4 } from "gl-matrix"
 import { createBuyEquipmentRenderer } from "../screens/buyEquipment"
 import { createLongRangeChartRenderer } from "../screens/galaxyChart"
 import { createInventoryRenderer } from "../screens/inventory"
-import { LaserTypeEnum } from "../../model/player"
 import { drawCrosshairs } from "./crosshairs"
 import { createPlayerLaserRenderer } from "./playerLasers"
 import { createExplosionsRenderer } from "./explosion"
+import { createInstructionsRenderer } from "../screens/instructions"
 
 export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const viewportWidth = dimensions.width
@@ -43,6 +43,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
   const buyEquipmentRenderer = createBuyEquipmentRenderer(draw2d)
   const inventoryRenderer = createInventoryRenderer(draw2d)
   const laserRenderer = createPlayerLaserRenderer(gl, resources)
+  const instructionsRenderer = createInstructionsRenderer(gl, resources, draw2d)
   let flashOn = true
   let flashOnTime = 0
 
@@ -108,6 +109,10 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
 
       case SceneEnum.Inventory:
         inventoryRenderer(game)
+        break
+
+      case SceneEnum.Instructions:
+        instructionsRenderer(game)
         break
     }
 

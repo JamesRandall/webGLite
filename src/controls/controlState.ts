@@ -25,6 +25,7 @@ export interface ControlState {
   previousEffectPressed: boolean
   saving: boolean
   loading: boolean
+  instructions: boolean
 }
 
 export function getEmptyControlState() {
@@ -51,5 +52,6 @@ export function getEmptyControlState() {
     previousEffectPressed: false,
     saving: false,
     loading: false,
+    instructions: false,
   }
 }

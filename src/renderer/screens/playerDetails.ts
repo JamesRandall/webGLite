@@ -105,9 +105,9 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
 
     if (game.flashMessageIntervals.length === 0) {
       if (doesSaveExist()) {
-        draw2d.text.center("(S)ave or (L)oad game", 21.5)
+        draw2d.text.center("(S)ave   (L)oad   (I)nstructions", 21.5)
       } else {
-        draw2d.text.center("(S)ave game", 21.5)
+        draw2d.text.center("(S)ave   (I)nstructions", 21.5)
       }
     }
   }
