@@ -159,12 +159,9 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   let logoAlpha = 0.0
   let canProceed = false
   let proceed = false
-  let canStart = false
 
-  const proceedHandler = () => {
-    canStart = true
-    proceed = canProceed && true
-  }
+  const proceedHandler = () => (proceed = canProceed && true)
+
   window.addEventListener("keydown", proceedHandler)
   window.addEventListener("mousedown", proceedHandler)
 
@@ -172,9 +169,9 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
     now *= 0.001
     if (isFirst) {
       previousTime = now
-      if (canStart) {
-        isFirst = false
-      }
+
+      isFirst = false
+
       return false
     }
     const delta = now - previousTime
