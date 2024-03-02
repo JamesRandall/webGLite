@@ -55,7 +55,8 @@ async function mount(viewCanvas: HTMLCanvasElement, docCanvas: HTMLCanvasElement
   let resources: Resources | null = null
   let renderInstructions: ((showInstructions: boolean) => void) | null = null
 
-  const loadingScreen: ((now: number, resourcesReady: boolean) => boolean) | null = createLoadingScreenRenderer(gl)
+  const loadingScreen: ((now: number, resourcesReady: boolean) => boolean) | null =
+    await createLoadingScreenRenderer(gl)
   let scene: Scene | null = null
   function renderGame(now: number) {
     if (scene !== null) {

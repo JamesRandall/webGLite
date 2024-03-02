@@ -171,7 +171,7 @@ export function setPositionAttribute(
   gl.enableVertexAttribArray(vertexPosition)
 }
 
-function setTextureAttribute(
+export function setTextureAttribute(
   gl: WebGL2RenderingContext,
   textureCoordsBuffer: WebGLBuffer,
   textureCoordsPosition: number,
