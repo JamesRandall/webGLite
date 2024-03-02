@@ -102,13 +102,17 @@ function createImageRenderer(
 // the sounds play. Browser will complain about audio being played before
 // the user has interacted with the page.
 export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
-  const pointsPerFrame = 32
-  const numberOfPlanetPoints = 1280 * 3 // * 3 due to x,y,z
-  const numberOfRingPoints = 1280 * 3
-  const numberOfStarPoints = 477 * 3
+  const numberOfPlanetPoints = 1800 // * 3 due to x,y,z
+  const numberOfRingPoints = 1800
+  const numberOfStarPoints = 140
+  const pointsPerSecond = 1200
+
   const planetPoints: number[] = []
   const ringPoints: number[] = []
   const starPoints: number[] = []
+  let planetPointVisits = 0
+  let ringPointVisits = 0
+  let starPointVisits = 0
   const planetBias = 128 * 128 //Math.pow(128, 2)
   const width = gl.canvas.width
   const height = gl.canvas.height
@@ -135,7 +139,7 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   const startRenderer = createImageRenderer(gl, start, projectionMatrix, [0, -128 * 4 + 46], [723 / 2, 23 / 2])
 
   let previousTime = 0
-  let isFirst = false
+  let isFirst = true
   let logoAlpha = 0.0
   let canProceed = false
   let proceed = false
@@ -148,6 +152,7 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
     now *= 0.001
     if (isFirst) {
       previousTime = now
+      isFirst = false
       return false
     }
     const delta = now - previousTime
@@ -163,10 +168,9 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
     setupGl(gl)
     gl.useProgram(shaderProgram)
     gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix)
-
-    if (planetPoints.length < numberOfPlanetPoints) {
-      // todo base this on time rather than frame
-      for (let i = 0; i < pointsPerFrame; i++) {
+    const pointsThisFrame = pointsPerSecond * delta
+    if (planetPointVisits < numberOfPlanetPoints) {
+      for (let i = 0; i < pointsThisFrame; i++) {
         const x = Math.round(Math.random() * 256) - 128
         const y = Math.round(Math.random() * 256) - 128
         const cd = x * x + y * y
@@ -178,8 +182,9 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
           planetPoints.push(-1) // z
         }
       }
-    } else if (ringPoints.length < numberOfRingPoints) {
-      for (let i = 0; i < pointsPerFrame; i++) {
+      planetPointVisits += pointsThisFrame
+    } else if (ringPointVisits < numberOfRingPoints) {
+      for (let i = 0; i < pointsThisFrame; i++) {
         const xBase = Math.random() * 256 - 128
         const y = Math.round(Math.random() * 256 - 128)
         const x = Math.round(xBase / 4) + y
@@ -191,8 +196,9 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
           ringPoints.push(-1)
         }
       }
-    } else if (starPoints.length < numberOfStarPoints) {
-      for (let i = 0; i < pointsPerFrame; i++) {
+      ringPointVisits += pointsThisFrame
+    } else if (starPointVisits < numberOfStarPoints) {
+      for (let i = 0; i < pointsThisFrame; i++) {
         const x = Math.random() * 256 - 128
         const y = Math.random() * 256 - 128
         const dist = (x * x + y * y) / 256
@@ -202,6 +208,7 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
           starPoints.push(-1)
         }
       }
+      starPointVisits += pointsThisFrame
     }
 
     if (planetPoints.length !== previousPlanetPointCount) {
