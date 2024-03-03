@@ -21,10 +21,11 @@ function createSingleAudioPlayer(path: string): Promise<HTMLAudioElement> {
 }
 
 async function createAudioPlayer(path: string) {
-  const players: HTMLAudioElement[] = []
+  const playerPromises: Promise<HTMLAudioElement>[] = []
   for (let i = 0; i < 4; i++) {
-    players.push(await createSingleAudioPlayer(path))
+    playerPromises.push(createSingleAudioPlayer(path))
   }
+  const players = await Promise.all(playerPromises)
   let currentIndex = 0
   return function (volume: number = 1.0) {
     players[currentIndex].volume = volume
@@ -37,16 +38,31 @@ async function createAudioPlayer(path: string) {
 }
 
 export async function createSoundEffects() {
+  const effects = await Promise.all(
+    [
+      "audio/BBC Boot Sound.mp3",
+      "audio/Docked.mp3",
+      "audio/Enemy Laser Hit.mp3",
+      "audio/Enemy Laser Miss.mp3",
+      "audio/Hyperspace.mp3",
+      "audio/Jump Blocked.mp3",
+      "audio/Launch.mp3",
+      "audio/Player Laser Hit.mp3",
+      "audio/Player Laser Miss.mp3",
+      "audio/Ship Explosion.mp3",
+    ].map((a) => createAudioPlayer(a)),
+  )
+
   return {
-    bootUp: await createAudioPlayer("audio/BBC Boot Sound.mp3"),
-    docked: await createAudioPlayer("audio/Docked.mp3"),
-    enemyLaserHit: await createAudioPlayer("audio/Enemy Laser Hit.mp3"),
-    enemyLaserMiss: await createAudioPlayer("audio/Enemy Laser Miss.mp3"),
-    hyperspace: await createAudioPlayer("audio/Hyperspace.mp3"),
-    jumpBlocked: await createAudioPlayer("audio/Jump Blocked.mp3"),
-    launch: await createAudioPlayer("audio/Launch.mp3"),
-    playerLaserHit: await createAudioPlayer("audio/Player Laser Hit.mp3"),
-    playerLaserMiss: await createAudioPlayer("audio/Player Laser Miss.mp3"),
-    shipExplosion: await createAudioPlayer("audio/Ship Explosion.mp3"),
+    bootUp: effects[0],
+    docked: effects[1],
+    enemyLaserHit: effects[2],
+    enemyLaserMiss: effects[3],
+    hyperspace: effects[4],
+    jumpBlocked: effects[5],
+    launch: effects[6],
+    playerLaserHit: effects[7],
+    playerLaserMiss: effects[8],
+    shipExplosion: effects[9],
   } as SoundEffects
 }
