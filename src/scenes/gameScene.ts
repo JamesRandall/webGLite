@@ -11,8 +11,8 @@ import { Size } from "../model/geometry"
 import { Scene } from "./scene"
 import { Game } from "../model/game"
 
-export const createGameScene = (resources: Resources, gl: WebGL2RenderingContext, loadedGame: Game | null): Scene => {
-  let game = loadedGame ?? newGame(gl, resources)
+export const createGameScene = (resources: Resources, gl: WebGL2RenderingContext, loadedGame: Game): Scene => {
+  let game = loadedGame
 
   let unbindKeys = bindKeys(game.player.controlState)
   let unbindMouse = bindMouse(game.player.controlState)

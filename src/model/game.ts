@@ -5,6 +5,7 @@ import { MarketItem } from "../proceduralGeneration/marketItems"
 import { RenderEffect } from "../renderer/rootRenderer"
 
 export enum SceneEnum {
+  Pregame,
   Front,
   Rear,
   Left,
@@ -22,6 +23,7 @@ export enum SceneEnum {
   PlayerExploding,
   PriceList,
   Instructions,
+  LoadoutEditor,
 }
 
 export interface LaunchingData {

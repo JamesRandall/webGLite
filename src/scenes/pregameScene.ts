@@ -9,13 +9,14 @@ import { createDashboardRenderer } from "../renderer/dashboard/dashboard"
 import { generateGalaxy } from "../proceduralGeneration/starSystems"
 import { Game, SceneEnum } from "../model/game"
 import { getStartingPlayer } from "../model/player"
-import { RendererEffectFunc, Scene } from "./scene"
+import { RendererEffectFunc } from "./scene"
 import { Size } from "../model/geometry"
 import { updateShipInstance } from "../gameloop/updateShipInstance"
 import { createGameScene } from "./gameScene"
 import { generateMarketItems } from "../proceduralGeneration/marketItems"
 import { createRootRenderer, nextEffect, previousEffect, RenderEffect } from "../renderer/rootRenderer"
-import { doesSaveExist, loadGame } from "../persistence"
+import { doesSaveExist, loadGame, newGame } from "../persistence"
+import { bindMouse } from "../controls/bindMouse"
 
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
@@ -78,7 +79,7 @@ export const createPregameScene = (resources: Resources, gl: WebGL2RenderingCont
     player: getStartingPlayer(resources, startingSystem),
     stars: stars,
     localBubble: localBubble,
-    currentScene: SceneEnum.Front,
+    currentScene: SceneEnum.Pregame,
     launching: null,
     hyperspace: null,
     currentSystem: startingSystem,
@@ -125,7 +126,6 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
   let timeSinceMovedIn = 0
   let currentShipIndex = 0
   let speed = startingZ / 1.5
-  let startGame = false
   let askingToLoad = false
   let loadGameFromStorage = false
 
@@ -164,11 +164,15 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
     } else if (e.key === "ArrowLeft") {
       previousShip()
     } else if (e.key === " " || e.key === "S" || e.key === "s") {
-      if (doesSaveExist()) {
-        game.message = "Load existing commander (Y/N)?"
-        askingToLoad = true
+      if (game.currentScene === SceneEnum.LoadoutEditor) {
+        game.currentScene = SceneEnum.Front
       } else {
-        startGame = true
+        if (doesSaveExist()) {
+          game.message = "Load existing commander (Y/N)?"
+          askingToLoad = true
+        } else {
+          game.currentScene = SceneEnum.LoadoutEditor
+        }
       }
     } else if (e.key === "]") {
       game.renderEffect = nextEffect(game.renderEffect)
@@ -177,7 +181,7 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
     } else if ((e.key === "Y" || e.key === "y") && askingToLoad) {
       loadGameFromStorage = true
     } else if ((e.key === "N" || e.key === "n") && askingToLoad) {
-      startGame = true
+      game.currentScene = SceneEnum.LoadoutEditor
     }
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
       game.localBubble.ships[0].position = existingPosition
@@ -187,6 +191,7 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
   }
 
   window.addEventListener("keydown", keyDown)
+  const unbindMouse = bindMouse(game.player.controlState)
 
   let isFirst = true
   game.message = "Press Space Or Fire, Commander"
@@ -196,9 +201,14 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
     // and that initial number is large, if its used for the frame time then the initial ship will appear past the
     // camera
     if (!isFirst) {
-      if (startGame || loadGameFromStorage) {
+      if (game.currentScene === SceneEnum.Front || loadGameFromStorage) {
         window.removeEventListener("keydown", keyDown)
-        return createGameScene(resources, gl, loadGameFromStorage ? loadGame(gl, resources) ?? null : null)
+        unbindMouse()
+        const theNewGame = (loadGameFromStorage ? loadGame(gl, resources) : null) ?? newGame(gl, resources)
+        if (!loadGameFromStorage) {
+          theNewGame.player.equipment = { ...game.player.equipment }
+        }
+        return createGameScene(resources, gl, theNewGame)
       }
 
       now *= 0.001 // convert to seconds
@@ -226,6 +236,8 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
       }
 
       renderer(game, deltaTime, game.renderEffect)
+
+      game.player.previousControlState = { ...game.player.controlState }
     } else {
       resources.soundEffects.bootUp()
       then = now * 0.001
