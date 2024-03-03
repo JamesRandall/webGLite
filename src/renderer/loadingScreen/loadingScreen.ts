@@ -212,8 +212,8 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       const pointsThisFrame = pointsPerSecond * delta
       if (planetPointVisits < numberOfPlanetPoints) {
         for (let i = 0; i < pointsThisFrame; i++) {
-          const x = Math.round(Math.random() * 256) - 128
-          const y = Math.round(Math.random() * 256) - 128
+          const x = Math.random() * 256 - 128
+          const y = Math.random() * 256 - 128
           const cd = x * x + y * y
           if (cd < planetBias) {
             const offsetX = Math.sqrt(planetBias - cd) / 2
@@ -227,8 +227,8 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       } else if (ringPointVisits < numberOfRingPoints) {
         for (let i = 0; i < pointsThisFrame; i++) {
           const xBase = Math.random() * 256 - 128
-          const y = Math.round(Math.random() * 256 - 128)
-          const x = Math.round(xBase / 4) + y
+          const y = Math.random() * 256 - 128
+          const x = xBase / 4 + y
           const dist = (x * x + y * y) / 256
           const ellipseCheck = (17 * (x * x + y * y) - 32 * x * y) / 256
           if (ellipseCheck < 80 && ellipseCheck > 32 && (xBase < 0 || dist > 16)) {
