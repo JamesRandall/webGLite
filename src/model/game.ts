@@ -1,4 +1,4 @@
-import { Player } from "./player"
+import { LaserTypeEnum, Player } from "./player"
 import { StarSystem } from "./starSystem"
 import { LocalBubble } from "./localBubble"
 import { MarketItem } from "../proceduralGeneration/marketItems"
@@ -56,6 +56,7 @@ export interface Game {
   flashMessage: string
   flashMessageIntervals: number[]
   message: string | null
+  purchasingLaserType: LaserTypeEnum | null
 }
 export function flashMessage(game: Game, message: string) {
   const flashSpeed = 0.5

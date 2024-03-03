@@ -92,6 +92,7 @@ export const createPregameScene = (resources: Resources, gl: WebGL2RenderingCont
     flashMessage: "",
     flashMessageIntervals: [],
     message: null,
+    purchasingLaserType: null,
   }
 
   let rootRenderer = createRootRenderer(

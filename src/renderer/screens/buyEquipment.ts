@@ -1,12 +1,8 @@
 import { Primitives } from "../primitives/primitives"
-import { Game } from "../../model/game"
-import { frameColor, frameWidth } from "../../constants"
-import { economyText, governmentText, StarSystem } from "../../model/starSystem"
-import { vec2, vec4 } from "gl-matrix"
-import { getNearestSystemToCursor } from "../../gameloop/utilities/map"
-import { availableCargoSpace } from "../../gameloop/utilities/cargo"
-import { equipment, equipmentForTechLevel } from "../../model/equipment"
-import { Player, PlayerEquipment } from "../../model/player"
+import { Game, SceneEnum } from "../../model/game"
+import { vec4 } from "gl-matrix"
+import { equipmentForTechLevel, priceForLaser } from "../../model/equipment"
+import { LaserTypeEnum, Player, PlayerEquipment } from "../../model/player"
 import { drawHeader } from "./screenUtilities"
 
 function calculateFuelPrice(player: Player) {
@@ -33,6 +29,15 @@ function buyItem(player: Player, price: number, updateEquipment: (equipment: Pla
 }
 
 export function createBuyEquipmentRenderer(draw2d: Primitives) {
+  const laserPositions = [
+    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.frontLaser = lt), text: "Front" },
+    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.aftLaser = lt), text: "Rear" },
+    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.portLaser = lt), text: "Left" },
+    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.starboardLaser = lt), text: "Right" },
+    { set: null, text: "" },
+    { set: null, text: "Cancel" },
+  ]
+
   return function renderMarketPlace(game: Game) {
     const top = 3
     const items = equipmentForTechLevel(game.currentSystem.technologyLevel)
@@ -43,10 +48,21 @@ export function createBuyEquipmentRenderer(draw2d: Primitives) {
     }
 
     const mouseCharacterPosition = draw2d.text.convertToCharacterCoordinates(game.player.controlState.mousePosition)
-    if (mouseCharacterPosition[1] >= top && mouseCharacterPosition[1] < top + items.length) {
+    if (
+      mouseCharacterPosition[1] >= top &&
+      ((game.purchasingLaserType === null && mouseCharacterPosition[1] < top + items.length) ||
+        (game.purchasingLaserType !== null && mouseCharacterPosition[1] < top + laserPositions.length))
+    ) {
       const itemIndex = mouseCharacterPosition[1] - top
 
-      const rowColor = canBuyItem(itemIndex) ? vec4.fromValues(1, 0, 0, 1) : vec4.fromValues(0.6, 0.0, 0.0, 1.0)
+      const rowColor =
+        game.purchasingLaserType === null
+          ? canBuyItem(itemIndex)
+            ? vec4.fromValues(1, 0, 0, 1)
+            : vec4.fromValues(0.6, 0.0, 0.0, 1.0)
+          : itemIndex < laserPositions.length && itemIndex !== laserPositions.length - 2
+            ? vec4.fromValues(1, 0, 0, 1)
+            : vec4.fromValues(0.0, 0.0, 0.0, 1.0)
       const drawPos = draw2d.text.convertToPosition([0, mouseCharacterPosition[1]])
       const size = draw2d.text.measure("My")
       draw2d.rect(drawPos, [draw2d.size().width, size.height], rowColor)
@@ -55,59 +71,95 @@ export function createBuyEquipmentRenderer(draw2d: Primitives) {
       // but it, at the time of writing this, doesn't seem worth going to the effort of putting in a system to
       // pull screen interactivity with the mouse out of the renderer
       // A nice to have. May come back and sort.
-      if (game.player.controlState.mouseDown && !game.player.previousControlState.mouseDown && canBuyItem(itemIndex)) {
-        const item = items[itemIndex]
-        switch (itemIndex) {
-          case 0:
-            buyFuel(game.player)
-            break
-          case 1:
-            buyMissile(game.player)
-            break
-          case 2:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.largeCargoBay = true))
-            break
-          case 3:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.ecmSystem = true))
-            break
-          case 6:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.fuelScoops = true))
-            break
-          case 7:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.escapePod = true))
-            break
-          case 8:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.energyBomb = true))
-            break
-          case 9:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.energyUnit = true))
-            break
-          case 10:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.dockingComputer = true))
-            break
-          case 11:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.galacticHyperdrive = true))
-            break
-          case 2:
-            buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.largeCargoBay = true))
-            break
+      if (game.purchasingLaserType === null) {
+        if (
+          game.player.controlState.mouseDown &&
+          !game.player.previousControlState.mouseDown &&
+          canBuyItem(itemIndex)
+        ) {
+          const item = items[itemIndex]
+          switch (itemIndex) {
+            case 0:
+              buyFuel(game.player)
+              break
+            case 1:
+              buyMissile(game.player)
+              break
+            case 2:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.largeCargoBay = true))
+              break
+            case 3:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.ecmSystem = true))
+              break
+            case 4:
+              game.purchasingLaserType = LaserTypeEnum.Pulse
+              break
+            case 5:
+              game.purchasingLaserType = LaserTypeEnum.Beam
+              break
+            case 6:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.fuelScoops = true))
+              break
+            case 7:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.escapePod = true))
+              break
+            case 8:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.energyBomb = true))
+              break
+            case 9:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.energyUnit = true))
+              break
+            case 10:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.dockingComputer = true))
+              break
+            case 11:
+              buyItem(game.player, item.price, (equipment: PlayerEquipment) => (equipment.galacticHyperdrive = true))
+              break
+            case 12:
+              game.purchasingLaserType = LaserTypeEnum.Military
+              break
+            case 13:
+              game.purchasingLaserType = LaserTypeEnum.Mining
+              break
+          }
+        }
+      } else {
+        if (
+          game.player.controlState.mouseDown &&
+          !game.player.previousControlState.mouseDown &&
+          itemIndex < laserPositions.length
+        ) {
+          const laserPosition = laserPositions[itemIndex]
+          if (laserPosition.set !== null) {
+            laserPosition.set(game.player.equipment, game.purchasingLaserType!)
+            game.player.cash -= priceForLaser(game.purchasingLaserType)
+          }
+          game.purchasingLaserType = null
         }
       }
     }
 
     drawHeader(draw2d, "EQUIP SHIP")
 
-    items
-      .map((item, index) => ({ item, index }))
-      .forEach(({ item, index }) => {
-        const color = canBuyItem(index) ? vec4.fromValues(1.0, 1.0, 1.0, 1.0) : vec4.fromValues(0.6, 0.6, 0.6, 1.0)
-        draw2d.text.draw(item.name, [1, top + index], true, color)
-        const itemPrice = (index === 0 ? fuelPrice : item.price).toLocaleString(undefined, {
-          maximumFractionDigits: 1,
-          minimumFractionDigits: 1,
+    if (game.purchasingLaserType !== null) {
+      laserPositions
+        .map((item, index) => ({ item, index }))
+        .forEach(({ item, index }) => {
+          draw2d.text.draw(item.text, [1, top + index], true, vec4.fromValues(1.0, 1.0, 1.0, 1.0))
         })
-        draw2d.text.draw(itemPrice, [36 - itemPrice.length, top + index], true, color)
-      })
+    } else {
+      items
+        .map((item, index) => ({ item, index }))
+        .forEach(({ item, index }) => {
+          const color = canBuyItem(index) ? vec4.fromValues(1.0, 1.0, 1.0, 1.0) : vec4.fromValues(0.6, 0.6, 0.6, 1.0)
+          draw2d.text.draw(item.name, [1, top + index], true, color)
+          const itemPrice = (index === 0 ? fuelPrice : item.price).toLocaleString(undefined, {
+            maximumFractionDigits: 1,
+            minimumFractionDigits: 1,
+          })
+          draw2d.text.draw(itemPrice, [36 - itemPrice.length, top + index], true, color)
+        })
+    }
     draw2d.text.draw(
       `Cash: ${game.player.cash.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} Cr`,
       [1, 21],

@@ -11,6 +11,9 @@ export interface SoundEffects {
   playerLaserHit: AudioPlayer
   playerLaserMiss: AudioPlayer
   shipExplosion: AudioPlayer
+  ecm: AudioPlayer
+  energyBomb: AudioPlayer
+  danube: AudioPlayer
 }
 
 function createSingleAudioPlayer(path: string): Promise<HTMLAudioElement> {
@@ -50,6 +53,9 @@ export async function createSoundEffects() {
       "audio/Player Laser Hit.mp3",
       "audio/Player Laser Miss.mp3",
       "audio/Ship Explosion.mp3",
+      "audio/ECM.mp3",
+      "audio/Energy Bomb.mp3",
+      "audio/Danube.mp3",
     ].map((a) => createAudioPlayer(a)),
   )
 
@@ -64,5 +70,8 @@ export async function createSoundEffects() {
     playerLaserHit: effects[7],
     playerLaserMiss: effects[8],
     shipExplosion: effects[9],
+    ecm: effects[10],
+    energyBomb: effects[11],
+    danube: effects[12],
   } as SoundEffects
 }

@@ -100,6 +100,12 @@ The spawning is covered in the main game loop parts 1 to 6:
 
 https://www.bbcelite.com/master/main/subroutine/main_game_loop_part_1_of_6.html
 
+## Audio
+
+The audio is all from the original game with the exception of the Blue Danube which is CC licensed from here:
+
+https://www.youtube.com/channel/UCht8qITGkBvXKsR1Byln-wA
+
 ## License
 
 Obviously the original game, code, ship models, names, etc. is copyright the original authors and copyright owners.

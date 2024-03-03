@@ -6,6 +6,7 @@ import { ShipModelEnum } from "../model/shipBlueprint"
 import { createTestScene } from "./testScene"
 import { scannerRadialWorldRange } from "../constants"
 import { AttitudeEnum, ShipRoleEnum } from "../model/ShipInstance"
+import { newGame } from "../persistence"
 
 export enum StartingSceneEnum {
   Pregame,
@@ -27,7 +28,7 @@ export function createStartingScene(
 ) {
   switch (scene) {
     case StartingSceneEnum.Docked:
-      return createGameScene(resources, gl, null)
+      return createGameScene(resources, gl, newGame(gl, resources))
     case StartingSceneEnum.NamedScene:
       // eventually be good to let scenes be loaded from JSON but for now we'll just use a function map
       const ships = sceneMap.get(namedScene ?? "trader")!(resources)
