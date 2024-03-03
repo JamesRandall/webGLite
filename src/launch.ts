@@ -1,8 +1,4 @@
-import { createGameScene } from "./scenes/gameScene"
 import { loadResources, Resources } from "./resources/resources"
-import { createPregameScene } from "./scenes/pregameScene"
-import { RenderEffect } from "./renderer/rootRenderer"
-import { createInstructionRenderer } from "./renderer/instructions/renderInstructions"
 import { createStartingScene, StartingSceneEnum } from "./scenes/sceneFactory"
 import { dimensions, setDimensions } from "./constants"
 import { createLoadingScreenRenderer } from "./renderer/loadingScreen/loadingScreen"
@@ -92,6 +88,17 @@ async function mount(viewCanvas: HTMLCanvasElement) {
   }
 
   resources = await loadResources(gl)
+
+  let resizeDebounce: ReturnType<typeof setTimeout> | undefined = undefined
+  window.addEventListener("resize", (ev) => {
+    clearTimeout(resizeDebounce)
+    resizeDebounce = setTimeout(() => {
+      setSize()
+      if (scene !== null) {
+        scene.resize(gl)
+      }
+    }, 100)
+  })
 }
 
 mount(document.getElementById("viewcanvas") as HTMLCanvasElement)
