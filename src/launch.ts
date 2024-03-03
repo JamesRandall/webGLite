@@ -49,7 +49,7 @@ async function mount(viewCanvas: HTMLCanvasElement) {
 
   let resources: Resources | null = null
 
-  const loadingScreen: ((now: number, resourcesReady: boolean) => boolean) | null =
+  const loadingScreen: { resize: () => void; render: (now: number, resourcesReady: boolean) => boolean } | null =
     await createLoadingScreenRenderer(gl)
   let scene: Scene | null = null
   function renderGame(now: number) {
@@ -73,7 +73,7 @@ async function mount(viewCanvas: HTMLCanvasElement) {
   }
   function render(now: number) {
     if (loadingScreen !== null) {
-      if (loadingScreen(now, resources !== null) && resources !== null) {
+      if (loadingScreen.render(now, resources !== null) && resources !== null) {
         requestAnimationFrame(renderGame)
         return
       }
@@ -94,6 +94,9 @@ async function mount(viewCanvas: HTMLCanvasElement) {
     clearTimeout(resizeDebounce)
     resizeDebounce = setTimeout(() => {
       setSize()
+      if (loadingScreen !== null) {
+        loadingScreen.resize()
+      }
       if (scene !== null) {
         scene.resize(gl)
       }

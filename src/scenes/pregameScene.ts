@@ -20,7 +20,7 @@ import { doesSaveExist, loadGame } from "../persistence"
 const startingZ = -scannerRadialWorldRange[2]
 const targetZ = -scannerRadialWorldRange[2] / 24.0
 
-export function createPregameScene(resources: Resources, gl: WebGL2RenderingContext) {
+export const createPregameScene = (resources: Resources, gl: WebGL2RenderingContext) => {
   const clipSpaceRadius = Math.abs(startingZ)
   const startingShip = 0
 
@@ -99,17 +99,20 @@ export function createPregameScene(resources: Resources, gl: WebGL2RenderingCont
     createPregameSceneRenderer(gl, resources),
     createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight),
   )
+  let update = createPregameLoop(game, gl, resources, rootRenderer)
+  const resize = () => {
+    rootRenderer = createRootRenderer(
+      gl,
+      resources,
+      createPregameSceneRenderer(gl, resources),
+      createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight),
+    )
+    update = createPregameLoop(game, gl, resources, rootRenderer)
+  }
+
   return {
-    resize: (gl: WebGL2RenderingContext) => {
-      console.log(gl.canvas.width)
-      rootRenderer = createRootRenderer(
-        gl,
-        resources,
-        createPregameSceneRenderer(gl, resources),
-        createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight),
-      )
-    },
-    update: createPregameLoop(game, gl, resources, rootRenderer),
+    resize: resize,
+    update: (now: number, sz: Size) => update(now, sz),
   }
 }
 

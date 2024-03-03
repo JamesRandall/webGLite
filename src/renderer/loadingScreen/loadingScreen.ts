@@ -11,10 +11,11 @@ import { loadTexture } from "../../resources/texture"
 const vertexShader = `#version 300 es
 in vec3 position;
 uniform mat4 uProjectionMatrix;
+uniform mat4 uModelMatrix;
 
 void main() {
     gl_PointSize = 2.0;
-    gl_Position = uProjectionMatrix * vec4(position.xyz,1.0);
+    gl_Position = uProjectionMatrix * uModelMatrix * vec4(position.xyz,1.0);
 }
 `
 const fragmentShader = `#version 300 es
@@ -114,20 +115,11 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   let ringPointVisits = 0
   let starPointVisits = 0
   const planetBias = 128 * 128 //Math.pow(128, 2)
-  const width = gl.canvas.width
-  const height = gl.canvas.height
-
-  const projectionMatrix = mat4.create()
-  // we probably want to set the height based on the aspect ratio
-  mat4.ortho(projectionMatrix, -width / 2, width / 2, -height / 2, height / 2, 10, -10)
-
-  const scale = width > height ? height / 256 : width / 256
-  const logoScale = width > height ? height / 1000 : width / 1000
-  console.log(`Logo scale: ${logoScale}`)
 
   const shaderProgram = compileShaderProgram2(gl, { frag: fragmentShader, vert: vertexShader })!
   const positionLocation = gl.getAttribLocation(shaderProgram, "position")!
   const projectionMatrixLocation = gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!
+  const modelMatrixLocation = gl.getUniformLocation(shaderProgram, "uModelMatrix")
   const colorLocation = gl.getUniformLocation(shaderProgram, "uColor")!
 
   const planetVertexBuffer = gl.createBuffer()!
@@ -136,23 +128,10 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
 
   const logoTexture = await loadTexture(gl, "./logo.png")
   const logo = createSquareModelWithLoadedTexture(gl, logoTexture)
-  const logoRenderer = createImageRenderer(
-    gl,
-    logo,
-    projectionMatrix,
-    [0, 128 * scale - 46 * logoScale * 1.5],
-    [239 * logoScale, 46 * logoScale],
-  )
+
   // 964x30
   const startTexture = await loadTexture(gl, "./start.png")
   const start = createSquareModelWithLoadedTexture(gl, startTexture)
-  const startRenderer = createImageRenderer(
-    gl,
-    start,
-    projectionMatrix,
-    [0, -128 * scale + 46 * logoScale],
-    [(723 / 2) * logoScale, (23 / 2) * logoScale],
-  )
 
   let previousTime = 0
   let isFirst = true
@@ -165,120 +144,159 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   window.addEventListener("keydown", proceedHandler)
   window.addEventListener("mousedown", proceedHandler)
 
-  return (now: number, resourcesReady: boolean) => {
-    now *= 0.001
-    if (isFirst) {
+  // Thinking the loading screen would be simple and is in a strange place in the system (before resource loading)
+  // I didn't follow my usual scene / render split thinking "I'll just keep it simple". However... then I introduced
+  // resize which does really need a clean split of model and renderer - which this had combined.
+  // Hence its a bit horrible. But I can't be arsed to redo it given its only the loading screen.
+  const createRenderer = () => {
+    const width = gl.canvas.width
+    const height = gl.canvas.height
+    const projectionMatrix = mat4.create()
+    // we probably want to set the height based on the aspect ratio
+    mat4.ortho(projectionMatrix, -width / 2, width / 2, -height / 2, height / 2, 10, -10)
+    const scale = width > height ? height / 256 : width / 256
+    const logoScale = width > height ? height / 1000 : width / 1000
+
+    const logoRenderer = createImageRenderer(
+      gl,
+      logo,
+      projectionMatrix,
+      [0, 128 * scale - 46 * logoScale * 1.5],
+      [239 * logoScale, 46 * logoScale],
+    )
+    const startRenderer = createImageRenderer(
+      gl,
+      start,
+      projectionMatrix,
+      [0, -128 * scale + 46 * logoScale],
+      [(723 / 2) * logoScale, (23 / 2) * logoScale],
+    )
+
+    return (now: number, resourcesReady: boolean) => {
+      now *= 0.001
+      if (isFirst) {
+        previousTime = now
+
+        isFirst = false
+
+        return false
+      }
+      if (proceed) {
+        window.removeEventListener("keydown", proceedHandler)
+        window.removeEventListener("mousedown", proceedHandler)
+        gl.deleteBuffer(planetVertexBuffer)
+        gl.deleteBuffer(starVertexBuffer)
+        gl.deleteBuffer(ringVertexBuffer)
+        return true
+      }
+      const delta = now - previousTime
       previousTime = now
 
-      isFirst = false
+      if (
+        planetPointVisits >= numberOfPlanetPoints &&
+        ringPointVisits >= numberOfRingPoints &&
+        starPointVisits >= numberOfStarPoints &&
+        resourcesReady &&
+        logoAlpha < 1.0
+      ) {
+        logoAlpha += delta
+      }
 
+      const previousPlanetPointCount = planetPoints.length
+      const previousRingPointCount = ringPoints.length
+      const previousStarPointCount = starPoints.length
+      setupGl(gl)
+      gl.viewport(0, 0, width, height)
+      gl.useProgram(shaderProgram)
+      gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix)
+      const pointsThisFrame = pointsPerSecond * delta
+      if (planetPointVisits < numberOfPlanetPoints) {
+        for (let i = 0; i < pointsThisFrame; i++) {
+          const x = Math.round(Math.random() * 256) - 128
+          const y = Math.round(Math.random() * 256) - 128
+          const cd = x * x + y * y
+          if (cd < planetBias) {
+            const offsetX = Math.sqrt(planetBias - cd) / 2
+            const offsetY = -y / 2
+            planetPoints.push(offsetX) // x
+            planetPoints.push(offsetY) // y
+            planetPoints.push(-1) // z
+          }
+        }
+        planetPointVisits += pointsThisFrame
+      } else if (ringPointVisits < numberOfRingPoints) {
+        for (let i = 0; i < pointsThisFrame; i++) {
+          const xBase = Math.random() * 256 - 128
+          const y = Math.round(Math.random() * 256 - 128)
+          const x = Math.round(xBase / 4) + y
+          const dist = (x * x + y * y) / 256
+          const ellipseCheck = (17 * (x * x + y * y) - 32 * x * y) / 256
+          if (ellipseCheck < 80 && ellipseCheck > 32 && (xBase < 0 || dist > 16)) {
+            ringPoints.push(x)
+            ringPoints.push(-y)
+            ringPoints.push(-1)
+          }
+        }
+        ringPointVisits += pointsThisFrame
+      } else if (starPointVisits < numberOfStarPoints) {
+        for (let i = 0; i < pointsThisFrame; i++) {
+          const x = Math.random() * 256 - 128
+          const y = Math.random() * 256 - 128
+          const dist = (x * x + y * y) / 256
+          if (dist > 17) {
+            starPoints.push(x)
+            starPoints.push(-y)
+            starPoints.push(-1)
+          }
+        }
+        starPointVisits += pointsThisFrame
+      }
+
+      const modelViewMatrix = mat4.fromScaling(mat4.create(), [scale, scale, 1])
+      if (planetPoints.length !== previousPlanetPointCount) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, planetVertexBuffer)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(planetPoints), gl.DYNAMIC_DRAW)
+      }
+      setPositionAttribute(gl, planetVertexBuffer, positionLocation, 3)
+      gl.uniformMatrix4fv(modelMatrixLocation, false, modelViewMatrix)
+      gl.uniform4fv(colorLocation, [1.0, 0.0, 0.0, 1.0])
+      gl.drawArrays(gl.POINTS, 0, planetPoints.length / 3)
+
+      if (ringPoints.length !== previousRingPointCount) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, ringVertexBuffer)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(ringPoints), gl.DYNAMIC_DRAW)
+      }
+      setPositionAttribute(gl, ringVertexBuffer, positionLocation, 3)
+      gl.uniform4fv(colorLocation, [1.0, 1.0, 0.0, 1.0])
+      gl.drawArrays(gl.POINTS, 0, ringPoints.length / 3)
+
+      if (starPoints.length !== previousStarPointCount) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, starVertexBuffer)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(starPoints), gl.DYNAMIC_DRAW)
+      }
+      setPositionAttribute(gl, starVertexBuffer, positionLocation, 3)
+      gl.uniform4fv(colorLocation, [1.0, 1.0, 1.0, 1.0])
+      gl.drawArrays(gl.POINTS, 0, starPoints.length / 3)
+
+      logoRenderer(logoAlpha)
+      startRenderer(logoAlpha)
+
+      if (
+        planetPointVisits >= numberOfPlanetPoints &&
+        ringPointVisits >= numberOfRingPoints &&
+        starPointVisits >= numberOfStarPoints &&
+        resourcesReady
+      ) {
+        canProceed = true
+      }
       return false
     }
-    if (proceed) {
-      window.removeEventListener("keydown", proceedHandler)
-      window.removeEventListener("mousedown", proceedHandler)
-      gl.deleteBuffer(planetVertexBuffer)
-      gl.deleteBuffer(starVertexBuffer)
-      gl.deleteBuffer(ringVertexBuffer)
-      return true
-    }
-    const delta = now - previousTime
-    previousTime = now
+  }
 
-    if (
-      planetPointVisits >= numberOfPlanetPoints &&
-      ringPointVisits >= numberOfRingPoints &&
-      starPointVisits >= numberOfStarPoints &&
-      resourcesReady &&
-      logoAlpha < 1.0
-    ) {
-      logoAlpha += delta
-    }
+  let render = createRenderer()
 
-    const previousPlanetPointCount = planetPoints.length
-    const previousRingPointCount = ringPoints.length
-    const previousStarPointCount = starPoints.length
-    setupGl(gl)
-    gl.useProgram(shaderProgram)
-    gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix)
-    const pointsThisFrame = pointsPerSecond * delta
-    if (planetPointVisits < numberOfPlanetPoints) {
-      for (let i = 0; i < pointsThisFrame; i++) {
-        const x = Math.round(Math.random() * 256) - 128
-        const y = Math.round(Math.random() * 256) - 128
-        const cd = x * x + y * y
-        if (cd < planetBias) {
-          const offsetX = (Math.sqrt(planetBias - cd) * scale) / 2
-          const offsetY = (-y * scale) / 2
-          planetPoints.push(offsetX) // x
-          planetPoints.push(offsetY) // y
-          planetPoints.push(-1) // z
-        }
-      }
-      planetPointVisits += pointsThisFrame
-    } else if (ringPointVisits < numberOfRingPoints) {
-      for (let i = 0; i < pointsThisFrame; i++) {
-        const xBase = Math.random() * 256 - 128
-        const y = Math.round(Math.random() * 256 - 128)
-        const x = Math.round(xBase / 4) + y
-        const dist = (x * x + y * y) / 256
-        const ellipseCheck = (17 * (x * x + y * y) - 32 * x * y) / 256
-        if (ellipseCheck < 80 && ellipseCheck > 32 && (xBase < 0 || dist > 16)) {
-          ringPoints.push(x * scale)
-          ringPoints.push(-y * scale)
-          ringPoints.push(-1)
-        }
-      }
-      ringPointVisits += pointsThisFrame
-    } else if (starPointVisits < numberOfStarPoints) {
-      for (let i = 0; i < pointsThisFrame; i++) {
-        const x = Math.random() * 256 - 128
-        const y = Math.random() * 256 - 128
-        const dist = (x * x + y * y) / 256
-        if (dist > 17) {
-          starPoints.push(x * scale)
-          starPoints.push(-y * scale)
-          starPoints.push(-1)
-        }
-      }
-      starPointVisits += pointsThisFrame
-    }
-
-    if (planetPoints.length !== previousPlanetPointCount) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, planetVertexBuffer)
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(planetPoints), gl.DYNAMIC_DRAW)
-    }
-    setPositionAttribute(gl, planetVertexBuffer, positionLocation, 3)
-    gl.uniform4fv(colorLocation, [1.0, 0.0, 0.0, 1.0])
-    gl.drawArrays(gl.POINTS, 0, planetPoints.length / 3)
-
-    if (ringPoints.length !== previousRingPointCount) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, ringVertexBuffer)
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(ringPoints), gl.DYNAMIC_DRAW)
-    }
-    setPositionAttribute(gl, ringVertexBuffer, positionLocation, 3)
-    gl.uniform4fv(colorLocation, [1.0, 1.0, 0.0, 1.0])
-    gl.drawArrays(gl.POINTS, 0, ringPoints.length / 3)
-
-    if (starPoints.length !== previousStarPointCount) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, starVertexBuffer)
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(starPoints), gl.DYNAMIC_DRAW)
-    }
-    setPositionAttribute(gl, starVertexBuffer, positionLocation, 3)
-    gl.uniform4fv(colorLocation, [1.0, 1.0, 1.0, 1.0])
-    gl.drawArrays(gl.POINTS, 0, starPoints.length / 3)
-
-    logoRenderer(logoAlpha)
-    startRenderer(logoAlpha)
-
-    if (
-      planetPointVisits >= numberOfPlanetPoints &&
-      ringPointVisits >= numberOfRingPoints &&
-      starPointVisits >= numberOfStarPoints &&
-      resourcesReady
-    ) {
-      canProceed = true
-    }
-    return false
+  return {
+    resize: () => (render = createRenderer()),
+    render: (now: number, resourcesReady: boolean) => render(now, resourcesReady),
   }
 }
