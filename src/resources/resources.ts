@@ -68,7 +68,7 @@ async function loadShaderSource(name: string) {
   return {
     frag: await fragResponse.text(),
     vert: await vertResponse.text(),
-  }
+  } as ShaderSource
 }
 
 export async function loadResources(gl: WebGL2RenderingContext): Promise<Resources> {
@@ -87,27 +87,44 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
     "vcr",
     "motionblur",
   ]
-  const loadedShaders = await Promise.all(shaderNames.map((sn) => loadShaderSource(sn)))
-  const namedShaders = new Map<string, ShaderSource>(shaderNames.map((sn, index) => [sn, loadedShaders[index]]))
-  const planets = await Promise.all(
-    [
-      "./mars.png",
-      "./neptune.png",
-      "./venusSurface.png",
-      "./venusAtmosphere.png",
-      "./saturn.png",
-      "./uranus.png",
-      "./mercury.png",
-      "./moon.png",
-      "./ceres.png",
-      "./eris.png",
-      "./haumea.png",
-      "./makemake.png",
-    ].map((t) => loadTexture(gl, t)),
-  )
   const textureNames = ["noise", "font", "starmask", "scanner"]
-  const loadedTextures = await Promise.all(textureNames.map((tn) => loadTexture(gl, `./${tn}.png`)))
+  const shaderPromises = shaderNames.map((sn) => loadShaderSource(sn))
+  const planetPromises = [
+    "./mars.png",
+    "./neptune.png",
+    "./venusSurface.png",
+    "./venusAtmosphere.png",
+    "./saturn.png",
+    "./uranus.png",
+    "./mercury.png",
+    "./moon.png",
+    "./ceres.png",
+    "./eris.png",
+    "./haumea.png",
+    "./makemake.png",
+  ].map((t) => loadTexture(gl, t))
+  const soundEffectPromise = createSoundEffects()
+  const texturePromises = textureNames.map((tn) => loadTexture(gl, `./${tn}.png`))
+  const promiseResults = await Promise.all([
+    ...shaderPromises,
+    ...planetPromises,
+    soundEffectPromise,
+    ...texturePromises,
+  ])
+  const loadedShaders = promiseResults.slice(0, shaderPromises.length) as ShaderSource[]
+  const planets = promiseResults.slice(
+    shaderPromises.length,
+    shaderPromises.length + planetPromises.length,
+  ) as WebGLTexture[]
+  const soundEffects = promiseResults[shaderPromises.length + planetPromises.length] as SoundEffects
+  const loadedTextures = promiseResults.slice(
+    shaderPromises.length + planetPromises.length + 1,
+    promiseResults.length,
+  ) as WebGLTexture[]
+
+  const namedShaders = new Map<string, ShaderSource>(shaderNames.map((sn, index) => [sn, loadedShaders[index]]))
   const textures = new Map<string, WebGLTexture>(loadedTextures.map((t, i) => [textureNames[i], t]))
+
   const instructionFont = await loadTexture(gl, "font.png")
   const traderIndexes = ships
     .map((s, i) => ({ s, i }))
@@ -177,7 +194,7 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
       vcr: namedShaders.get("vcr")!,
       motionBlur: namedShaders.get("motionblur")!,
     },
-    soundEffects: await createSoundEffects(),
+    soundEffects: soundEffects,
   }
 }
 
