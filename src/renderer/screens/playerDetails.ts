@@ -82,13 +82,13 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
       draw2d.text.draw(`Front ${laserTypeText(frontLaser)}`, [6, equipmentLine++])
     }
     if (rearLaser != LaserTypeEnum.None) {
-      draw2d.text.draw(`Left ${laserTypeText(rearLaser)}`, [6, equipmentLine++])
+      draw2d.text.draw(`Rear ${laserTypeText(rearLaser)}`, [6, equipmentLine++])
     }
     if (leftLaser != LaserTypeEnum.None) {
-      draw2d.text.draw(`Port ${laserTypeText(leftLaser)}`, [6, equipmentLine++])
+      draw2d.text.draw(`Left ${laserTypeText(leftLaser)}`, [6, equipmentLine++])
     }
     if (rightLaser != LaserTypeEnum.None) {
-      draw2d.text.draw(`Front ${laserTypeText(rightLaser)}`, [6, equipmentLine++])
+      draw2d.text.draw(`Right ${laserTypeText(rightLaser)}`, [6, equipmentLine++])
     }
     if (equipment.fuelScoops) {
       draw2d.text.draw(`Fuel Scoops`, [6, equipmentLine++])
