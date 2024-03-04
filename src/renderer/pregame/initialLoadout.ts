@@ -2,7 +2,7 @@ import { Primitives } from "../primitives/primitives"
 import { Game } from "../../model/game"
 import { vec4 } from "gl-matrix"
 import { equipment } from "../../model/equipment"
-import { LaserMountEnum, LaserTypeEnum, Player, PlayerEquipment } from "../../model/player"
+import { getLaserMountsText, LaserMountEnum, LaserTypeEnum, Player, PlayerEquipment } from "../../model/player"
 import { drawHeader } from "../screens/screenUtilities"
 
 function calculateFuelPrice(player: Player) {
@@ -170,7 +170,9 @@ export function createInitialLoadoutRenderer(draw2d: Primitives) {
           const color = isEquipped(game.player, index)
             ? vec4.fromValues(1.0, 1.0, 1.0, 1.0)
             : vec4.fromValues(0.6, 0.6, 0.6, 1.0)
-          draw2d.text.draw(item.name, [1, top + index], true, color)
+          const laserFittings = getLaserMountsText(game.player, item.laserType)
+          const lineText = laserFittings.length > 0 ? `${item.name} (${laserFittings})` : item.name
+          draw2d.text.draw(lineText, [1, top + index], true, color)
           //draw2d.text.draw(itemPrice, [36 - itemPrice.length, top + index], true, color)
         })
     }

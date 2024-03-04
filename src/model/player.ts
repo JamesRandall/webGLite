@@ -41,9 +41,9 @@ export enum LaserTypeEnum {
 
 export enum LaserMountEnum {
   Front,
+  Rear,
   Left,
   Right,
-  Rear,
   None,
 }
 
@@ -158,4 +158,29 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     laserOffset: vec2.fromValues(0, 0),
     timeToNextEnergyRecharge: playerEnergyIntervalSeconds,
   }
+}
+
+export function getLaserMounts(player: Player, laserType: LaserTypeEnum) {
+  if (laserType === LaserTypeEnum.None) return []
+  return Array.from(player.equipment.lasers)
+    .filter(([_, type]) => laserType === type)
+    .map(([mount, _]) => mount)
+    .sort((a, b) => a - b)
+}
+
+export function getLaserMountsText(player: Player, laserType: LaserTypeEnum, short: boolean = true) {
+  return getLaserMounts(player, laserType)
+    .map((mnt) => {
+      switch (mnt) {
+        case LaserMountEnum.Front:
+          return short ? "Fr" : "Front"
+        case LaserMountEnum.Rear:
+          return short ? "Re" : "Rear"
+        case LaserMountEnum.Left:
+          return short ? "Le" : "Left"
+        case LaserMountEnum.Right:
+          return short ? "Ri" : "Right"
+      }
+    })
+    .join(short ? "/" : ",")
 }
