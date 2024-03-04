@@ -1,8 +1,8 @@
 import { Primitives } from "../primitives/primitives"
-import { Game, SceneEnum } from "../../model/game"
+import { Game } from "../../model/game"
 import { vec4 } from "gl-matrix"
 import { equipmentForTechLevel, priceForLaser } from "../../model/equipment"
-import { LaserTypeEnum, Player, PlayerEquipment } from "../../model/player"
+import { LaserMountEnum, LaserTypeEnum, Player, PlayerEquipment } from "../../model/player"
 import { drawHeader } from "./screenUtilities"
 
 function calculateFuelPrice(player: Player) {
@@ -30,12 +30,11 @@ function buyItem(player: Player, price: number, updateEquipment: (equipment: Pla
 
 export function createBuyEquipmentRenderer(draw2d: Primitives) {
   const laserPositions = [
-    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.frontLaser = lt), text: "Front" },
-    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.aftLaser = lt), text: "Rear" },
-    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.portLaser = lt), text: "Left" },
-    { set: (e: PlayerEquipment, lt: LaserTypeEnum) => (e.starboardLaser = lt), text: "Right" },
-    { set: null, text: "" },
-    { set: null, text: "Cancel" },
+    { mount: LaserMountEnum.Front, text: "Front" },
+    { mount: LaserMountEnum.Rear, text: "Rear" },
+    { mount: LaserMountEnum.Left, text: "Left" },
+    { mount: LaserMountEnum.Right, text: "Right" },
+    { mount: LaserMountEnum.None, text: "Cancel" },
   ]
 
   return function renderMarketPlace(game: Game) {
@@ -130,8 +129,13 @@ export function createBuyEquipmentRenderer(draw2d: Primitives) {
           itemIndex < laserPositions.length
         ) {
           const laserPosition = laserPositions[itemIndex]
-          if (laserPosition.set !== null) {
-            laserPosition.set(game.player.equipment, game.purchasingLaserType!)
+          if (laserPosition.mount !== LaserMountEnum.None) {
+            const existingLaser = game.player.equipment.lasers.get(laserPosition.mount)
+            // get a refund for the existing laser
+            if (existingLaser) {
+              game.player.cash += priceForLaser(existingLaser)
+            }
+            game.player.equipment.lasers.set(laserPosition.mount, game.purchasingLaserType!)
             game.player.cash -= priceForLaser(game.purchasingLaserType)
           }
           game.purchasingLaserType = null

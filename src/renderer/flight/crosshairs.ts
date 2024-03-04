@@ -1,12 +1,12 @@
 import { Primitives } from "../primitives/primitives"
-import { Game, SceneEnum } from "../../model/game"
+import { Game, getLaserMountForScene, SceneEnum } from "../../model/game"
 import { LaserTypeEnum } from "../../model/player"
 import { dimensions, frameColor, frameWidth } from "../../constants"
 
 export function drawCrosshairs(draw2d: Primitives, game: Game) {
   if (game.currentScene !== SceneEnum.Front && game.currentScene !== SceneEnum.Rear) return
-  if (game.currentScene === SceneEnum.Front && game.player.equipment.frontLaser === LaserTypeEnum.None) return
-  if (game.currentScene === SceneEnum.Rear && game.player.equipment.aftLaser === LaserTypeEnum.None) return
+  const laserType = game.player.equipment.lasers.get(getLaserMountForScene(game.currentScene))
+  if (laserType === undefined || laserType === LaserTypeEnum.None) return
 
   const centerX = dimensions.width / 2
   const centerY = dimensions.mainViewHeight / 2

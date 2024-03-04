@@ -39,19 +39,28 @@ export enum LaserTypeEnum {
   Military,
 }
 
-export interface PlayerEquipment {
+export enum LaserMountEnum {
+  Front,
+  Left,
+  Right,
+  Rear,
+  None,
+}
+
+// map doesn't serialize well so we just use this base
+export interface PlayerEquipmentBase {
   largeCargoBay: boolean
   ecmSystem: boolean
-  frontLaser: LaserTypeEnum
-  aftLaser: LaserTypeEnum
-  portLaser: LaserTypeEnum
-  starboardLaser: LaserTypeEnum
   fuelScoops: boolean
   escapePod: boolean
   energyBomb: boolean
   energyUnit: boolean
   dockingComputer: boolean
   galacticHyperdrive: boolean
+}
+
+export interface PlayerEquipment extends PlayerEquipmentBase {
+  lasers: Map<LaserMountEnum, LaserTypeEnum>
 }
 
 export interface Player {
@@ -127,10 +136,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     equipment: {
       largeCargoBay: false,
       ecmSystem: false,
-      frontLaser: LaserTypeEnum.Pulse,
-      aftLaser: LaserTypeEnum.None,
-      portLaser: LaserTypeEnum.None,
-      starboardLaser: LaserTypeEnum.None,
+      lasers: new Map([[LaserMountEnum.Front, LaserTypeEnum.Pulse]]),
       fuelScoops: false,
       escapePod: false,
       energyBomb: false,

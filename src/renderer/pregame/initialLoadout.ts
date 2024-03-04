@@ -35,9 +35,9 @@ function isEquipped(player: Player, itemIndex: number) {
     case 2:
       return e.ecmSystem
     case 3:
-      return e.frontLaser === LaserTypeEnum.Pulse
+      return false
     case 4:
-      return e.frontLaser === LaserTypeEnum.Beam
+      return false
     case 5:
       return e.fuelScoops
     case 6:
@@ -51,9 +51,9 @@ function isEquipped(player: Player, itemIndex: number) {
     case 10:
       return e.galacticHyperdrive
     case 11:
-      return e.frontLaser === LaserTypeEnum.Military
+      return false
     case 12:
-      return e.frontLaser === LaserTypeEnum.Mining
+      return false
     default:
       return false
   }

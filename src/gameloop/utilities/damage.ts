@@ -1,5 +1,5 @@
 import { Resources } from "../../resources/resources"
-import { Game, SceneEnum } from "../../model/game"
+import { Game, getLaserMountForScene, SceneEnum } from "../../model/game"
 import { ShipInstance } from "../../model/ShipInstance"
 import { LaserTypeEnum, Player } from "../../model/player"
 import { ShipModelEnum } from "../../model/shipBlueprint"
@@ -39,13 +39,8 @@ export function applyDamageToPlayer(game: Game, resources: Resources, ship: Ship
 }
 
 function getLaserForView(player: Player, scene: SceneEnum) {
-  switch (scene) {
-    case SceneEnum.Rear:
-      return player.equipment.aftLaser
-    case SceneEnum.Front:
-    default:
-      return player.equipment.frontLaser
-  }
+  const laserMount = getLaserMountForScene(scene)
+  return player.equipment.lasers.get(laserMount) ?? LaserTypeEnum.None
 }
 
 function getLaserPower(laserType: LaserTypeEnum) {

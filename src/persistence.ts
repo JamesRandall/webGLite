@@ -1,7 +1,14 @@
 import { flashMessage, Game, SceneEnum } from "./model/game"
 import { generateMarketItems, MarketItem } from "./proceduralGeneration/marketItems"
 import { ShipModelEnum } from "./model/shipBlueprint"
-import { CombatRatingEnum, getStartingPlayer, LegalStatusEnum, PlayerEquipment } from "./model/player"
+import {
+  CombatRatingEnum,
+  getStartingPlayer,
+  LaserMountEnum,
+  LaserTypeEnum,
+  LegalStatusEnum,
+  PlayerEquipmentBase,
+} from "./model/player"
 import { LocalBubble } from "./model/localBubble"
 import { createSquareModel, createSquareModelWithLoadedTexture } from "./resources/models"
 import { createStardust } from "./gameloop/stardust"
@@ -11,6 +18,13 @@ import { randomiseSpawnDelta } from "./utilities"
 import { Resources } from "./resources/resources"
 import { worldSize } from "./constants"
 import { RenderEffect } from "./renderer/rootRenderer"
+
+interface PersistablePlayerEquipment extends PlayerEquipmentBase {
+  frontLaser: LaserTypeEnum
+  rearLaser: LaserTypeEnum
+  leftLaser: LaserTypeEnum
+  rightLaser: LaserTypeEnum
+}
 
 interface SaveState {
   version: { major: number; minor: number; patch: number }
@@ -27,7 +41,7 @@ interface SaveState {
     numberOfKills: number
     fuel: number
     currentNumberOfMissiles: number
-    equipment: PlayerEquipment
+    equipment: PersistablePlayerEquipment
     cargoHoldContents: number[]
   }
 }
@@ -48,7 +62,13 @@ export function saveGame(game: Game) {
       numberOfKills: game.player.numberOfKills,
       fuel: game.player.fuel,
       currentNumberOfMissiles: game.player.missiles.currentNumber,
-      equipment: game.player.equipment,
+      equipment: {
+        ...game.player.equipment,
+        frontLaser: game.player.equipment.lasers.get(LaserMountEnum.Front) ?? LaserTypeEnum.None,
+        rearLaser: game.player.equipment.lasers.get(LaserMountEnum.Rear) ?? LaserTypeEnum.None,
+        leftLaser: game.player.equipment.lasers.get(LaserMountEnum.Left) ?? LaserTypeEnum.None,
+        rightLaser: game.player.equipment.lasers.get(LaserMountEnum.Right) ?? LaserTypeEnum.None,
+      },
       cargoHoldContents: game.player.cargoHoldContents,
     },
   }
@@ -63,6 +83,20 @@ export function loadGame(gl: WebGL2RenderingContext, resources: Resources) {
   if (!json) return
   const state: SaveState = JSON.parse(json)
   const game = newGame(gl, resources)
+  const laserValues: [LaserMountEnum, LaserTypeEnum][] = []
+  if (state.player.equipment.frontLaser !== LaserTypeEnum.None)
+    laserValues.push([LaserMountEnum.Front, state.player.equipment.frontLaser])
+  if (state.player.equipment.rearLaser !== LaserTypeEnum.None)
+    laserValues.push([LaserMountEnum.Rear, state.player.equipment.rearLaser])
+  if (state.player.equipment.leftLaser !== LaserTypeEnum.None)
+    laserValues.push([LaserMountEnum.Left, state.player.equipment.leftLaser])
+  if (state.player.equipment.rightLaser !== LaserTypeEnum.None)
+    laserValues.push([LaserMountEnum.Right, state.player.equipment.rightLaser])
+  const equipment = {
+    ...state.player.equipment,
+    lasers: new Map<LaserMountEnum, LaserTypeEnum>(laserValues),
+  }
+
   game.currentSystem = game.stars.find(
     (s) =>
       s.seed.s0 === state.currentStarSystemSeed[0] &&
@@ -81,7 +115,7 @@ export function loadGame(gl: WebGL2RenderingContext, resources: Resources) {
   game.player.numberOfKills = state.player.numberOfKills
   game.player.fuel = state.player.fuel
   game.player.missiles.currentNumber = state.player.currentNumberOfMissiles
-  game.player.equipment = state.player.equipment
+  game.player.equipment = equipment
   game.player.cargoHoldContents = state.player.cargoHoldContents
   flashMessage(game, "Game loaded")
   return game

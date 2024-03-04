@@ -1,7 +1,6 @@
 import { Primitives } from "../primitives/primitives"
 import { Game } from "../../model/game"
-import { frameColor, frameWidth } from "../../constants"
-import { CombatRatingEnum, LaserTypeEnum, LegalStatusEnum } from "../../model/player"
+import { CombatRatingEnum, LaserMountEnum, LaserTypeEnum, LegalStatusEnum } from "../../model/player"
 import { drawHeader } from "./screenUtilities"
 import { doesSaveExist } from "../../persistence"
 
@@ -75,17 +74,21 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
     draw2d.text.draw(`Legal Status: ${legalStatusText(player.legalStatus)}`, [1, 8])
     draw2d.text.draw(`Rating: ${ratingText(player.combatRating)}`, [1, 9])
     draw2d.text.draw(`EQUIPMENT:`, [1, 11])
-    if (equipment.frontLaser != LaserTypeEnum.None) {
-      draw2d.text.draw(`Front ${laserTypeText(equipment.frontLaser)}`, [6, equipmentLine++])
+    const frontLaser = equipment.lasers.get(LaserMountEnum.Front) ?? LaserTypeEnum.None
+    const rearLaser = equipment.lasers.get(LaserMountEnum.Rear) ?? LaserTypeEnum.None
+    const leftLaser = equipment.lasers.get(LaserMountEnum.Left) ?? LaserTypeEnum.None
+    const rightLaser = equipment.lasers.get(LaserMountEnum.Right) ?? LaserTypeEnum.None
+    if (frontLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Front ${laserTypeText(frontLaser)}`, [6, equipmentLine++])
     }
-    if (equipment.aftLaser != LaserTypeEnum.None) {
-      draw2d.text.draw(`Aft ${laserTypeText(equipment.aftLaser)}`, [6, equipmentLine++])
+    if (rearLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Left ${laserTypeText(rearLaser)}`, [6, equipmentLine++])
     }
-    if (equipment.portLaser != LaserTypeEnum.None) {
-      draw2d.text.draw(`Port ${laserTypeText(equipment.portLaser)}`, [6, equipmentLine++])
+    if (leftLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Port ${laserTypeText(leftLaser)}`, [6, equipmentLine++])
     }
-    if (equipment.starboardLaser != LaserTypeEnum.None) {
-      draw2d.text.draw(`Front ${laserTypeText(equipment.starboardLaser)}`, [6, equipmentLine++])
+    if (rightLaser != LaserTypeEnum.None) {
+      draw2d.text.draw(`Front ${laserTypeText(rightLaser)}`, [6, equipmentLine++])
     }
     if (equipment.fuelScoops) {
       draw2d.text.draw(`Fuel Scoops`, [6, equipmentLine++])

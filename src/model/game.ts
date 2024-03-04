@@ -1,4 +1,4 @@
-import { LaserTypeEnum, Player } from "./player"
+import { LaserMountEnum, LaserTypeEnum, Player } from "./player"
 import { StarSystem } from "./starSystem"
 import { LocalBubble } from "./localBubble"
 import { MarketItem } from "../proceduralGeneration/marketItems"
@@ -24,6 +24,20 @@ export enum SceneEnum {
   PriceList,
   Instructions,
   LoadoutEditor,
+}
+
+export function getLaserMountForScene(scene: SceneEnum) {
+  switch (scene) {
+    case SceneEnum.Front:
+      return LaserMountEnum.Front
+    case SceneEnum.Right:
+      return LaserMountEnum.Right
+    case SceneEnum.Rear:
+      return LaserMountEnum.Rear
+    case SceneEnum.Left:
+      return LaserMountEnum.Left
+  }
+  return LaserMountEnum.None
 }
 
 export interface LaunchingData {
