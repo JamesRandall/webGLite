@@ -1,7 +1,7 @@
 import { Primitives } from "../primitives/primitives"
 import { Game } from "../../model/game"
 import { vec4 } from "gl-matrix"
-import { equipment, priceForLaser } from "../../model/equipment"
+import { equipment } from "../../model/equipment"
 import { LaserMountEnum, LaserTypeEnum, Player, PlayerEquipment } from "../../model/player"
 import { drawHeader } from "../screens/screenUtilities"
 
@@ -35,9 +35,9 @@ function isEquipped(player: Player, itemIndex: number) {
     case 2:
       return e.ecmSystem
     case 3:
-      return false
+      return Array.from(e.lasers.values()).indexOf(LaserTypeEnum.Pulse) !== -1
     case 4:
-      return false
+      return Array.from(e.lasers.values()).indexOf(LaserTypeEnum.Beam) !== -1
     case 5:
       return e.fuelScoops
     case 6:
@@ -51,9 +51,9 @@ function isEquipped(player: Player, itemIndex: number) {
     case 10:
       return e.galacticHyperdrive
     case 11:
-      return false
+      return Array.from(e.lasers.values()).indexOf(LaserTypeEnum.Military) !== -1
     case 12:
-      return false
+      return Array.from(e.lasers.values()).indexOf(LaserTypeEnum.Mining) !== -1
     default:
       return false
   }

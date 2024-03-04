@@ -4,7 +4,7 @@ import { frameColor, frameWidth } from "../../constants"
 import { economyText, governmentText, StarSystem } from "../../model/starSystem"
 import { vec2, vec4 } from "gl-matrix"
 import { getNearestSystemToCursor } from "../../gameloop/utilities/map"
-import { availableCargoSpace } from "../../gameloop/utilities/cargo"
+import { availableCargoSpace, totalCargoSpace, usedCargoSpace } from "../../gameloop/utilities/cargo"
 import { drawHeader } from "./screenUtilities"
 
 export function createBuyMarketItemsRenderer(draw2d: Primitives) {
@@ -106,7 +106,8 @@ export function createBuyMarketItemsRenderer(draw2d: Primitives) {
         })} Cr`,
         [1, y + 1],
       )
-      draw2d.text.draw(`Cargo space: ${availableCargoSpace(game.player)}`, [20, y + 1])
+      const cargoText = `Cargo: ${usedCargoSpace(game.player)}/${totalCargoSpace(game.player)}`
+      draw2d.text.draw(cargoText, [35 - cargoText.length, y + 1])
     }
   }
 }

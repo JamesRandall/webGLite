@@ -17,6 +17,9 @@ export function createInventoryRenderer(draw2d: Primitives) {
       `Cash:     ${player.cash.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} Cr`,
       [1, 4],
     )
+    if (player.equipment.largeCargoBay) {
+      draw2d.text.draw("Large Cargo Bay", [1, 5])
+    }
 
     let y = 6
     game.marketItems
