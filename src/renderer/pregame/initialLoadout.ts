@@ -71,12 +71,14 @@ export function createInitialLoadoutRenderer(draw2d: Primitives) {
   return function render(game: Game) {
     const top = 3
     const items = equipment.filter((e) => e.name !== "Fuel")
+    const cashRow = items.length + top + 1
 
     const mouseCharacterPosition = draw2d.text.convertToCharacterCoordinates(game.player.controlState.mousePosition)
     if (
       mouseCharacterPosition[1] >= top &&
       ((game.purchasingLaserType === null && mouseCharacterPosition[1] < top + items.length) ||
-        (game.purchasingLaserType !== null && mouseCharacterPosition[1] < top + laserPositions.length))
+        (game.purchasingLaserType !== null && mouseCharacterPosition[1] < top + laserPositions.length) ||
+        mouseCharacterPosition[1] === cashRow)
     ) {
       const itemIndex = mouseCharacterPosition[1] - top
 
@@ -91,7 +93,6 @@ export function createInitialLoadoutRenderer(draw2d: Primitives) {
       // A nice to have. May come back and sort.
       if (game.purchasingLaserType === null) {
         if (game.player.controlState.mouseDown && !game.player.previousControlState.mouseDown) {
-          const item = items[itemIndex]
           switch (itemIndex) {
             case 0:
               buyMissile(game.player)
@@ -138,6 +139,9 @@ export function createInitialLoadoutRenderer(draw2d: Primitives) {
             case 12:
               game.purchasingLaserType = LaserTypeEnum.Mining
               break
+            case 14:
+              game.player.cash += mouseCharacterPosition[0] < 30 ? 100 : 1000
+              break
           }
         }
       } else {
@@ -175,6 +179,13 @@ export function createInitialLoadoutRenderer(draw2d: Primitives) {
           draw2d.text.draw(lineText, [1, top + index], true, color)
           //draw2d.text.draw(itemPrice, [36 - itemPrice.length, top + index], true, color)
         })
+
+      draw2d.text.draw(
+        `Cash: ${game.player.cash.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 })} Cr`,
+        [1, cashRow],
+      )
+      draw2d.text.draw("+100", [24, cashRow])
+      draw2d.text.draw("+1000", [30, cashRow])
     }
 
     draw2d.text.center("Press SPACE or Fire Commander", 21)
