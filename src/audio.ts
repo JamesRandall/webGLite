@@ -25,7 +25,7 @@ function createSingleAudioPlayer(path: string): Promise<HTMLAudioElement> {
 
 async function createAudioPlayer(path: string) {
   const playerPromises: Promise<HTMLAudioElement>[] = []
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 10; i++) {
     playerPromises.push(createSingleAudioPlayer(path))
   }
   const players = await Promise.all(playerPromises)

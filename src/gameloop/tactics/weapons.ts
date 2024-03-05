@@ -4,7 +4,7 @@ import { Game } from "../../model/game"
 import { vec3 } from "gl-matrix"
 import { applyDamageToPlayer, DamageLocationEnum } from "../utilities/damage"
 import { ShipBlueprint } from "../../model/shipBlueprint"
-import { pulseLaserMs } from "../../model/player"
+import { pulseLaserFrequency } from "../../model/player"
 import { scannerRadialWorldRange } from "../../constants"
 
 function calculateLaserDamage(blueprint: ShipBlueprint) {
@@ -28,7 +28,7 @@ export function considerFiringLasers(ship: ShipInstance, timeDelta: number, game
     ship.timeLeftFiringLasers -= timeDelta
     if (ship.timeLeftFiringLasers < 0) {
       ship.timeLeftFiringLasers = null
-      ship.timeUntilCanFireAgain = pulseLaserMs + (2 - ship.aggressionLevel / 16) * Math.random() // 0.5 + Math.random() * 2.0
+      ship.timeUntilCanFireAgain = pulseLaserFrequency + (2 - ship.aggressionLevel / 16) * Math.random() // 0.5 + Math.random() * 2.0
     }
     return
   }

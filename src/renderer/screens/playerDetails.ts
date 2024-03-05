@@ -107,10 +107,14 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
     }
 
     if (game.flashMessageIntervals.length === 0) {
-      if (doesSaveExist()) {
-        draw2d.text.center("(S)ave   (L)oad   (I)nstructions", 21.5)
+      if (game.player.isDocked) {
+        if (doesSaveExist()) {
+          draw2d.text.center("(S)ave   (L)oad   (I)nstructions", 21.5)
+        } else {
+          draw2d.text.center("(S)ave   (I)nstructions", 21.5)
+        }
       } else {
-        draw2d.text.center("(S)ave   (I)nstructions", 21.5)
+        draw2d.text.center("(I)nstructions", 21.5)
       }
     }
   }

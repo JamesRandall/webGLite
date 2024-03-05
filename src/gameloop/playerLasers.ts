@@ -1,5 +1,13 @@
 import { Game, SceneEnum } from "../model/game"
-import { pulseLaserMs } from "../model/player"
+import {
+  getLaserForScene,
+  getLaserFrequency,
+  getLaserSpecs,
+  laserMaxTemperature,
+  laserTemperaturePerPulse,
+  LaserTypeEnum,
+  pulseLaserFrequency,
+} from "../model/player"
 import { vec2, vec3 } from "gl-matrix"
 import { dimensions } from "../constants"
 import { AttitudeEnum, ShipInstance } from "../model/ShipInstance"
@@ -7,7 +15,20 @@ import { Resources } from "../resources/resources"
 import { applyDamageToNpcWithLasers } from "./utilities/damage"
 
 export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: number) {
+  const laserType = getLaserForScene(game)
+  if (laserType === LaserTypeEnum.None) {
+    game.player.isLaserActive = false
+    return
+  }
+  // if the
+
+  if (game.player.laserTemperature > laserMaxTemperature && !game.player.isLaserActive) {
+    // if the laser is "on" we let it turn off before stopping it turning on again when overheating
+    return
+  }
+
   const laserEnergy = 1
+  const laserFrequency = getLaserFrequency(laserType)
 
   const previousActiveState = game.player.isLaserActive
   // the laser pulse state change is always running - this stops players from tapping the fire key quickly
@@ -19,7 +40,7 @@ export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: n
     // if we were firing and the players laser was active then we need to make sure we wait a full laser pulse
     // until we can fire again
     if (game.player.previousControlState.firing && game.player.isLaserActive) {
-      game.player.timeToLaserStateChange += pulseLaserMs
+      game.player.timeToLaserStateChange += laserFrequency
     }
     // if we're not firing then stop the counter at zero - this means that when the player fires again
     // we won't wait for the next pulse but will do so immediately
@@ -32,7 +53,7 @@ export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: n
 
   // handle an actual firing situation
   if (game.player.timeToLaserStateChange < 0) {
-    game.player.timeToLaserStateChange = pulseLaserMs
+    game.player.timeToLaserStateChange = laserFrequency
 
     game.player.isLaserActive = !game.player.isLaserActive
     if (game.player.isLaserActive && game.player.energyBankLevel <= laserEnergy + 1) {
@@ -40,7 +61,7 @@ export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: n
     }
     if (game.player.isLaserActive && !previousActiveState) {
       // we "fire" when the pulse turns on
-      game.player.laserTemperature++
+      game.player.laserTemperature += laserTemperaturePerPulse
       game.player.energyBankLevel -= laserEnergy
       if (game.player.laserTemperature === game.player.blueprint.maxLaserTemperature) {
         game.currentScene = SceneEnum.PlayerExploding

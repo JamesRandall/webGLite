@@ -10,10 +10,10 @@ import { spawnNPCShips } from "./utilities/spawn"
 import { Resources } from "../resources/resources"
 import { applyTactics } from "./tactics/applyTactics"
 import { dimensions } from "../constants"
-import { pulseLaserMs } from "../model/player"
+import { pulseLaserFrequency } from "../model/player"
 import { applyPlayerLasers } from "./playerLasers"
 import { replaceDestroyedShipsWithExplosions } from "./explosions"
-import { recharge } from "./playerEnergy"
+import { recharge, reduceLaserTemperature } from "./playerEnergy"
 
 export function flightLoop(resources: Resources, game: Game, timeDelta: number) {
   game.localBubble.ships.forEach((ship) => {
@@ -31,6 +31,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   // this should be done at the end of the loop
   replaceDestroyedShipsWithExplosions(game, timeDelta)
   recharge(game.player, timeDelta)
+  reduceLaserTemperature(game.player, timeDelta)
 
   // Useful diagnostic when working on manual docking or with the docking computer - shows the station roll and pitch
   //stationPitchAndRoll(game)

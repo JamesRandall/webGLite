@@ -1,5 +1,5 @@
 import { Player } from "../model/player"
-import { playerEnergyIntervalSeconds } from "../constants"
+import { playerEnergyIntervalSeconds, playerLaserCooldownIntervalSeconds } from "../constants"
 
 export function recharge(player: Player, timeDelta: number) {
   player.timeToNextEnergyRecharge -= timeDelta
@@ -17,4 +17,14 @@ export function recharge(player: Player, timeDelta: number) {
     }
   }
   player.energyBankLevel += player.equipment.energyUnit ? 2 : 1
+}
+
+export function reduceLaserTemperature(player: Player, timeDelta: number) {
+  player.timeToNextLaserCooldown -= timeDelta
+  if (player.timeToNextLaserCooldown > 0) return
+  player.timeToNextLaserCooldown += playerLaserCooldownIntervalSeconds
+
+  if (player.laserTemperature > 0) {
+    player.laserTemperature--
+  }
 }

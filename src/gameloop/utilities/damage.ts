@@ -1,7 +1,7 @@
 import { Resources } from "../../resources/resources"
 import { Game, getLaserMountForScene, SceneEnum } from "../../model/game"
 import { ShipInstance } from "../../model/ShipInstance"
-import { LaserTypeEnum, Player } from "../../model/player"
+import { getLaserPower, LaserTypeEnum, Player } from "../../model/player"
 import { ShipModelEnum } from "../../model/shipBlueprint"
 import { log } from "../../gameConsole"
 
@@ -41,20 +41,6 @@ export function applyDamageToPlayer(game: Game, resources: Resources, ship: Ship
 function getLaserForView(player: Player, scene: SceneEnum) {
   const laserMount = getLaserMountForScene(scene)
   return player.equipment.lasers.get(laserMount) ?? LaserTypeEnum.None
-}
-
-function getLaserPower(laserType: LaserTypeEnum) {
-  // all but military figured out from here (I hope!)
-  switch (laserType) {
-    case LaserTypeEnum.Military:
-      return Math.round(15 * 1.5) // from here https://www.bbcelite.com/master/main/subroutine/main_flight_loop_part_11_of_16.html
-    case LaserTypeEnum.Mining:
-      return 50
-    case LaserTypeEnum.Pulse:
-    case LaserTypeEnum.Beam:
-    default:
-      return 15
-  }
 }
 
 export function applyDamageToNpcWithLasers(game: Game, resources: Resources, ship: ShipInstance) {

@@ -3,8 +3,8 @@ import { ControlState, getEmptyControlState } from "../controls/controlState"
 import { Position, StarSystem } from "./starSystem"
 import { Resources } from "../resources/resources"
 import { vec2, vec3 } from "gl-matrix"
-import { Game } from "./game"
-import { playerEnergyIntervalSeconds } from "../constants"
+import { Game, SceneEnum } from "./game"
+import { playerEnergyIntervalSeconds, playerLaserCooldownIntervalSeconds } from "../constants"
 
 enum MissileTargettingStatusEnum {
   Normal,
@@ -102,9 +102,27 @@ export interface Player {
   timeToLaserStateChange: number
   laserOffset: vec2
   timeToNextEnergyRecharge: number
+  timeToNextLaserCooldown: number
 }
 
-export const pulseLaserMs = 1.0 / 4.0
+export const pulseLaserFrequency = 1.0 / 4.0
+export const beamLaserFrequency = 1.0 / 20.0
+export const militaryLaserFrequency = 1.0 / 20.0
+export const miningLaserFrequency = 1.0 / 3.0
+// best reference for laser powers is:
+// https://www.bbcelite.com/master/main/subroutine/sight.html
+// and
+// https://www.bbcelite.com/master/all/workspaces.html#pow
+export const pulseLaserPower = 15
+export const beamLaserPower = 15
+// the below is based on ARMLAS in the original game which is set as:
+// INT(128.5 + 1.5*POW) = 151
+// The high bit signifies whether or not the laser pulses and so the power of the laser is:
+// 151-128 = 23
+export const militaryLaserPower = 23
+export const miningLaserPower = 50
+export const laserTemperaturePerPulse = 8
+export const laserMaxTemperature = 242
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem): Player {
   const cobra = resources.ships.getCobraMk3([0, 0, 0], [0, 1, 0]).blueprint
@@ -154,9 +172,10 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     lookAt: vec3.fromValues(0, 0, 1),
     isLaserFiring: false, // true if the player is firing the laser
     isLaserActive: false, // true if the laser is actively "pulsing" and shown
-    timeToLaserStateChange: pulseLaserMs,
+    timeToLaserStateChange: pulseLaserFrequency,
     laserOffset: vec2.fromValues(0, 0),
     timeToNextEnergyRecharge: playerEnergyIntervalSeconds,
+    timeToNextLaserCooldown: playerLaserCooldownIntervalSeconds,
   }
 }
 
@@ -166,6 +185,63 @@ export function getLaserMounts(player: Player, laserType: LaserTypeEnum) {
     .filter(([_, type]) => laserType === type)
     .map(([mount, _]) => mount)
     .sort((a, b) => a - b)
+}
+
+export function getLaserForScene(game: Game) {
+  const lasers = game.player.equipment.lasers
+  switch (game.currentScene) {
+    case SceneEnum.Front:
+      return lasers.get(LaserMountEnum.Front) ?? LaserTypeEnum.None
+    case SceneEnum.Rear:
+      return lasers.get(LaserMountEnum.Rear) ?? LaserTypeEnum.None
+    case SceneEnum.Left:
+      return lasers.get(LaserMountEnum.Left) ?? LaserTypeEnum.None
+    case SceneEnum.Right:
+      return lasers.get(LaserMountEnum.Right) ?? LaserTypeEnum.None
+  }
+  return LaserTypeEnum.None
+}
+
+export function getLaserSpecs(laserType: LaserTypeEnum) {
+  switch (laserType) {
+    case LaserTypeEnum.Pulse:
+      return [pulseLaserFrequency, pulseLaserPower]
+    case LaserTypeEnum.Beam:
+      return [beamLaserFrequency, beamLaserPower]
+    case LaserTypeEnum.Military:
+      return [militaryLaserFrequency, militaryLaserPower]
+    case LaserTypeEnum.Mining:
+      return [miningLaserFrequency, miningLaserPower]
+  }
+  return [1, 1]
+}
+
+export function getLaserFrequency(laserType: LaserTypeEnum) {
+  switch (laserType) {
+    case LaserTypeEnum.Pulse:
+      return pulseLaserFrequency
+    case LaserTypeEnum.Beam:
+      return beamLaserFrequency
+    case LaserTypeEnum.Military:
+      return militaryLaserFrequency
+    case LaserTypeEnum.Mining:
+      return miningLaserFrequency
+  }
+  return 1
+}
+
+export function getLaserPower(laserType: LaserTypeEnum) {
+  switch (laserType) {
+    case LaserTypeEnum.Pulse:
+      return pulseLaserPower
+    case LaserTypeEnum.Beam:
+      return beamLaserPower
+    case LaserTypeEnum.Military:
+      return militaryLaserPower
+    case LaserTypeEnum.Mining:
+      return miningLaserPower
+  }
+  return 0
 }
 
 export function getLaserMountsText(player: Player, laserType: LaserTypeEnum, short: boolean = true) {

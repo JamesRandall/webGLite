@@ -87,3 +87,4 @@ export const stationTacticsIntervalSeconds = 0.25
 // in the original game player energy refreshes each time from the main loop but enemy ships update in pairs (see
 // applyTactics.ts) and so we use a different interval (based on 12 enemy ships) to refresh player energy
 export const playerEnergyIntervalSeconds = tacticsIntervalSeconds / 6
+export const playerLaserCooldownIntervalSeconds = tacticsIntervalSeconds / 12
