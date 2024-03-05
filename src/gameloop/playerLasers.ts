@@ -1,15 +1,7 @@
 import { Game, SceneEnum } from "../model/game"
-import {
-  getLaserForScene,
-  getLaserFrequency,
-  getLaserSpecs,
-  laserMaxTemperature,
-  laserTemperaturePerPulse,
-  LaserTypeEnum,
-  pulseLaserFrequency,
-} from "../model/player"
+import { getLaserForScene, getLaserFrequency, LaserTypeEnum } from "../model/player"
 import { vec2, vec3 } from "gl-matrix"
-import { dimensions } from "../constants"
+import { dimensions, laserMaxTemperature, laserTemperaturePerPulse } from "../constants"
 import { AttitudeEnum, ShipInstance } from "../model/ShipInstance"
 import { Resources } from "../resources/resources"
 import { applyDamageToNpcWithLasers } from "./utilities/damage"

@@ -1,10 +1,21 @@
 import { ShipBlueprint } from "./shipBlueprint"
 import { ControlState, getEmptyControlState } from "../controls/controlState"
-import { Position, StarSystem } from "./starSystem"
+import { StarSystem } from "./starSystem"
 import { Resources } from "../resources/resources"
 import { vec2, vec3 } from "gl-matrix"
 import { Game, SceneEnum } from "./game"
-import { playerEnergyIntervalSeconds, playerLaserCooldownIntervalSeconds } from "../constants"
+import {
+  beamLaserFrequency,
+  beamLaserPower,
+  militaryLaserFrequency,
+  militaryLaserPower,
+  miningLaserFrequency,
+  miningLaserPower,
+  playerEnergyIntervalSeconds,
+  playerLaserCooldownIntervalSeconds,
+  pulseLaserFrequency,
+  pulseLaserPower,
+} from "../constants"
 
 enum MissileTargettingStatusEnum {
   Normal,
@@ -104,25 +115,6 @@ export interface Player {
   timeToNextEnergyRecharge: number
   timeToNextLaserCooldown: number
 }
-
-export const pulseLaserFrequency = 1.0 / 4.0
-export const beamLaserFrequency = 1.0 / 20.0
-export const militaryLaserFrequency = 1.0 / 20.0
-export const miningLaserFrequency = 1.0 / 3.0
-// best reference for laser powers is:
-// https://www.bbcelite.com/master/main/subroutine/sight.html
-// and
-// https://www.bbcelite.com/master/all/workspaces.html#pow
-export const pulseLaserPower = 15
-export const beamLaserPower = 15
-// the below is based on ARMLAS in the original game which is set as:
-// INT(128.5 + 1.5*POW) = 151
-// The high bit signifies whether or not the laser pulses and so the power of the laser is:
-// 151-128 = 23
-export const militaryLaserPower = 23
-export const miningLaserPower = 50
-export const laserTemperaturePerPulse = 8
-export const laserMaxTemperature = 242
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem): Player {
   const cobra = resources.ships.getCobraMk3([0, 0, 0], [0, 1, 0]).blueprint

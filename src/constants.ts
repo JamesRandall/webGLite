@@ -88,3 +88,21 @@ export const stationTacticsIntervalSeconds = 0.25
 // applyTactics.ts) and so we use a different interval (based on 12 enemy ships) to refresh player energy
 export const playerEnergyIntervalSeconds = tacticsIntervalSeconds / 6
 export const playerLaserCooldownIntervalSeconds = tacticsIntervalSeconds / 12
+export const pulseLaserFrequency = 1.0 / 4.0
+export const beamLaserFrequency = 1.0 / 20.0
+export const militaryLaserFrequency = 1.0 / 20.0
+export const miningLaserFrequency = 1.0 / 3.0
+// best reference for laser powers is:
+// https://www.bbcelite.com/master/main/subroutine/sight.html
+// and
+// https://www.bbcelite.com/master/all/workspaces.html#pow
+export const pulseLaserPower = 15
+export const beamLaserPower = 15
+// the below is based on ARMLAS in the original game which is set as:
+// INT(128.5 + 1.5*POW) = 151
+// The high bit signifies whether or not the laser pulses and so the power of the laser is:
+// 151-128 = 23
+export const militaryLaserPower = 23
+export const miningLaserPower = 50
+export const laserTemperaturePerPulse = 8
+export const laserMaxTemperature = 242

@@ -4,8 +4,7 @@ import { Game } from "../../model/game"
 import { vec3 } from "gl-matrix"
 import { applyDamageToPlayer, DamageLocationEnum } from "../utilities/damage"
 import { ShipBlueprint } from "../../model/shipBlueprint"
-import { pulseLaserFrequency } from "../../model/player"
-import { scannerRadialWorldRange } from "../../constants"
+import { pulseLaserFrequency, scannerRadialWorldRange } from "../../constants"
 
 function calculateLaserDamage(blueprint: ShipBlueprint) {
   // this replicates byte 19 of the ship blueprint in the original game
