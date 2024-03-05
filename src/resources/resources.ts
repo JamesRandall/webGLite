@@ -208,10 +208,12 @@ function getNamedShip(
   return toInstance(ships.find((s) => s.name === name)!, position, noseOrientation, role)
 }
 
+let nextShipId = 0
 function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, role?: ShipRoleEnum) {
   const orientations = calculateOrientationsFromNose(noseOrientation)
 
   return {
+    id: nextShipId++,
     role: role ?? ShipRoleEnum.Trader,
     blueprint: ship,
     position: vec3.copy(vec3.create(), position),

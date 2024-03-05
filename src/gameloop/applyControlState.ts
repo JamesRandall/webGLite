@@ -1,5 +1,5 @@
-import { Player } from "../model/player"
-import { Game, SceneEnum } from "../model/game"
+import { MissileStatusEnum, Player } from "../model/player"
+import { Game } from "../model/game"
 import { vec2, vec3 } from "gl-matrix"
 import { getNearestSystemToCursor } from "./utilities/map"
 import { createDockingComputer } from "./utilities/dockingComputer"
@@ -20,6 +20,7 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
       applyHyperspace(game)
     }
     applyLasers(game, timeDelta)
+    applyMissiles(game)
   }
   if (game.hyperspace === null) {
     applyCursors(player, timeDelta)
@@ -29,6 +30,26 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
 
 function applyLasers(game: Game, timeDelta: number) {
   game.player.isLaserFiring = game.player.controlState.firing
+}
+
+function applyMissiles(game: Game) {
+  if (game.player.missiles.currentNumber > 0) {
+    if (
+      game.player.controlState.armMissile &&
+      !game.player.previousControlState.armMissile &&
+      game.player.missiles.status === MissileStatusEnum.Unarmed
+    ) {
+      game.player.missiles.status = MissileStatusEnum.Armed
+    } else if (game.player.controlState.unarmMissile && !game.player.previousControlState.unarmMissile) {
+      game.player.missiles.status = MissileStatusEnum.Unarmed
+      game.player.missiles.lockedShipId = null
+    } else if (
+      game.player.controlState.fireMissile &&
+      !game.player.previousControlState.fireMissile &&
+      game.player.missiles.status === MissileStatusEnum.Locked
+    ) {
+    }
+  }
 }
 
 function applyEffects(game: Game) {

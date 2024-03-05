@@ -43,6 +43,7 @@ export interface TacticsState {
 }
 
 export interface ShipInstance extends PositionedObject {
+  id: number
   role: ShipRoleEnum
   blueprint: ShipBlueprint
   speed: number

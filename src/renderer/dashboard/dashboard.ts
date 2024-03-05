@@ -5,6 +5,7 @@ import { mat4, vec2, vec3, vec4 } from "gl-matrix"
 import { createScannerBackgroundRenderer } from "./scannerBackground"
 import { createScannerShipRenderer } from "./scannerShips"
 import { Resources } from "../../resources/resources"
+import { MissileStatusEnum } from "../../model/player"
 
 const sidePanelWidth = 800 / 5.0 //width / 5.0
 
@@ -82,7 +83,14 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
   let missileX = sidePanelWidth - missileSpacing - missileSize
   const missileY = (missileRow - 1) * barHeight + missileSpacing + 1
   for (let missileIndex = 0; missileIndex < game.player.missiles.currentNumber; missileIndex++) {
-    const missileColor = vec4.fromValues(0.0, 1.0, 0.0, 1.0)
+    const missileColor =
+      missileIndex === game.player.missiles.currentNumber - 1
+        ? game.player.missiles.status === MissileStatusEnum.Armed
+          ? vec4.fromValues(1.0, 1.0, 0.0, 1.0)
+          : game.player.missiles.status === MissileStatusEnum.Locked
+            ? vec4.fromValues(1.0, 0.0, 0.0, 1.0)
+            : vec4.fromValues(0.0, 1.0, 0.0, 1.0)
+        : vec4.fromValues(0.0, 1.0, 0.0, 1.0)
     draw2d.rect([missileX, missileY], [missileSize, missileSize], missileColor)
     missileX -= missileSpacing + missileSize
   }

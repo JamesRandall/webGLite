@@ -17,10 +17,10 @@ import {
   pulseLaserPower,
 } from "../constants"
 
-enum MissileTargettingStatusEnum {
-  Normal,
-  Targetting,
-  LockedOn,
+export enum MissileStatusEnum {
+  Unarmed,
+  Armed,
+  Locked,
 }
 
 export enum LegalStatusEnum {
@@ -73,7 +73,6 @@ export interface PlayerEquipmentBase {
 export interface PlayerEquipment extends PlayerEquipmentBase {
   lasers: Map<LaserMountEnum, LaserTypeEnum>
 }
-
 export interface Player {
   previousControlState: ControlState
   controlState: ControlState
@@ -97,7 +96,8 @@ export interface Player {
   aftShield: number
   missiles: {
     currentNumber: number
-    status: MissileTargettingStatusEnum
+    status: MissileStatusEnum
+    lockedShipId: number | null
   }
   equipment: PlayerEquipment
   galaxyIndex: number
@@ -141,7 +141,8 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     aftShield: cobra.maxAftShield,
     missiles: {
       currentNumber: cobra.maxMissiles - 1,
-      status: MissileTargettingStatusEnum.Normal,
+      status: MissileStatusEnum.Unarmed,
+      lockedShipId: null,
     },
     equipment: {
       largeCargoBay: false,

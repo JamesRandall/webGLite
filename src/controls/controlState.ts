@@ -26,6 +26,9 @@ export interface ControlState {
   saving: boolean
   loading: boolean
   instructions: boolean
+  armMissile: boolean
+  fireMissile: boolean
+  unarmMissile: boolean
 }
 
 export function getEmptyControlState() {
@@ -53,5 +56,8 @@ export function getEmptyControlState() {
     saving: false,
     loading: false,
     instructions: false,
+    armMissile: false,
+    fireMissile: false,
+    unarmMissile: false,
   }
 }

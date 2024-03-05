@@ -33,6 +33,18 @@ export function bindKeys(controlState: ControlState) {
         controlState.pitchDown = newState
         controlState.saving = newState
         break
+      case "t":
+      case "T":
+        controlState.armMissile = newState
+        break
+      case "m":
+      case "M":
+        controlState.fireMissile = newState
+        break
+      case "u":
+      case "U":
+        controlState.unarmMissile = newState
+        break
       case "x":
       case "X":
         controlState.pitchUp = newState

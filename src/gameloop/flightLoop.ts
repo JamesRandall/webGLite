@@ -5,14 +5,15 @@ import { Game, SceneEnum } from "../model/game"
 import { isShipCollidingWithPlayer } from "./utilities/collisions"
 import { ShipRoleEnum } from "../model/ShipInstance"
 import { isValidDocking } from "./utilities/docking"
-import { vec2, vec3 } from "gl-matrix"
+import { vec3 } from "gl-matrix"
 import { spawnNPCShips } from "./utilities/spawn"
 import { Resources } from "../resources/resources"
 import { applyTactics } from "./tactics/applyTactics"
-import { dimensions, pulseLaserFrequency } from "../constants"
 import { applyPlayerLasers } from "./playerLasers"
 import { replaceDestroyedShipsWithExplosions } from "./explosions"
 import { recharge, reduceLaserTemperature } from "./playerEnergy"
+import { MissileStatusEnum } from "../model/player"
+import { findShipInCrosshairs } from "./utilities/findShipInCrosshairs"
 
 export function flightLoop(resources: Resources, game: Game, timeDelta: number) {
   game.localBubble.ships.forEach((ship) => {
@@ -26,6 +27,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   applyPlayerLasers(game, resources, timeDelta)
   spawnNPCShips(resources, game, timeDelta)
   applyTactics(game, resources, timeDelta)
+  lockPlayerMissiles(game, resources)
 
   // this should be done at the end of the loop
   replaceDestroyedShipsWithExplosions(game, timeDelta)
@@ -40,6 +42,17 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
 
   // And another
   //stationDistance(game)
+}
+
+function lockPlayerMissiles(game: Game, resources: Resources) {
+  if (game.player.missiles.status === MissileStatusEnum.Armed) {
+    const target = findShipInCrosshairs(game)
+    if (target !== null) {
+      game.player.missiles.lockedShipId = target.id
+      game.player.missiles.status = MissileStatusEnum.Locked
+      resources.soundEffects.missileTarget()
+    }
+  }
 }
 
 function updateStationAndSafeZone(game: Game) {
