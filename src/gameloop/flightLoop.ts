@@ -16,9 +16,17 @@ import { MissileStatusEnum } from "../model/player"
 import { findShipInCrosshairs } from "./utilities/findShipInCrosshairs"
 
 export function flightLoop(resources: Resources, game: Game, timeDelta: number) {
+  let missileTargetShipExists = false
   game.localBubble.ships.forEach((ship) => {
     updateShipInstance(ship, game.player, timeDelta)
+    if (ship.id === game.player.missiles.lockedShipId) {
+      missileTargetShipExists = true
+    }
   })
+  if (!missileTargetShipExists && game.player.missiles.lockedShipId !== null) {
+    game.player.missiles.lockedShipId = null
+    game.player.missiles.status = MissileStatusEnum.Unarmed
+  }
   game.localBubble.explosions.forEach((explosion) => updateExplosion(explosion, game.player, timeDelta))
   updateStationAndSafeZone(game)
   updateOrbitalBodies(game, timeDelta)
