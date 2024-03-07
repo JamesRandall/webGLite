@@ -7,8 +7,11 @@ import { frameColor, frameWidth, galaxySize } from "../../constants"
 import { drawHeader } from "./screenUtilities"
 
 export function createLongRangeChartRenderer(draw2d: Primitives) {
-  const xScale = draw2d.size().height / galaxySize.height
-  const yScale = draw2d.size().height / galaxySize.height
+  const wRatio = draw2d.size().width / galaxySize.width
+  const hRatio = draw2d.size().height / galaxySize.height
+  const xScale = hRatio > wRatio ? wRatio : hRatio
+  const yScale = hRatio > wRatio ? wRatio : hRatio
+
   const top = 40 + yScale
   const left = draw2d.size().width / 2 - (galaxySize.width * xScale) / 2
 
@@ -32,7 +35,16 @@ export function createLongRangeChartRenderer(draw2d: Primitives) {
     })
 
     drawHeader(draw2d, `GALACTIC CHART  ${game.player.galaxyIndex + 1}`)
-    draw2d.rect([0, top + galaxySize.height * yScale], [draw2d.size().width, frameWidth], frameColor)
+    if (hRatio > wRatio) {
+      draw2d.rect([0, top + galaxySize.height * yScale], [draw2d.size().width, frameWidth], frameColor)
+    } else {
+      draw2d.rect([left, top - yScale - 1], [frameWidth, galaxySize.height * yScale], frameColor)
+      draw2d.rect(
+        [left + galaxySize.width * xScale, top - yScale - 1],
+        [frameWidth, galaxySize.height * yScale],
+        frameColor,
+      )
+    }
 
     draw2d.rect([currentCursor[0] - 1.5, currentCursor[1] - 10], [3, -10], [1.0, 1.0, 1.0, 1.0])
     draw2d.rect([currentCursor[0] - 1.5, currentCursor[1] + 10], [3, 10], [1.0, 1.0, 1.0, 1.0])
