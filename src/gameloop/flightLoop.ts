@@ -15,6 +15,7 @@ import { recharge, reduceLaserTemperature } from "./playerEnergy"
 import { MissileStatusEnum } from "../model/player"
 import { findShipInCrosshairs } from "./utilities/findShipInCrosshairs"
 import { damagePlayerWithMissile } from "./utilities/damage"
+import { missileDamageAmount } from "../constants"
 
 export function flightLoop(resources: Resources, game: Game, timeDelta: number) {
   let missileTargetShipExists = false
@@ -78,7 +79,7 @@ function updateStationAndSafeZone(game: Game) {
 
 function handleCollisions(game: Game, resources: Resources) {
   game.localBubble.ships.forEach((ship) => {
-    if (ship.role === ShipRoleEnum.Missile && ship.tacticsState.targetIndex !== null) {
+    if (ship.role === ShipRoleEnum.Missile && ship.tacticsState.targetIndex !== null && !ship.isDestroyed) {
       // if we're a missile that has been fired at another ship then we just do a simple range
       // check for a collision against the other ships
       const missileSize = Math.max(...ship.blueprint.renderingModel.boundingBoxSize)
@@ -89,8 +90,13 @@ function handleCollisions(game: Game, resources: Resources) {
         const distance = vec3.length(vec3.subtract(vec3.create(), ship.position, otherShip.position))
         game.diagnostics.push(`D: ${distance}`)
         if (distance < (Math.max(...otherShip.blueprint.renderingModel.boundingBoxSize) + missileSize) / 2) {
-          otherShip.isDestroyed = true
+          otherShip.energy -= missileDamageAmount
+          if (otherShip.energy <= 0) {
+            otherShip.isDestroyed = true
+            otherShip.energy = 0
+          }
           ship.isDestroyed = true
+          resources.soundEffects.shipExplosion()
         }
       })
     } else if (isShipCollidingWithPlayer(ship)) {
