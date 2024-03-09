@@ -1,11 +1,31 @@
 import { Game, SceneEnum } from "../model/game"
-import { getLaserForScene, getLaserFrequency, LaserTypeEnum } from "../model/player"
-import { vec2, vec3 } from "gl-matrix"
+import { getLaserForScene, getLaserFrequency, LaserTypeEnum, MissileStatusEnum } from "../model/player"
+import { vec2 } from "gl-matrix"
 import { dimensions, laserMaxTemperature, laserTemperaturePerPulse } from "../constants"
-import { AttitudeEnum, ShipInstance } from "../model/ShipInstance"
+import { AttitudeEnum, FlyingTowardsEnum, ShipRoleEnum } from "../model/ShipInstance"
 import { Resources } from "../resources/resources"
 import { applyDamageToNpcWithLasers } from "./utilities/damage"
 import { findShipInCrosshairs } from "./utilities/findShipInCrosshairs"
+import { ShipModelEnum } from "../model/shipBlueprint"
+
+export function applyPlayerMissiles(game: Game, resources: Resources, timeDelta: number) {
+  if (
+    game.player.controlState.fireMissile &&
+    !game.player.previousControlState.fireMissile &&
+    game.player.missiles.status === MissileStatusEnum.Locked
+  ) {
+    const missile = resources.ships.getInstanceOfModel(ShipModelEnum.Missile, [0, 0, -2], [0, 0, -1])
+    missile.role = ShipRoleEnum.Missile
+    missile.speed = missile.blueprint.maxSpeed
+    missile.aiEnabled = true
+    missile.tacticsState.flyingTowards = FlyingTowardsEnum.ToTarget
+    missile.tacticsState.targetIndex = game.player.missiles.lockedShipId
+    game.localBubble.ships.push(missile)
+
+    game.player.missiles.currentNumber--
+    game.player.missiles.status = MissileStatusEnum.Unarmed
+  }
+}
 
 export function applyPlayerLasers(game: Game, resources: Resources, timeDelta: number) {
   const laserType = getLaserForScene(game)

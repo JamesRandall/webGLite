@@ -245,6 +245,7 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
       timeUntilNextStateChange: 0,
       flyingTowards: FlyingTowardsEnum.None,
       canApplyTactics: false,
+      targetIndex: null,
     },
   } as ShipInstance
 }

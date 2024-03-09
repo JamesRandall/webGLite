@@ -9,7 +9,7 @@ import { vec3 } from "gl-matrix"
 import { spawnNPCShips } from "./utilities/spawn"
 import { Resources } from "../resources/resources"
 import { applyTactics } from "./tactics/applyTactics"
-import { applyPlayerLasers } from "./playerLasers"
+import { applyPlayerLasers, applyPlayerMissiles } from "./playerWeapons"
 import { replaceDestroyedShipsWithExplosions } from "./explosions"
 import { recharge, reduceLaserTemperature } from "./playerEnergy"
 import { MissileStatusEnum } from "../model/player"
@@ -33,6 +33,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   updateStardust(game, timeDelta)
   handleCollisions(game)
   applyPlayerLasers(game, resources, timeDelta)
+  applyPlayerMissiles(game, resources, timeDelta)
   spawnNPCShips(resources, game, timeDelta)
   applyTactics(game, resources, timeDelta)
   lockPlayerMissiles(game, resources)

@@ -9,7 +9,10 @@ require("./extensions.ts")
 async function mount(viewCanvas: HTMLCanvasElement) {
   const retroRatio = 800 / 760
   const wideScreenRatio = 16 / 9
-  const urlSearchParams = new URLSearchParams(window.location.search)
+  // case insensitive launch params
+  const urlSearchParams = new URLSearchParams(
+    Array.from(new URLSearchParams(window.location.search), ([key, value]) => [key.toLowerCase(), value]),
+  )
   const isWidescreen = urlSearchParams.get("widescreen") !== null
 
   function setSize() {
@@ -56,8 +59,8 @@ async function mount(viewCanvas: HTMLCanvasElement) {
     if (scene !== null) {
       scene = scene.update(now, viewportExtent) ?? scene
     } else if (resources !== null) {
-      const isSkipStart = urlSearchParams.get("skipStart") !== null
-      const namedScene = urlSearchParams.get("namedScene")
+      const isSkipStart = urlSearchParams.get("skipstart") !== null
+      const namedScene = urlSearchParams.get("namedscene")
       scene = createStartingScene(
         isSkipStart
           ? StartingSceneEnum.Docked
@@ -81,7 +84,7 @@ async function mount(viewCanvas: HTMLCanvasElement) {
     requestAnimationFrame(render)
   }
 
-  if (urlSearchParams.get("skipStart") !== null || urlSearchParams.get("namedScene") !== null) {
+  if (urlSearchParams.get("skipstart") !== null || urlSearchParams.get("namedscene") !== null) {
     requestAnimationFrame(renderGame)
   } else {
     requestAnimationFrame(render)

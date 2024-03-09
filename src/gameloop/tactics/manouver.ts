@@ -1,7 +1,7 @@
 import { AccelerationModeEnum, FlyingTowardsEnum, ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
 import { vec3 } from "gl-matrix"
 import { Game } from "../../model/game"
-import { scannerRadialWorldRange, tacticsIntervalSeconds } from "../../constants"
+import { scannerRadialWorldRange } from "../../constants"
 import { aiFlag } from "./common"
 import { log } from "../../gameConsole"
 
@@ -35,25 +35,27 @@ export function rollShipByNoticeableAmount(ship: ShipInstance) {
 export function steerShip(ship: ShipInstance, game: Game, timeDelta: number) {
   if (ship.role === ShipRoleEnum.Station) return
 
-  if (ship.tacticsState.canApplyTactics) {
-    if (isFarAway(ship)) {
-      const aiFlagValue = aiFlag(ship)
-      const aiRoll = Math.floor(Math.random() * 127) + 128
-      log(`AI Flag: ${aiFlagValue}      AI Roll: ${aiRoll}`)
-      // this random check basically says the more aggressive the ship
-      // the more likely it is to head towards us, the less aggressive the
-      // more likely it is to head away
-      if (aiRoll > aiFlagValue) {
-        headShipAwayFromPlayer(ship, game)
-      } else {
-        headShipTowardsPlayer(ship, game)
+  if (ship.role !== ShipRoleEnum.Missile) {
+    if (ship.tacticsState.canApplyTactics) {
+      if (isFarAway(ship)) {
+        const aiFlagValue = aiFlag(ship)
+        const aiRoll = Math.floor(Math.random() * 127) + 128
+        log(`AI Flag: ${aiFlagValue}      AI Roll: ${aiRoll}`)
+        // this random check basically says the more aggressive the ship
+        // the more likely it is to head towards us, the less aggressive the
+        // more likely it is to head away
+        if (aiRoll > aiFlagValue) {
+          headShipAwayFromPlayer(ship, game)
+        } else {
+          headShipTowardsPlayer(ship, game)
+        }
       }
     }
-  }
 
-  // If a ship gets too close to the player always head it away irrespective of the tactics timing
-  if (!isFarAway(ship)) {
-    headShipAwayFromPlayer(ship, game)
+    // If a ship gets too close to the player always head it away irrespective of the tactics timing
+    if (!isFarAway(ship)) {
+      headShipAwayFromPlayer(ship, game)
+    }
   }
 
   // This actually does the manouvering
@@ -81,13 +83,36 @@ function headShipAwayFromPlayer(ship: ShipInstance, game: Game) {
   ship.acceleration = AccelerationModeEnum.Accelerating
 }
 
+function getDirection(ship: ShipInstance, game: Game) {
+  const target =
+    ship.tacticsState.targetIndex !== null
+      ? game.localBubble.ships.find((s) => s.id === ship.tacticsState.targetIndex) ?? null
+      : null
+  const planetDirection = vec3.subtract(vec3.create(), game.localBubble.planet.position, ship.position)
+  if (ship.tacticsState.targetIndex !== null && target === null) {
+    // if we can't find the ship with the given ID then its been removed / destroyed and so we let
+    // the object targetted on it to continue on its current direction - and turn the AI off
+    // so we don't bother again
+    ship.tacticsState.targetIndex = null
+    ship.aiEnabled = false
+    return planetDirection
+  }
+
+  switch (ship.tacticsState.flyingTowards) {
+    case FlyingTowardsEnum.ToTarget:
+      return vec3.subtract(vec3.create(), target!.position, ship.position)
+    case FlyingTowardsEnum.AwayFromPlayer:
+      return vec3.copy(vec3.create(), ship.position)
+    case FlyingTowardsEnum.Player:
+      return vec3.multiply(vec3.create(), ship.position, [-1, -1, -1]) // towards the player
+    case FlyingTowardsEnum.None:
+    case FlyingTowardsEnum.Planet:
+      return planetDirection
+  }
+}
+
 function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
-  const direction =
-    ship.tacticsState.flyingTowards === FlyingTowardsEnum.Planet
-      ? vec3.subtract(vec3.create(), game.localBubble.planet.position, ship.position)
-      : ship.tacticsState.flyingTowards === FlyingTowardsEnum.AwayFromPlayer
-        ? ship.position
-        : vec3.multiply(vec3.create(), ship.position, [-1, -1, -1]) // towards the player
+  const direction = getDirection(ship, game)
   const normalisedDirection = vec3.normalize(vec3.create(), direction)
 
   const orientationDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.noseOrientation), normalisedDirection)
@@ -139,7 +164,7 @@ function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
   }
 
   const accelerationValue =
-    ship.acceleration === AccelerationModeEnum.Accelerating
+    ship.acceleration === AccelerationModeEnum.Accelerating || ship.role === ShipRoleEnum.Missile
       ? 1
       : ship.acceleration === AccelerationModeEnum.Decelerating
         ? -1

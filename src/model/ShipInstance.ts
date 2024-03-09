@@ -33,6 +33,7 @@ export enum FlyingTowardsEnum {
   Planet,
   Player,
   AwayFromPlayer,
+  ToTarget,
   None,
 }
 
@@ -40,6 +41,7 @@ export interface TacticsState {
   timeUntilNextStateChange: number
   flyingTowards: FlyingTowardsEnum
   canApplyTactics: boolean
+  targetIndex: number | null
 }
 
 export interface ShipInstance extends PositionedObject {
