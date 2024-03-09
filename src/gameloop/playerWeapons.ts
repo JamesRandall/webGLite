@@ -24,6 +24,8 @@ export function applyPlayerMissiles(game: Game, resources: Resources, timeDelta:
 
     game.player.missiles.currentNumber--
     game.player.missiles.status = MissileStatusEnum.Unarmed
+
+    resources.soundEffects.missileLaunch()
   }
 }
 

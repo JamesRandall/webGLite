@@ -95,6 +95,5 @@ function pirateGroup(resources: Resources) {
   pirate3.attitude = AttitudeEnum.Hostile
 
   //pirate.speed = pirate.blueprint.maxSpeed / 2
-  //return [pirate1, pirate2, pirate3]
-  return [pirate1]
+  return [pirate1, pirate2, pirate3]
 }
