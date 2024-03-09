@@ -72,8 +72,8 @@ export function setDimensions(width: number, height: number) {
 
 // Pitch must be 8 times lower than roll
 
-const maxRollSpeed = 2.0 * Math.PI // / 3.5
-const maxPitchSpeed = (2.0 * Math.PI) / 8 // / 10
+const maxRollSpeed = (2.0 * Math.PI) / 4 // / 3.5
+const maxPitchSpeed = (2.0 * Math.PI) / 10
 const maxSpeed = 30.0
 export const shipMovementSpeeds = {
   maxRollSpeed: maxRollSpeed,
