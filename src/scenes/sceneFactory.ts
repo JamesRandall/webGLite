@@ -7,6 +7,7 @@ import { createTestScene } from "./testScene"
 import { scannerRadialWorldRange } from "../constants"
 import { AttitudeEnum, ShipRoleEnum } from "../model/ShipInstance"
 import { newGame } from "../persistence"
+import { vec3 } from "gl-matrix"
 
 export enum StartingSceneEnum {
   Pregame,
@@ -51,8 +52,8 @@ function soloTrader(resources: Resources) {
 function soloPirate(resources: Resources) {
   const pirate = resources.ships.getInstanceOfModel(
     ShipModelEnum.Python,
-    [0, 0, -scannerRadialWorldRange[2] / 4],
-    [0, 0, 1],
+    [0, 0, -scannerRadialWorldRange[2] / 2],
+    vec3.normalize(vec3.create(), [0, 0, -1]),
   )
   pirate.role = ShipRoleEnum.Pirate
   pirate.aiEnabled = true
@@ -94,5 +95,6 @@ function pirateGroup(resources: Resources) {
   pirate3.attitude = AttitudeEnum.Hostile
 
   //pirate.speed = pirate.blueprint.maxSpeed / 2
-  return [pirate1, pirate2, pirate3]
+  //return [pirate1, pirate2, pirate3]
+  return [pirate1]
 }

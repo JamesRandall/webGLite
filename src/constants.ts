@@ -69,8 +69,11 @@ export function setDimensions(width: number, height: number) {
 //   1 second to reach max pitch speed
 //   7 seconds for pitch to slow to zero
 //   10.6 seconds to complete 360 degrees of pitch at max pitch speed
-const maxRollSpeed = (2.0 * Math.PI) / 3.5
-const maxPitchSpeed = (2.0 * Math.PI) / 10
+
+// Pitch must be 8 times lower than roll
+
+const maxRollSpeed = 2.0 * Math.PI // / 3.5
+const maxPitchSpeed = (2.0 * Math.PI) / 8 // / 10
 const maxSpeed = 30.0
 export const shipMovementSpeeds = {
   maxRollSpeed: maxRollSpeed,
@@ -106,3 +109,4 @@ export const militaryLaserPower = 23
 export const miningLaserPower = 50
 export const laserTemperaturePerPulse = 8
 export const laserMaxTemperature = 242
+export const missileDamageAmount = 250

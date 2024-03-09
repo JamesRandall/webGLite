@@ -4,10 +4,16 @@ import { ShipInstance } from "../../model/ShipInstance"
 import { getLaserPower, LaserTypeEnum, Player } from "../../model/player"
 import { ShipModelEnum } from "../../model/shipBlueprint"
 import { log } from "../../gameConsole"
+import { missileDamageAmount } from "../../constants"
 
 export enum DamageLocationEnum {
   Shields,
   Energy,
+}
+
+export function damagePlayerWithMissile(game: Game, resources: Resources, ship: ShipInstance) {
+  applyDamageToPlayer(game, resources, ship, missileDamageAmount) // missiles damage player by 250 units
+  ship.isDestroyed = true
 }
 
 export function applyDamageToPlayer(game: Game, resources: Resources, ship: ShipInstance, damage: number) {

@@ -14,7 +14,7 @@ export function applyPlayerMissiles(game: Game, resources: Resources, timeDelta:
     !game.player.previousControlState.fireMissile &&
     game.player.missiles.status === MissileStatusEnum.Locked
   ) {
-    const missile = resources.ships.getInstanceOfModel(ShipModelEnum.Missile, [0, 0, -2], [0, 0, -1])
+    const missile = resources.ships.getInstanceOfModel(ShipModelEnum.Missile, [0, -2, -2], [0, 0, -1])
     missile.role = ShipRoleEnum.Missile
     missile.speed = missile.blueprint.maxSpeed
     missile.aiEnabled = true

@@ -1,5 +1,5 @@
 import { AccelerationModeEnum, FlyingTowardsEnum, ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
-import { vec3 } from "gl-matrix"
+import { mat4, quat, vec3 } from "gl-matrix"
 import { Game } from "../../model/game"
 import { scannerRadialWorldRange } from "../../constants"
 import { aiFlag } from "./common"
@@ -104,7 +104,7 @@ function getDirection(ship: ShipInstance, game: Game) {
     case FlyingTowardsEnum.AwayFromPlayer:
       return vec3.copy(vec3.create(), ship.position)
     case FlyingTowardsEnum.Player:
-      return vec3.multiply(vec3.create(), ship.position, [-1, -1, -1]) // towards the player
+      return vec3.subtract(vec3.create(), [0, 0, 0], ship.position) // towards the player
     case FlyingTowardsEnum.None:
     case FlyingTowardsEnum.Planet:
       return planetDirection
@@ -115,51 +115,28 @@ function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
   const direction = getDirection(ship, game)
   const normalisedDirection = vec3.normalize(vec3.create(), direction)
 
+  const ro = ship.roofOrientation
+  const pDp = vec3.dot(normalisedDirection, ro)
   const orientationDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.noseOrientation), normalisedDirection)
-  let angle = Math.acos(orientationDotProduct < -1 ? -1 : orientationDotProduct > 1 ? 1 : orientationDotProduct)
-  const roofDotProduct = vec3.dot(normalisedDirection, ship.roofOrientation)
 
-  // If we're facing away from the target direction then we always pitch, if we're facing then we only pitch towards our
-  // target direction if it is not at a small angle
-  if (Math.abs(roofDotProduct) > 0.005 || orientationDotProduct < 0) {
-    ship.pitch += ship.blueprint.pitchAcceleration * timeDelta * (roofDotProduct > 0 ? -1 : 1)
-    if (ship.pitch > ship.blueprint.maxPitchSpeed) ship.pitch = ship.blueprint.maxPitchSpeed
-    else if (ship.pitch < -ship.blueprint.maxPitchSpeed) ship.pitch = -ship.blueprint.maxPitchSpeed
-
-    // this prevents the ship from oscillating around the players position when coming head on
-    if (ship.pitch > 0 && ship.pitch > angle) ship.pitch = angle
-    else if (ship.pitch < 0 && ship.pitch < angle) ship.pitch = angle
+  if (orientationDotProduct > 0 && Math.abs(pDp) < 0.005) {
+    ship.pitch = 0
   } else {
-    // otherwise we start stopping our pitch motion
-    let delta = ship.blueprint.pitchAcceleration * timeDelta
-    if (ship.pitch < 0) {
-      ship.pitch += delta
-      if (ship.pitch > 0) {
-        ship.pitch = 0
-      }
-    } else if (ship.pitch > 0) {
-      ship.pitch -= delta
-      if (ship.pitch < 0) {
-        ship.pitch = 0
-      }
+    if (pDp > 0) {
+      ship.pitch = -ship.blueprint.maxPitchSpeed
+    } else if (pDp < 0) {
+      ship.pitch = ship.blueprint.maxPitchSpeed
+    } else {
+      ship.pitch = 0
     }
   }
 
   const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
-  if (Math.abs(sideDotProduct) > 0.001) {
-    ship.roll += ship.blueprint.rollAcceleration * timeDelta * (sideDotProduct > 0 ? 1 : -1)
-    if (ship.roll > ship.blueprint.maxRollSpeed) ship.roll = ship.blueprint.maxRollSpeed
-    else if (ship.roll < -ship.blueprint.maxRollSpeed) ship.roll = -ship.blueprint.maxRollSpeed
+  if (sideDotProduct > 0.005) {
+    ship.roll = -ship.blueprint.maxRollSpeed
+  } else if (sideDotProduct < 0.005) {
+    ship.roll = ship.blueprint.maxRollSpeed
   } else {
-    let delta = ship.blueprint.rollAcceleration * timeDelta
-    if (ship.roll < 0) {
-      ship.roll += delta
-      if (ship.roll > 0) ship.roll = 0
-    }
-    if (ship.roll > 0) {
-      ship.roll -= delta
-      if (ship.roll < 0) ship.roll = 0
-    }
     ship.roll = 0
   }
 

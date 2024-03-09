@@ -1,5 +1,5 @@
 import { StarSystem } from "./starSystem"
-import { mat4, vec2, vec3, vec4 } from "gl-matrix"
+import { mat4, quat, vec2, vec3, vec4 } from "gl-matrix"
 import { degreesToRadians } from "../gameloop/utilities/transforms"
 import { dimensions } from "../constants"
 
@@ -31,9 +31,21 @@ export function distance(p1: Point, p2: Point) {
 }
 
 export function calculateOrientationsFromNose(noseOrientation: vec3) {
-  const roofOrientation = vec3.rotateX(vec3.create(), noseOrientation, [0, 0, 0], degreesToRadians(-90))
-  const sideOrientation = vec3.rotateY(vec3.create(), noseOrientation, [0, 0, 0], degreesToRadians(90))
-  return { noseOrientation, roofOrientation, sideOrientation }
+  const startingNoseOrientation = vec3.fromValues(0, 0, -1)
+  const startingRoofOrientation = vec3.fromValues(0, 1, 0)
+  const startingRightOrientation = vec3.fromValues(-1, 0, 0)
+
+  const rotation = quat.rotationTo(quat.create(), startingNoseOrientation, noseOrientation)
+  const matrix = mat4.fromQuat(mat4.create(), rotation)
+  const newNoseOrientation = vec3.transformMat4(vec3.create(), startingNoseOrientation, matrix)
+  const newRoofOrientation = vec3.transformMat4(vec3.create(), startingRoofOrientation, matrix)
+  const newRightOrientation = vec3.transformMat4(vec3.create(), startingRightOrientation, matrix)
+
+  return {
+    noseOrientation: newNoseOrientation,
+    roofOrientation: newRoofOrientation,
+    sideOrientation: newRightOrientation,
+  }
 }
 
 export function projectPosition(p: vec3, projectionMatrix: mat4) {
