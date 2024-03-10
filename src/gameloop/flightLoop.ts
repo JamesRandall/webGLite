@@ -88,7 +88,6 @@ function handleCollisions(game: Game, resources: Resources) {
           return
         }
         const distance = vec3.length(vec3.subtract(vec3.create(), ship.position, otherShip.position))
-        game.diagnostics.push(`D: ${distance}`)
         if (distance < (Math.max(...otherShip.blueprint.renderingModel.boundingBoxSize) + missileSize) / 2) {
           otherShip.energy -= missileDamageAmount
           if (otherShip.energy <= 0) {

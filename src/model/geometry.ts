@@ -57,3 +57,19 @@ export function projectPosition(p: vec3, projectionMatrix: mat4) {
   const viewportY = ((1 - y) / 2) * dimensions.mainViewHeight
   return vec2.fromValues(viewportX, viewportY)
 }
+
+export function cleanNormalise(p: vec3) {
+  const n = vec3.normalize(vec3.create(), p)
+  if (n[0] === 1 || n[0] === -1) {
+    n[1] = 0
+    n[2] = 0
+  } else if (n[1] === 1 || n[1] === -1) {
+    n[0] = 0
+    n[2] = 0
+  }
+  if (n[2] === 1 || n[2] === -1) {
+    n[0] = 0
+    n[1] = 0
+  }
+  return n
+}

@@ -1,9 +1,10 @@
 import { AccelerationModeEnum, FlyingTowardsEnum, ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
-import { mat4, quat, vec3 } from "gl-matrix"
+import { vec3 } from "gl-matrix"
 import { Game } from "../../model/game"
 import { scannerRadialWorldRange } from "../../constants"
 import { aiFlag } from "./common"
 import { log } from "../../gameConsole"
+import { cleanNormalise } from "../../model/geometry"
 
 // Elite far away check looks at the high byte of Z being greater than 3 so a distance >= 768
 // The Elite scanner range in the original game is 13056 (0x3300). 768 is = 768/13056 of that (as in 0.0588)
@@ -112,8 +113,20 @@ function getDirection(ship: ShipInstance, game: Game) {
 }
 
 function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
+  if (ship.role === ShipRoleEnum.Missile) {
+    headTowardsAcceleration(ship, game, timeDelta)
+  } else {
+    // TODO: Keep an eye on this
+    // Experimenting with this - I'm not figuring out when I need to start decelerating but it might
+    // lead to more natural movement nevertheless
+    // I don't do this for the missile though because the missile needs to be accurate
+    headTowardsAcceleration(ship, game, timeDelta)
+  }
+}
+
+function headTowardsNoAcceleration(ship: ShipInstance, game: Game, timeDelta: number) {
   const direction = getDirection(ship, game)
-  const normalisedDirection = vec3.normalize(vec3.create(), direction)
+  const normalisedDirection = cleanNormalise(direction)
 
   const ro = ship.roofOrientation
   const pDp = vec3.dot(normalisedDirection, ro)
@@ -131,11 +144,69 @@ function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
     }
   }
 
-  const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
-  if (sideDotProduct > 0.005) {
+  const sideDotProduct = vec3.dot(normalisedDirection, cleanNormalise(ship.rightOrientation))
+  if (sideDotProduct !== 0) debugger
+  game.diagnostics.push(`${sideDotProduct}`)
+  if (sideDotProduct > 0.03) {
     ship.roll = -ship.blueprint.maxRollSpeed
-  } else if (sideDotProduct < 0.005) {
+  } else if (sideDotProduct < -0.03) {
     ship.roll = ship.blueprint.maxRollSpeed
+  } else {
+    ship.roll = 0
+  }
+
+  const accelerationValue =
+    ship.acceleration === AccelerationModeEnum.Accelerating || ship.role === ShipRoleEnum.Missile
+      ? 1
+      : ship.acceleration === AccelerationModeEnum.Decelerating
+        ? -1
+        : 0
+  ship.speed += ship.blueprint.speedAcceleration * accelerationValue * timeDelta
+  if (ship.speed > ship.blueprint.maxSpeed) ship.speed = ship.blueprint.maxSpeed
+  else if (ship.speed < 0) ship.speed = 0
+}
+
+function headTowardsAcceleration(ship: ShipInstance, game: Game, timeDelta: number) {
+  const direction = getDirection(ship, game)
+  const normalisedDirection = vec3.normalize(vec3.create(), direction)
+
+  const ro = ship.roofOrientation
+  const pDp = vec3.dot(normalisedDirection, ro)
+  const orientationDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.noseOrientation), normalisedDirection)
+  const pitchDelta = timeDelta * ship.blueprint.pitchAcceleration
+  const rollDelta = timeDelta * ship.blueprint.rollAcceleration
+  const deceleratePitch = () => {
+    if (ship.pitch > 0) {
+      ship.pitch -= pitchDelta
+      if (ship.pitch < 0) ship.pitch = 0
+    } else if (ship.pitch < 0) {
+      ship.pitch += pitchDelta
+      if (ship.pitch > 0) ship.pitch = 0
+    }
+  }
+
+  if (orientationDotProduct > 0 && Math.abs(pDp) < 0.1) {
+    deceleratePitch()
+  } else {
+    if (pDp > 0) {
+      ship.pitch -= pitchDelta
+      if (ship.pitch < -ship.blueprint.maxPitchSpeed) ship.pitch = -ship.blueprint.maxPitchSpeed
+    } else if (pDp < 0) {
+      ship.pitch += pitchDelta
+      if (ship.pitch > ship.blueprint.maxPitchSpeed) ship.pitch = ship.blueprint.maxPitchSpeed
+    } else {
+      deceleratePitch()
+    }
+  }
+
+  const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
+  game.diagnostics.push(`SDP ${sideDotProduct}`)
+  if (sideDotProduct > 0) {
+    ship.roll -= rollDelta
+    if (ship.roll < -ship.blueprint.maxRollSpeed) ship.roll = -ship.blueprint.maxRollSpeed
+  } else if (sideDotProduct < 0) {
+    ship.roll += rollDelta
+    if (ship.roll > ship.blueprint.maxRollSpeed) ship.roll = ship.blueprint.maxRollSpeed
   } else {
     ship.roll = 0
   }

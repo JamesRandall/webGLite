@@ -92,7 +92,7 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     }
     // Original game uses this percentage but its based on its loop timing system
     // if (Math.random() < 0.0025) {
-    if (Math.random() < 0.05) {
+    if (ship.role != ShipRoleEnum.Missile && Math.random() < 0.05) {
       rollShipByNoticeableAmount(ship)
     }
     if (ship.energy > ship.blueprint.maxAiEnergy / 2) {

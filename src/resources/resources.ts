@@ -637,8 +637,10 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxAiEnergy: 2,
       bounty: 0,
       canBeRockHermit: false,
-      maxPitchSpeed: Math.PI / 4,
-      maxRollSpeed: Math.PI * 2,
+      maxPitchSpeed: (Math.PI / 4) * 1,
+      //pitchAcceleration: shipMovementSpeeds.pitchAcceleration * 4,
+      maxRollSpeed: Math.PI * 2 * 1,
+      //rollAcceleration: shipMovementSpeeds.rollAcceleration * 4,
     },
     {
       name: "Moray",
