@@ -58,6 +58,7 @@ export interface Resources {
     greenCrt: ShaderSource
     vcr: ShaderSource
     motionBlur: ShaderSource
+    energyBomb: ShaderSource
   }
   soundEffects: SoundEffects
 }
@@ -86,6 +87,7 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
     "greencrt",
     "vcr",
     "motionblur",
+    "energybomb",
   ]
   const textureNames = ["noise", "font", "starmask", "scanner"]
   const shaderPromises = shaderNames.map((sn) => loadShaderSource(sn))
@@ -193,6 +195,7 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
       greenCrt: namedShaders.get("greencrt")!,
       vcr: namedShaders.get("vcr")!,
       motionBlur: namedShaders.get("motionblur")!,
+      energyBomb: namedShaders.get("energybomb")!,
     },
     soundEffects: soundEffects,
   }

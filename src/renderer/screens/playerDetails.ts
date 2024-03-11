@@ -102,6 +102,9 @@ export function createPlayerDetailsRenderer(draw2d: Primitives) {
     if (equipment.ecmSystem) {
       draw2d.text.draw(`E.C.M. System`, [6, equipmentLine++])
     }
+    if (equipment.energyBomb) {
+      draw2d.text.draw(`Energy Bomb`, [6, equipmentLine++])
+    }
     if (equipment.galacticHyperdrive) {
       draw2d.text.draw(`Galactic Hyperdrive`, [6, equipmentLine++])
     }

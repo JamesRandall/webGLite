@@ -4,7 +4,7 @@ import { vec2, vec3 } from "gl-matrix"
 import { getNearestSystemToCursor } from "./utilities/map"
 import { createDockingComputer } from "./utilities/dockingComputer"
 import { Resources } from "../resources/resources"
-import { ShipInstance } from "../model/ShipInstance"
+import { ShipInstance, ShipRoleEnum } from "../model/ShipInstance"
 import { ecmDurationSeconds, ecmTotalEnergyCost, ecmWarmUpTimeSeconds, scannerRadialWorldRange } from "../constants"
 import { nextEffect, previousEffect } from "../renderer/rootRenderer"
 
@@ -22,11 +22,27 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
     applyLasers(game, timeDelta)
     applyMissiles(game)
     applyEcm(game, resources, timeDelta)
+    applyEnergyBomb(game, resources, timeDelta)
   }
   if (game.hyperspace === null) {
     applyCursors(player, timeDelta)
   }
   applyEffects(game)
+}
+
+function applyEnergyBomb(game: Game, resources: Resources, timeDelta: number) {
+  if (game.player.timeToEnergyBombEnd > 0) {
+    game.player.timeToEnergyBombEnd -= timeDelta
+  } else if (
+    game.player.equipment.energyBomb &&
+    game.player.controlState.energyBomb &&
+    !game.player.previousControlState.energyBomb
+  ) {
+    game.player.equipment.energyBomb = false
+    game.player.timeToEnergyBombEnd = 2.5
+    resources.soundEffects.energyBomb()
+    game.localBubble.ships.forEach((s) => (s.isDestroyed = s.role !== ShipRoleEnum.Station))
+  }
 }
 
 function applyEcm(game: Game, resources: Resources, timeDelta: number) {

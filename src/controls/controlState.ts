@@ -30,6 +30,7 @@ export interface ControlState {
   fireMissile: boolean
   unarmMissile: boolean
   ecm: boolean
+  energyBomb: boolean
 }
 
 export function getEmptyControlState() {
@@ -61,5 +62,6 @@ export function getEmptyControlState() {
     fireMissile: false,
     unarmMissile: false,
     ecm: false,
+    energyBomb: false,
   }
 }

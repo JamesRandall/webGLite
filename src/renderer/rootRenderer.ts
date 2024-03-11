@@ -153,12 +153,20 @@ export function createRootRenderer(
   ])
   let time = 0.0
   const flightSceneMotionBlur = createFlightSceneRenderEffect(resources.shaderSource.motionBlur)
+  const flightSceneEnergyBomb = createFlightSceneRenderEffect(resources.shaderSource.energyBomb)
   const flightSceneCopy = createFlightSceneRenderEffect(resources.shaderSource.simpleTexture)
 
   const draw2d = createPrimitiveRenderer(gl, false, resources, dimensions.width, dimensions.mainViewHeight)
 
   const applyFlightSceneMotionBlur = (effectTime: number) =>
     flightSceneMotionBlur(
+      [0, 0],
+      [dimensions.width, dimensions.mainViewHeight],
+      flightSceneFrameBufferTexture,
+      effectTime,
+    )
+  const applyFlightSceneEnergyBomb = (effectTime: number) =>
+    flightSceneEnergyBomb(
       [0, 0],
       [dimensions.width, dimensions.mainViewHeight],
       flightSceneFrameBufferTexture,
@@ -187,9 +195,12 @@ export function createRootRenderer(
     setupGl(gl)
     if (game.player.isJumping) {
       applyFlightSceneMotionBlur(time)
+    } else if (game.player.timeToEnergyBombEnd > 0) {
+      applyFlightSceneEnergyBomb(time)
     } else {
       applyFlightSceneCopy(time)
     }
+
     drawFrame(draw2d)
 
     // draw the dashboard

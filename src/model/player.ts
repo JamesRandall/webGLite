@@ -114,6 +114,7 @@ export interface Player {
   laserOffset: vec2
   timeToNextEnergyRecharge: number
   timeToNextLaserCooldown: number
+  timeToEnergyBombEnd: number
 }
 
 export function getStartingPlayer(resources: Resources, currentSystem: StarSystem): Player {
@@ -169,6 +170,7 @@ export function getStartingPlayer(resources: Resources, currentSystem: StarSyste
     laserOffset: vec2.fromValues(0, 0),
     timeToNextEnergyRecharge: playerEnergyIntervalSeconds,
     timeToNextLaserCooldown: playerLaserCooldownIntervalSeconds,
+    timeToEnergyBombEnd: 0,
   }
 }
 

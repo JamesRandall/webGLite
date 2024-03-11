@@ -59,6 +59,9 @@ export function bindKeys(controlState: ControlState) {
       case "E":
         controlState.ecm = newState
         break
+      case "Tab":
+        controlState.energyBomb = newState
+        break
       case "j":
       case "J":
         controlState.jump = newState
