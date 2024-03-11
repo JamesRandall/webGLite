@@ -145,8 +145,6 @@ function headTowardsNoAcceleration(ship: ShipInstance, game: Game, timeDelta: nu
   }
 
   const sideDotProduct = vec3.dot(normalisedDirection, cleanNormalise(ship.rightOrientation))
-  if (sideDotProduct !== 0) debugger
-  game.diagnostics.push(`${sideDotProduct}`)
   if (sideDotProduct > 0.03) {
     ship.roll = -ship.blueprint.maxRollSpeed
   } else if (sideDotProduct < -0.03) {
@@ -200,7 +198,6 @@ function headTowardsAcceleration(ship: ShipInstance, game: Game, timeDelta: numb
   }
 
   const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
-  game.diagnostics.push(`SDP ${sideDotProduct}`)
   if (sideDotProduct > 0) {
     ship.roll -= rollDelta
     if (ship.roll < -ship.blueprint.maxRollSpeed) ship.roll = -ship.blueprint.maxRollSpeed
