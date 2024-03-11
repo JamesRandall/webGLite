@@ -15,7 +15,32 @@ import { recharge, reduceLaserTemperature } from "./playerEnergy"
 import { MissileStatusEnum } from "../model/player"
 import { findShipInCrosshairs } from "./utilities/findShipInCrosshairs"
 import { damagePlayerWithMissile } from "./utilities/damage"
-import { missileDamageAmount } from "../constants"
+import { ecmEnergyCostPerSecond, missileDamageAmount } from "../constants"
+
+function applyEcmCountdown(game: Game, resources: Resources, timeDelta: number) {
+  if (game.ecmTimings !== null) {
+    const energyDelta = ecmEnergyCostPerSecond * timeDelta
+    game.player.energyBankLevel -= energyDelta
+    game.ecmTimings.timeRemaining -= timeDelta
+    if (game.ecmTimings.timeRemaining > 0) {
+      game.ecmTimings.warmUpTimeRemaining -= timeDelta
+      if (game.ecmTimings.warmUpTimeRemaining < 0) {
+        let destroyCount = game.localBubble.ships.reduce((cnt, s) => {
+          if (s.role === ShipRoleEnum.Missile) {
+            s.isDestroyed = true
+            return cnt + 1
+          }
+          return cnt
+        }, 0)
+        if (destroyCount > 0) {
+          resources.soundEffects.shipExplosion()
+        }
+      }
+    } else {
+      game.ecmTimings = null
+    }
+  }
+}
 
 export function flightLoop(resources: Resources, game: Game, timeDelta: number) {
   let missileTargetShipExists = false
@@ -39,6 +64,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   spawnNPCShips(resources, game, timeDelta)
   applyTactics(game, resources, timeDelta)
   lockPlayerMissiles(game, resources)
+  applyEcmCountdown(game, resources, timeDelta) // this is here rather than the flight loop because it can also be triggered by enemy ships
 
   // this should be done at the end of the loop
   replaceDestroyedShipsWithExplosions(game, timeDelta)

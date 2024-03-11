@@ -90,6 +90,7 @@ export const stationTacticsIntervalSeconds = 0.25
 // in the original game player energy refreshes each time from the main loop but enemy ships update in pairs (see
 // applyTactics.ts) and so we use a different interval (based on 12 enemy ships) to refresh player energy
 export const playerEnergyIntervalSeconds = tacticsIntervalSeconds / 6
+export const playerStandardEnergyRecoveryPerSecond = 1
 export const playerLaserCooldownIntervalSeconds = tacticsIntervalSeconds / 12
 export const pulseLaserFrequency = 1.0 / 4.0
 export const beamLaserFrequency = 1.0 / 20.0
@@ -110,3 +111,10 @@ export const miningLaserPower = 50
 export const laserTemperaturePerPulse = 8
 export const laserMaxTemperature = 242
 export const missileDamageAmount = 250
+export const ecmDurationSeconds = 4.0
+export const ecmWarmUpTimeSeconds = 0.5
+// the final deficit from the ECM is 32 units visible on the energy bar, but we'll be recharging at the same time
+// so we account for that here.
+export const ecmTotalEnergyCost =
+  32.0 + (playerStandardEnergyRecoveryPerSecond / playerEnergyIntervalSeconds) * ecmDurationSeconds
+export const ecmEnergyCostPerSecond = ecmTotalEnergyCost / ecmDurationSeconds

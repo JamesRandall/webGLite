@@ -71,6 +71,7 @@ export interface Game {
   flashMessageIntervals: number[]
   message: string | null
   purchasingLaserType: LaserTypeEnum | null
+  ecmTimings: { timeRemaining: number; warmUpTimeRemaining: number } | null
 }
 export function flashMessage(game: Game, message: string) {
   const flashSpeed = 0.5

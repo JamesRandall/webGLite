@@ -1,4 +1,3 @@
-import { Player } from "../model/player"
 import { ControlState } from "./controlState"
 
 export function bindKeys(controlState: ControlState) {
@@ -18,6 +17,7 @@ export function bindKeys(controlState: ControlState) {
       case "l":
       case "L":
         controlState.loading = newState
+        break
       case "a":
       case "A":
         controlState.firing = newState
@@ -54,6 +54,10 @@ export function bindKeys(controlState: ControlState) {
         break
       case "/":
         controlState.decelerate = newState
+        break
+      case "e":
+      case "E":
+        controlState.ecm = newState
         break
       case "j":
       case "J":

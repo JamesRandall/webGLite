@@ -153,15 +153,19 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
   draw2d.text.drawAtSize("4", [tr + cw / 2, topOffset + barHeight * 6], cw, ch, 0, standardBarColor)
 
   const compassCenter = drawCompass(width, sidePanelWidth, draw2d, game)
+  const safeZoneW = 30
+  const safeZoneH = 30
+  const safeZone = vec2.fromValues(
+    compassCenter[0] - safeZoneW / 2 + 2,
+    //rightStartBarX - safeZoneW - safeZoneW/2,
+    draw2d.size().height - safeZoneH * 1.5,
+  )
   if (game.player.isInSafeZone && !game.player.isDocked) {
-    const safeZoneW = 30
-    const safeZoneH = 30
-    const safeZone = vec2.fromValues(
-      compassCenter[0] - safeZoneW / 2 + 2,
-      //rightStartBarX - safeZoneW - safeZoneW/2,
-      draw2d.size().height - safeZoneH * 1.5,
-    )
     draw2d.text.drawAtSize("S", safeZone, safeZoneW, safeZoneH, 0, [1, 1, 1, 1])
+  }
+  if (game.ecmTimings !== null) {
+    const ecmZone = vec2.fromValues(rightStartBarX - safeZone[0] + sidePanelWidth - safeZoneW, safeZone[1])
+    draw2d.text.drawAtSize("E", ecmZone, safeZoneW, safeZoneH, 0, [1, 1, 1, 1])
   }
 }
 

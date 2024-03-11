@@ -9,6 +9,8 @@ import { createDockingLoop } from "./docking"
 import { createFramerateCounter } from "../utilities"
 import { vec3 } from "gl-matrix"
 import { saveGame } from "../persistence"
+import { ShipRoleEnum } from "../model/ShipInstance"
+import { ecmEnergyCostPerSecond } from "../constants"
 
 function applySceneSelection(game: Game) {
   if (

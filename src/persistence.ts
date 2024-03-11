@@ -191,6 +191,7 @@ export function newGame(gl: WebGL2RenderingContext, resources: Resources) {
     flashMessageIntervals: [],
     message: null,
     purchasingLaserType: null,
+    ecmTimings: null,
   }
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
 

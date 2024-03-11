@@ -1,5 +1,9 @@
 import { Player } from "../model/player"
-import { playerEnergyIntervalSeconds, playerLaserCooldownIntervalSeconds } from "../constants"
+import {
+  playerEnergyIntervalSeconds,
+  playerLaserCooldownIntervalSeconds,
+  playerStandardEnergyRecoveryPerSecond,
+} from "../constants"
 
 export function recharge(player: Player, timeDelta: number) {
   player.timeToNextEnergyRecharge -= timeDelta
@@ -16,7 +20,10 @@ export function recharge(player: Player, timeDelta: number) {
       player.energyBankLevel--
     }
   }
-  player.energyBankLevel += player.equipment.energyUnit ? 2 : 1
+  player.energyBankLevel += playerStandardEnergyRecoveryPerSecond * (player.equipment.energyUnit ? 2 : 1)
+  if (player.energyBankLevel > player.blueprint.maxEnergy) {
+    player.energyBankLevel = player.blueprint.maxEnergy
+  }
 }
 
 export function reduceLaserTemperature(player: Player, timeDelta: number) {

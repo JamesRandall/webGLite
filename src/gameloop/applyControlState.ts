@@ -5,7 +5,7 @@ import { getNearestSystemToCursor } from "./utilities/map"
 import { createDockingComputer } from "./utilities/dockingComputer"
 import { Resources } from "../resources/resources"
 import { ShipInstance } from "../model/ShipInstance"
-import { scannerRadialWorldRange } from "../constants"
+import { ecmDurationSeconds, ecmTotalEnergyCost, ecmWarmUpTimeSeconds, scannerRadialWorldRange } from "../constants"
 import { nextEffect, previousEffect } from "../renderer/rootRenderer"
 
 export function applyControlState(game: Game, resources: Resources, timeDelta: number) {
@@ -21,11 +21,25 @@ export function applyControlState(game: Game, resources: Resources, timeDelta: n
     }
     applyLasers(game, timeDelta)
     applyMissiles(game)
+    applyEcm(game, resources, timeDelta)
   }
   if (game.hyperspace === null) {
     applyCursors(player, timeDelta)
   }
   applyEffects(game)
+}
+
+function applyEcm(game: Game, resources: Resources, timeDelta: number) {
+  if (
+    game.player.controlState.ecm &&
+    !game.player.previousControlState.ecm &&
+    game.ecmTimings === null &&
+    game.player.equipment.ecmSystem &&
+    game.player.energyBankLevel >= ecmTotalEnergyCost
+  ) {
+    game.ecmTimings = { timeRemaining: ecmDurationSeconds, warmUpTimeRemaining: ecmWarmUpTimeSeconds }
+    resources.soundEffects.ecm()
+  }
 }
 
 function applyLasers(game: Game, timeDelta: number) {
