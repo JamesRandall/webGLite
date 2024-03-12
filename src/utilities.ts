@@ -1,5 +1,6 @@
 import { vec3 } from "gl-matrix"
 import { averageSpawnTimeInSecond } from "./constants"
+import { Game } from "./model/game"
 
 export function getConstraints(vertices: vec3[]) {
   return vertices.reduce(
@@ -65,4 +66,13 @@ export function createFramerateCounter() {
     }
     return Math.round(1 / (frameTimes.reduce((a, b) => a + b, 0) / size))
   }
+}
+
+export function calculateAltitudeAndMaxAltitude(game: Game) {
+  const maxAltitude = game.localBubble.planet.radius * 1.1 // station is at *2 so we put the max a bit higher
+  const altitude = Math.max(
+    Math.min(vec3.length(game.localBubble.planet.position) - game.localBubble.planet.radius, maxAltitude),
+    0,
+  )
+  return { maxAltitude, altitude }
 }

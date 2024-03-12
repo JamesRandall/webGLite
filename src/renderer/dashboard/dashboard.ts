@@ -6,6 +6,7 @@ import { createScannerBackgroundRenderer } from "./scannerBackground"
 import { createScannerShipRenderer } from "./scannerShips"
 import { Resources } from "../../resources/resources"
 import { MissileStatusEnum } from "../../model/player"
+import { calculateAltitudeAndMaxAltitude } from "../../utilities"
 
 const sidePanelWidth = 800 / 5.0 //width / 5.0
 
@@ -127,7 +128,10 @@ function drawHud(draw2d: Primitives, width: number, height: number, game: Game) 
       : vec4.fromValues(1, 1, 1, 1),
   )
   draw2d.text.drawAtSize("LT", [tl, topOffset + barHeight * 4], cw, ch, 0, standardBarColor)
-  drawBar(true, 5, game.player.altitude, game.player.blueprint.maxAltitude, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
+
+  const { altitude, maxAltitude } = calculateAltitudeAndMaxAltitude(game)
+  drawBar(true, 5, altitude, maxAltitude, vec4.fromValues(1.0, 1.0, 0.0, 1.0))
+
   draw2d.text.drawAtSize("AL", [tl, topOffset + barHeight * 5], cw, ch, 0, standardBarColor)
   drawBar(
     false,

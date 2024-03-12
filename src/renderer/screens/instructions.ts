@@ -36,6 +36,8 @@ export function createInstructionsRenderer(gl: WebGL2RenderingContext, resources
     text.draw("T      arm missile", [1, row++])
     text.draw("U      unarm missile", [1, row++])
     text.draw("M      fire missile", [1, row++])
+    text.draw("E      ECM", [1, row++])
+    text.draw("TAB    energy bomb", [1, row++])
 
     row++
     text.draw("1      front \\ launch", [1, row++])

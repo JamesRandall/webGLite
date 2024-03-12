@@ -194,6 +194,8 @@ export function newGame(gl: WebGL2RenderingContext, resources: Resources) {
     ecmTimings: null,
   }
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
+  game.localBubble.planet.radius = game.currentSystem.averageRadius
+  game.localBubble.planet.position = [0, 0, -game.currentSystem.averageRadius * 2]
 
   return game
 }

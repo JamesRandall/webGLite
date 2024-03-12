@@ -16,6 +16,7 @@ import { MissileStatusEnum } from "../model/player"
 import { findShipInCrosshairs } from "./utilities/findShipInCrosshairs"
 import { damagePlayerWithMissile } from "./utilities/damage"
 import { ecmEnergyCostPerSecond, missileDamageAmount } from "../constants"
+import { calculateAltitudeAndMaxAltitude } from "../utilities"
 
 function applyEcmCountdown(game: Game, resources: Resources, timeDelta: number) {
   if (game.ecmTimings !== null) {
@@ -70,6 +71,7 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
   replaceDestroyedShipsWithExplosions(game, timeDelta)
   recharge(game.player, timeDelta)
   reduceLaserTemperature(game.player, timeDelta)
+  checkAltitude(game)
 
   // Useful diagnostic when working on manual docking or with the docking computer - shows the station roll and pitch
   //stationPitchAndRoll(game)
@@ -79,6 +81,13 @@ export function flightLoop(resources: Resources, game: Game, timeDelta: number) 
 
   // And another
   //stationDistance(game)
+}
+
+function checkAltitude(game: Game) {
+  const { altitude } = calculateAltitudeAndMaxAltitude(game)
+  if (altitude <= 0) {
+    game.currentScene = SceneEnum.PlayerExploding
+  }
 }
 
 function lockPlayerMissiles(game: Game, resources: Resources) {
