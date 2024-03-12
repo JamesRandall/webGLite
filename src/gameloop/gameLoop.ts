@@ -92,7 +92,8 @@ function applyHyperspaceCountdown(game: Game, hyperspaceClock: number | null, de
     if (hyperspaceClock > 0.1 && game.hyperspace !== null) {
       game.hyperspace.countdown--
       if (game.hyperspace.countdown === 0) {
-        game.currentScene = SceneEnum.Hyperspace
+        game.currentScene = SceneEnum.Witchspace
+        //game.currentScene = SceneEnum.Hyperspace
       } else {
         hyperspaceClock = 0
       }
@@ -107,6 +108,7 @@ function shouldRunFlightLoop(game: Game) {
   return (
     !game.player.isDocked &&
     game.currentScene != SceneEnum.Hyperspace &&
+    game.currentScene != SceneEnum.Witchspace &&
     game.currentScene != SceneEnum.Launching &&
     game.currentScene != SceneEnum.PlayerExploding &&
     game.currentScene != SceneEnum.Docking
@@ -201,9 +203,14 @@ export function createGameLoop(resources: Resources, renderer: RendererEffectFun
         resources.soundEffects.launch()
       }
       launchingLoop!(deltaTime)
-    } else if (game.currentScene === SceneEnum.Hyperspace) {
+    } else if (game.currentScene === SceneEnum.Hyperspace || game.currentScene === SceneEnum.Witchspace) {
       if (hyperspaceLoop === null) {
-        hyperspaceLoop = createHyperspaceLoop(game, resources, () => (hyperspaceLoop = null))
+        hyperspaceLoop = createHyperspaceLoop(
+          game,
+          resources,
+          game.currentScene === SceneEnum.Witchspace,
+          () => (hyperspaceLoop = null),
+        )
         resources.soundEffects.hyperspace()
       }
       hyperspaceLoop!(deltaTime)

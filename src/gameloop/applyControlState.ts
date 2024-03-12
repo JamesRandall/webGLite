@@ -116,8 +116,7 @@ function applyDockingComputer(game: Game, resources: Resources, timeDelta: numbe
 }
 
 function applyHyperspace(game: Game) {
-  if (game.player.controlState.hyperspace) {
-    game.player.controlState.hyperspace = false
+  if (game.player.controlState.hyperspace && !game.player.previousControlState.hyperspace) {
     if (game.hyperspace === null) {
       const selectedSystem = getNearestSystemToCursor(game)
       game.player.selectedSystem = selectedSystem

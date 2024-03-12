@@ -92,6 +92,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
         break
 
       case SceneEnum.Hyperspace:
+      case SceneEnum.Witchspace:
         hyperspaceRenderer(game)
         break
 
