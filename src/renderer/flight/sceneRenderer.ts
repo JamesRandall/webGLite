@@ -64,8 +64,10 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
         gl.enable(gl.DEPTH_TEST)
         shipRenderer(viewProjectionMatrix, game.localBubble)
         explosionRenderer(viewProjectionMatrix, game.localBubble)
-        sunRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
-        planetRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
+        if (!game.isInWitchspace) {
+          sunRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
+          planetRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
+        }
         stardustRenderer(game)
         gl.disable(gl.DEPTH_TEST)
         break

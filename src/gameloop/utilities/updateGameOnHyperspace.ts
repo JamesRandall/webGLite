@@ -1,11 +1,10 @@
-import { Game } from "../../model/game"
+import { Game, SceneEnum } from "../../model/game"
 import { Resources } from "../../resources/resources"
 import { vec2, vec3 } from "gl-matrix"
 import {
   calculateSpaceStationPlanetDistance,
   calculateSpaceStationRotationSpeed,
   degreesToRadians,
-  move,
   rotateLocationInSpaceByPitchAndRoll,
   rotateOrientationVectorsByPitchAndRoll,
 } from "./transforms"
@@ -13,7 +12,13 @@ import { worldSize } from "../../constants"
 import { generateMarketItems } from "../../proceduralGeneration/marketItems"
 
 export function updateGameOnHyperspace(game: Game, resources: Resources) {
-  const distance = vec2.distance(game.currentSystem.galacticPosition, game.player.selectedSystem.galacticPosition)
+  game.isInWitchspace = game.currentScene === SceneEnum.Witchspace
+  // the original game would consume the players fuel when they got sucked into witchspace that left them stranded
+  // and unable to get back out if they didn't have enough fuel. Instead we take fuel for a third of the distance
+  // making it much more likely they can escape
+  const distance =
+    vec2.distance(game.currentSystem.galacticPosition, game.player.selectedSystem.galacticPosition) /
+    (game.isInWitchspace ? 3 : 1)
   game.player.fuel = Math.max(0, game.player.fuel - Math.floor(distance * 10))
   game.hyperspace = null
   game.currentSystem = game.player.selectedSystem
@@ -22,7 +27,12 @@ export function updateGameOnHyperspace(game: Game, resources: Resources) {
 
   positionPlayerAwayFromPlanet(game)
   positionSun(game)
-  spawnStationInOrbit(game, resources)
+  if (game.isInWitchspace) {
+    spawnThargoids(game, resources)
+  } else {
+    spawnStationInOrbit(game, resources)
+  }
+
   game.marketItems = generateMarketItems(game.currentSystem)
 }
 
@@ -101,3 +111,5 @@ function positionSun(game: Game) {
     vec3.subtract(vec3.create(), game.localBubble.planet.position, game.localBubble.sun.position),
   )
 }
+
+function spawnThargoids(game: Game, resources: Resources) {}

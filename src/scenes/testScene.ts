@@ -88,6 +88,7 @@ export function createTestScene(resources: Resources, gl: WebGL2RenderingContext
     message: null,
     purchasingLaserType: null,
     ecmTimings: null,
+    isInWitchspace: false,
   }
   game.player.isDocked = false
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
