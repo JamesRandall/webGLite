@@ -1,6 +1,6 @@
 import { Game } from "../../model/game"
 import { randomiseSpawnDelta } from "../../utilities"
-import { ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
+import { AttitudeEnum, ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
 import { vec3 } from "gl-matrix"
 import { scannerRadialWorldRange } from "../../constants"
 import { Resources } from "../../resources/resources"
@@ -163,6 +163,7 @@ function spawnInstanceOfPirate(resources: Resources, game: Game, position: vec3,
   ship.role = ShipRoleEnum.Pirate
   ship.hasECM = Math.random() < 0.22
   ship.aiEnabled = true
+  ship.attitude = AttitudeEnum.Hostile
 
   game.localBubble.ships.push(ship)
   return ship
