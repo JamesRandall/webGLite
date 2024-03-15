@@ -95,14 +95,14 @@ function extractFromObj(
   lines.forEach((line) => {
     const components = line.split(" ")
     if (components.length > 0) {
-      if (components[0] == "v") {
+      if (components[0] === "v") {
         const newVector = vec3.fromValues(
           parseFloat(components[1]) * scale,
           parseFloat(components[2]) * scale,
           parseFloat(components[3]) * scale,
         )
         vertices.push(newVector)
-      } else if (components[0] == "f") {
+      } else if (components[0] === "f") {
         // Face can be in the formats:
         // f 1 2 3              indices for positions only
         // f 1/1 2/2 3/3        indices for positions and texcoords

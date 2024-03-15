@@ -250,6 +250,13 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
       canApplyTactics: false,
       targetIndex: null,
     },
+    numberOfShipsToSpawn:
+      ship.model === ShipModelEnum.Thargoid
+        ? Math.ceil(Math.random() * 3)
+        : ship.model === ShipModelEnum.Anaconda
+          ? 1
+          : 0,
+    timeToNextSpawn: null,
   } as ShipInstance
 }
 
@@ -726,6 +733,26 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       canBeRockHermit: true,
     },
     {
+      name: "Thargon",
+      model: ShipModelEnum.Thargon,
+      renderingModel: loadModel(gl, "ships/tharglet.obj", shipScaleFactor),
+      explosion: loadExplosionFromModel(gl, "ships/tharglet.obj", shipScaleFactor),
+      ...playerDefaults,
+      pregameScale: 1.2,
+      maxSpeed: 30,
+      canBeTrader: false,
+      canBePirate: false,
+      canBeBountyHunter: false,
+      fixedDirectionOfMovement: false,
+      maxCanistersOnDeath: 7,
+      targetableArea: 99 * 99,
+      laserPower: 2,
+      maxAiMissiles: 0,
+      maxAiEnergy: 20,
+      bounty: 5.0,
+      canBeRockHermit: false,
+    },
+    {
       name: "Thargoid",
       model: ShipModelEnum.Thargoid,
       renderingModel: loadModel(gl, "ships/thargoid.obj", shipScaleFactor),
@@ -740,7 +767,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
       maxCanistersOnDeath: 7,
       targetableArea: 99 * 99,
       laserPower: 2,
-      maxAiMissiles: 6,
+      maxAiMissiles: 0,
       maxAiEnergy: 240,
       bounty: 50.0,
       canBeRockHermit: false,
