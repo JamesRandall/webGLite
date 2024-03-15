@@ -192,6 +192,7 @@ export function newGame(gl: WebGL2RenderingContext, resources: Resources) {
     message: null,
     purchasingLaserType: null,
     ecmTimings: null,
+    isInWitchspace: false,
   }
   game.player.cargoHoldContents = game.marketItems.map(() => 0)
   game.localBubble.planet.radius = game.currentSystem.averageRadius

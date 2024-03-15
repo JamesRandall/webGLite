@@ -66,4 +66,6 @@ export interface ShipInstance extends PositionedObject {
   rollAcceleration: AccelerationModeEnum
   tacticsState: TacticsState
   isDestroyed: boolean
+  numberOfShipsToSpawn: number
+  timeToNextSpawn: number | null
 }

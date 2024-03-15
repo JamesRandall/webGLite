@@ -28,7 +28,9 @@ function drawCompass(width: number, sidePanelWidth: number, draw2d: Primitives, 
   //const compassPointsTowards = game.player.isInSafeZone && game.localBubble.station !== null ? game.localBubble.station.position : game.localBubble.planet.position
   const compassPointsTowards =
     game.localBubble.station !== null ? game.localBubble.station.position : game.localBubble.planet.position
-  const directionVector = vec3.normalize(vec3.create(), compassPointsTowards)
+  const directionVector = game.isInWitchspace
+    ? vec3.fromValues(0, 0, 1)
+    : vec3.normalize(vec3.create(), compassPointsTowards)
   const compassWidth = 8.0
   const compassHeight = 6.0
   const xPos = innerCompassRadius * directionVector[0] - compassWidth / 2

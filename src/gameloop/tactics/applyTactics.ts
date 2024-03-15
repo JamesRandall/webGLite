@@ -12,6 +12,7 @@ import { ShipModelEnum } from "../../model/shipBlueprint"
 import { anacondaTactics } from "./anacondaTactics"
 import { considerFiringLasers, considerFiringMissile, considerLaunchingEscapePod } from "./weapons"
 import { stationTacticsIntervalSeconds, tacticsIntervalSeconds } from "../../constants"
+import { thargoidTactics } from "./thargoidTactics"
 
 export function applyTactics(game: Game, resources: Resources, timeDelta: number) {
   // TODO: In the original game this operated on a couple of ships from the full set each
@@ -90,9 +91,12 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
     if (ship.blueprint.model === ShipModelEnum.Anaconda) {
       anacondaTactics(ship, game, resources)
     }
-    // Original game uses this percentage but its based on its loop timing system
-    // if (Math.random() < 0.0025) {
+    if (ship.blueprint.model === ShipModelEnum.Thargoid) {
+      thargoidTactics(ship, game, resources, timeDelta)
+    }
     if (ship.role != ShipRoleEnum.Missile && Math.random() < 0.05) {
+      // Original game uses this percentage but its based on its loop timing system
+      // if (Math.random() < 0.0025) {
       rollShipByNoticeableAmount(ship)
     }
     if (ship.energy > ship.blueprint.maxAiEnergy / 2) {

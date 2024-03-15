@@ -6,6 +6,7 @@ import { Resources } from "../../resources/resources"
 export function anacondaTactics(ship: ShipInstance, game: Game, resources: Resources) {
   if (!ship.tacticsState.canApplyTactics) return
   if (!ship.aiEnabled || ship.aggressionLevel === 0) return
+  if (ship.numberOfShipsToSpawn === 0) return
   if (Math.random() > 0.22) return
 
   const model = Math.random() < 0.61 ? ShipModelEnum.Worm : ShipModelEnum.Sidewinder
@@ -15,4 +16,6 @@ export function anacondaTactics(ship: ShipInstance, game: Game, resources: Resou
   newShip.aggressionLevel = 28
   newShip.attitude = AttitudeEnum.Hostile
   game.localBubble.ships.push(newShip)
+
+  ship.numberOfShipsToSpawn--
 }

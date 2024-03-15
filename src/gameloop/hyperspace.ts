@@ -5,7 +5,7 @@ import { Resources } from "../resources/resources"
 import { updateGameOnLaunch } from "./utilities/updateGameOnLaunch"
 import { updateGameOnHyperspace } from "./utilities/updateGameOnHyperspace"
 
-export function createHyperspaceLoop(game: Game, resources: Resources, onComplete: () => void) {
+export function createHyperspaceLoop(game: Game, resources: Resources, isWitchspace: boolean, onComplete: () => void) {
   let now = 0
   let rotationTime = 0
   let outboundMultiplier = 1

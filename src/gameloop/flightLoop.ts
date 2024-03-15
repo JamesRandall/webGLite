@@ -109,6 +109,8 @@ function updateStationAndSafeZone(game: Game) {
     //    game.localBubble.ships = game.localBubble.ships.filter(s => s.role !== ShipRoleEnum.Station)
     //    game.localBubble.station = null
     //}
+  } else {
+    game.player.isInSafeZone = false
   }
 }
 

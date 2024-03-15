@@ -17,6 +17,7 @@ export enum SceneEnum {
   Inventory,
   Launching,
   Hyperspace,
+  Witchspace,
   BuyMarketItems,
   BuyEquipment,
   Docking,
@@ -72,6 +73,9 @@ export interface Game {
   message: string | null
   purchasingLaserType: LaserTypeEnum | null
   ecmTimings: { timeRemaining: number; warmUpTimeRemaining: number } | null
+  // Rather than deal with null planets and suns everywhere we instead just don't render them
+  // and fix the altitude when we are in witchspace
+  isInWitchspace: boolean
 }
 export function flashMessage(game: Game, message: string) {
   const flashSpeed = 0.5

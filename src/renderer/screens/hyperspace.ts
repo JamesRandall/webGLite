@@ -1,5 +1,5 @@
 import { Primitives } from "../primitives/primitives"
-import { Game } from "../../model/game"
+import { Game, SceneEnum } from "../../model/game"
 import { frameColor, frameWidth } from "../../constants"
 import { CombatRatingEnum, LaserTypeEnum, LegalStatusEnum } from "../../model/player"
 import { createPolygonRenderer } from "../primitives/polygon"
@@ -23,6 +23,13 @@ export function createHyperspaceRenderer(
     vec4.fromValues(0, 0, 1, 1),
     vec4.fromValues(0, 1, 1, 1),
   ]
+  const witchspaceColors = [
+    vec4.fromValues(0.7, 0.7, 0.7, 1),
+    vec4.fromValues(0.5, 0.5, 0.5, 1),
+    vec4.fromValues(0.3, 0.3, 0.3, 1),
+    vec4.fromValues(0.1, 0.1, 0.1, 1),
+    vec4.fromValues(0.0, 0.0, 0.0, 1),
+  ]
   return function renderHyperspace(game: Game) {
     if (game.hyperspace === null) {
       return
@@ -35,7 +42,10 @@ export function createHyperspaceRenderer(
       if (rotationIndex > game.hyperspace!.rotation) {
         rotationIndex = game.hyperspace!.rotation
       }
-      const color = colors[Math.floor(Math.random() * (colors.length - 1))]
+      const color =
+        game.currentScene === SceneEnum.Hyperspace
+          ? colors[Math.floor(Math.random() * (colors.length - 1))]
+          : witchspaceColors[Math.floor(Math.random() * (witchspaceColors.length - 1))]
       //octRenderer([centerX, centerY], radius*maxRadius, color, rotation)
       octRenderer([centerX, centerY], radius * maxRadius, color, rotation)
     })

@@ -1,0 +1,47 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v4.1.0)
+
+mtllib ejmlfyczcthc.mtl
+
+# 10 vertex positions
+v -9 -38 -13
+v -9 0 -40
+v 9 0 8
+v 9 -10 15
+v -9 -24 32
+v 9 -6 26
+v -9 24 32
+v 9 6 26
+v -9 38 -13
+v 9 10 15
+
+# 0 UV coordinates
+
+# 7 vertex normals
+vn 0.8932254910469055 -0.4265365600585938 -0.1421788483858109
+vn 0.9260088205337524 -0.14519302546978 -0.348463237285614
+vn 0.6507997512817383 -0.4459795355796814 0.6144607067108154
+vn 0.6424312591552734 0.4501464664936066 0.6202018260955811
+vn 0.8198146224021912 0.5709423422813416 0.04391863942146301
+vn -1 0 0
+vn 1 0 0
+
+# Mesh '$dummy_node' with 5 faces
+g $dummy_node
+usemtl Material1
+f 1//1 2//2 3//2 4//1
+f 5//3 1//1 4//1 6//3
+f 7//4 5//3 6//3 8//4
+f 9//5 7//4 8//4 10//5
+f 10//5 3//2 2//2 9//5
+
+# Mesh '$dummy_node' with 1 faces
+g $dummy_node
+usemtl Material2
+f 9//6 2//6 1//6 5//6 7//6
+
+# Mesh '$dummy_node' with 1 faces
+g $dummy_node
+usemtl Material3
+f 8//7 6//7 4//7 3//7 10//7
+

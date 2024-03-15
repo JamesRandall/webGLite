@@ -94,6 +94,7 @@ export const createPregameScene = (resources: Resources, gl: WebGL2RenderingCont
     message: null,
     purchasingLaserType: null,
     ecmTimings: null,
+    isInWitchspace: false,
   }
 
   let rootRenderer = createRootRenderer(
