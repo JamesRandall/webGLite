@@ -196,8 +196,6 @@ export async function loadRawModel(path: string, scale: number) {
         const edge2 = vec3.create()
         const normal = vec3.create()
 
-        if (faceVertices.length < 3) debugger
-
         vec3.subtract(edge1, faceVertices[0], faceVertices[1])
         vec3.subtract(edge2, faceVertices[1], faceVertices[2])
         vec3.cross(normal, edge1, edge2)
