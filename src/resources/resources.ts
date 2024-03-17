@@ -299,6 +299,9 @@ async function loadShipSpecifications(
     pregameScale: 1,
   }
 
+  const curveFactorRoll = (cv: number) => (shipMovementSpeeds.maxRollSpeed / 8) * cv
+  const curveFactorPitch = (cv: number) => (shipMovementSpeeds.maxPitchSpeed / 8) * cv
+
   const loadingShips = [
     {
       name: "Cobra Mk III",
@@ -319,6 +322,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 150,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(8),
+      maxPitchSpeed: curveFactorPitch(8),
     },
     {
       name: "Adder",
@@ -339,6 +344,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 85,
       bounty: 4.0,
       canBeRockHermit: true,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Anaconda",
@@ -359,6 +366,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 252,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(3),
+      maxPitchSpeed: curveFactorPitch(3),
     },
     {
       name: "Asp",
@@ -379,6 +388,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 150,
       bounty: 20.0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Asteroid",
@@ -399,6 +410,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 60,
       bounty: 0.5,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(1),
+      maxPitchSpeed: curveFactorPitch(1),
     },
     {
       name: "Boa",
@@ -419,6 +432,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 250,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Boulder",
@@ -439,6 +454,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 20,
       bounty: 0.1,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(2),
+      maxPitchSpeed: curveFactorPitch(2),
     },
     {
       name: "Cargo",
@@ -459,6 +476,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 17,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(2),
+      maxPitchSpeed: curveFactorPitch(2),
     },
     {
       name: "Cobra Mk I",
@@ -479,6 +498,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 90,
       bounty: 7.5,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(3),
+      maxPitchSpeed: curveFactorPitch(3),
     },
     {
       name: "Constrictor",
@@ -499,6 +520,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 252,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(8),
+      maxPitchSpeed: curveFactorPitch(8),
     },
     {
       name: "Coriolis",
@@ -519,6 +542,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 240,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Dodo",
@@ -539,6 +564,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 240,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Escape Pod",
@@ -559,6 +586,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 17,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Fer de Lance",
@@ -579,6 +608,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 160,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(5),
+      maxPitchSpeed: curveFactorPitch(5),
     },
     {
       name: "Gecko",
@@ -599,6 +630,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 70,
       bounty: 5.5,
       canBeRockHermit: true,
+      maxRollSpeed: curveFactorRoll(7),
+      maxPitchSpeed: curveFactorPitch(7),
     },
     {
       name: "Krait",
@@ -619,6 +652,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 80,
       bounty: 10.0,
       canBeRockHermit: true,
+      maxRollSpeed: curveFactorRoll(8),
+      maxPitchSpeed: curveFactorPitch(8),
     },
     {
       name: "Mamba",
@@ -639,6 +674,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 90,
       bounty: 15.0,
       canBeRockHermit: true,
+      maxRollSpeed: curveFactorRoll(9),
+      maxPitchSpeed: curveFactorPitch(9),
     },
     {
       name: "Missile",
@@ -683,6 +720,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 100,
       bounty: 5.0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(6),
+      maxPitchSpeed: curveFactorPitch(6),
     },
     {
       name: "Python",
@@ -703,6 +742,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 250,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(3),
+      maxPitchSpeed: curveFactorPitch(3),
     },
     {
       name: "Shuttle",
@@ -723,6 +764,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 32,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Sidewinder",
@@ -743,6 +786,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 70,
       bounty: 5.0,
       canBeRockHermit: true,
+      maxRollSpeed: curveFactorRoll(9),
+      maxPitchSpeed: curveFactorPitch(9),
     },
     {
       name: "Thargon",
@@ -763,6 +808,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 20,
       bounty: 5.0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(4),
+      maxPitchSpeed: curveFactorPitch(4),
     },
     {
       name: "Thargoid",
@@ -783,6 +830,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 240,
       bounty: 50.0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(6),
+      maxPitchSpeed: curveFactorPitch(6),
     },
     {
       name: "Transporter",
@@ -803,6 +852,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 32,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(2),
+      maxPitchSpeed: curveFactorPitch(2),
     },
     {
       name: "Viper",
@@ -823,6 +874,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 140,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(7.4),
+      maxPitchSpeed: curveFactorPitch(7.4),
     },
     {
       name: "Worm",
@@ -843,6 +896,8 @@ async function loadShipSpecifications(
       maxAiEnergy: 30,
       bounty: 0,
       canBeRockHermit: false,
+      maxRollSpeed: curveFactorRoll(6),
+      maxPitchSpeed: curveFactorPitch(6),
     },
   ]
   const loadedShips = await Promise.all(loadingShips.map((ls) => ls.renderingModel))

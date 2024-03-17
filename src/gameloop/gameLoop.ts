@@ -9,8 +9,6 @@ import { createDockingLoop } from "./docking"
 import { createFramerateCounter } from "../utilities"
 import { vec3 } from "gl-matrix"
 import { saveGame } from "../persistence"
-import { ShipRoleEnum } from "../model/ShipInstance"
-import { ecmEnergyCostPerSecond } from "../constants"
 
 function applySceneSelection(game: Game) {
   if (
@@ -92,8 +90,8 @@ function applyHyperspaceCountdown(game: Game, hyperspaceClock: number | null, de
     if (hyperspaceClock > 0.1 && game.hyperspace !== null) {
       game.hyperspace.countdown--
       if (game.hyperspace.countdown === 0) {
-        game.currentScene = SceneEnum.Witchspace
-        //game.currentScene = SceneEnum.Hyperspace
+        // very slight chance of entering witchspace
+        game.currentScene = Math.random() >= 0.95 ? SceneEnum.Witchspace : SceneEnum.Hyperspace
       } else {
         hyperspaceClock = 0
       }
