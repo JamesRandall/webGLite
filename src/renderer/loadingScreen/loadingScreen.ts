@@ -147,6 +147,7 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   window.addEventListener("mousedown", proceedHandler)
   const loadingBarInner = document.getElementById("loading-bar-inner")!
   const loadingBarOuter = document.getElementById("loading-bar-outer")!
+  loadingBarOuter.style.display = "block"
 
   // Thinking the loading screen would be simple and is in a strange place in the system (before resource loading)
   // I didn't follow my usual scene / render split thinking "I'll just keep it simple". However... then I introduced
@@ -196,13 +197,8 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       const delta = now - previousTime
       previousTime = now
 
-      if (
-        planetPointVisits >= numberOfPlanetPoints &&
-        ringPointVisits >= numberOfRingPoints &&
-        starPointVisits >= numberOfStarPoints &&
-        resourcesReady &&
-        logoAlpha < 1.0
-      ) {
+      const resourceStatus = getResourceStatus()
+      if (resourceStatus.loaded >= resourceStatus.max && logoAlpha < 1.0) {
         logoAlpha += delta
       }
 
@@ -285,7 +281,6 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       logoRenderer(logoAlpha)
       startRenderer(logoAlpha)
 
-      const resourceStatus = getResourceStatus()
       if (resourceStatus.loaded >= resourceStatus.max) {
         loadingBarAlpha -= delta
         canProceed = true
