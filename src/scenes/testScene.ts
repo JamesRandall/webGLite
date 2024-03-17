@@ -101,8 +101,8 @@ export function createTestScene(resources: Resources, gl: WebGL2RenderingContext
   bindMouse(game.player.controlState)
   const sceneRenderer = createSceneRenderer(gl, resources)
   const dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
-  const rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
-  const gameLoop = createGameLoop(resources, rootRenderer, () => {})
+  const rootRenderer = createRootRenderer(gl, resources, sceneRenderer.render, dashboardRenderer.render)
+  const gameLoop = createGameLoop(resources, rootRenderer.render, () => {})
 
   return {
     resize: () => {},

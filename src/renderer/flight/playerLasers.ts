@@ -5,7 +5,7 @@ import { Resources } from "../../resources/resources"
 import { Game } from "../../model/game"
 
 export function createPlayerLaserRenderer(gl: WebGL2RenderingContext, resources: Resources) {
-  let { render: leftLaser } = createTriangleRenderer(
+  let leftLaser = createTriangleRenderer(
     gl,
     dimensions.width,
     dimensions.mainViewHeight,
@@ -17,7 +17,7 @@ export function createPlayerLaserRenderer(gl: WebGL2RenderingContext, resources:
     resources,
   )
 
-  let { render: rightLaser } = createTriangleRenderer(
+  let rightLaser = createTriangleRenderer(
     gl,
     dimensions.width,
     dimensions.mainViewHeight,
@@ -29,10 +29,16 @@ export function createPlayerLaserRenderer(gl: WebGL2RenderingContext, resources:
     resources,
   )
 
-  return function renderLasers(game: Game) {
+  const dispose = () => {
+    leftLaser.dispose()
+    rightLaser.dispose()
+  }
+  const render = (game: Game) => {
     if (game.player.isLaserActive) {
-      leftLaser(game.player.laserOffset, [1.0, 0.0, 0.0, 1.0])
-      rightLaser(game.player.laserOffset, [1.0, 0.0, 0.0, 1.0])
+      leftLaser.render(game.player.laserOffset, [1.0, 0.0, 0.0, 1.0])
+      rightLaser.render(game.player.laserOffset, [1.0, 0.0, 0.0, 1.0])
     }
   }
+
+  return { render, dispose }
 }

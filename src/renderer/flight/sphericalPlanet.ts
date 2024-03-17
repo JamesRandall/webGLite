@@ -1,13 +1,14 @@
-import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
+import { compileShaderProgram, compileShaderProgramFromSource } from "../../shader"
 import { LocalBubble } from "../../model/localBubble"
 import { mat4, quat, vec3 } from "gl-matrix"
 import { createSphere } from "../../resources/sphere"
 import { Resources } from "../../resources/resources"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { planetScaleFactor } from "../../constants"
+import { disposeRenderingModel } from "../../resources/models"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.planet)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.planet)
   if (!shaderProgram) {
     return null
   }
@@ -40,7 +41,10 @@ export function createSphericalPlanetRenderer(gl: WebGL2RenderingContext, resour
     textureFile: "./meridian.png",
   })
 
-  return function (projectionMatrix: mat4, localBubble: LocalBubble, timeDelta: number) {
+  const dispose = () => {
+    disposeRenderingModel(gl, sphere)
+  }
+  const render = (projectionMatrix: mat4, localBubble: LocalBubble, timeDelta: number) => {
     gl.useProgram(programInfo.program)
 
     const planet = localBubble.planet
@@ -78,4 +82,5 @@ export function createSphericalPlanetRenderer(gl: WebGL2RenderingContext, resour
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
     }
   }
+  return { render, dispose }
 }

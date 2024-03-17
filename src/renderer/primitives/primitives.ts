@@ -20,6 +20,7 @@ export interface Primitives {
     fontSize: { width: number; height: number }
   }
   size: () => Size
+  dispose: () => void
 }
 
 export function createPrimitiveRenderer(
@@ -29,11 +30,21 @@ export function createPrimitiveRenderer(
   width: number,
   height: number,
 ): Primitives {
+  const rr = createRectRenderer(gl, width, height, resources)
+  const trr = createTexturedRectRenderer(gl, width, height, resources)
+  const cr = createCircleRenderer(gl, width, height, resources)
+  const tr = createTextRenderer(gl, width, height, false, resources)
   return {
-    rect: createRectRenderer(gl, width, height, resources),
-    texturedRect: createTexturedRectRenderer(gl, width, height, resources),
-    circle: createCircleRenderer(gl, width, height, resources),
-    text: createTextRenderer(gl, width, height, false, resources),
+    rect: rr.render,
+    texturedRect: trr.render,
+    circle: cr.render,
+    text: tr,
     size: () => ({ width: width, height: height }),
+    dispose: () => {
+      rr.dispose()
+      trr.dispose()
+      cr.dispose()
+      tr.dispose()
+    },
   }
 }

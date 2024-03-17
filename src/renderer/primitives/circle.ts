@@ -1,10 +1,11 @@
-import { compileShaderProgram2 } from "../../shader"
+import { compileShaderProgramFromSource } from "../../shader"
 import { mat4, quat, vec2, vec4 } from "gl-matrix"
 import { setCommonAttributes2D, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
+import { disposeRenderingModel } from "../../resources/models"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.uColor)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.uColor)
   if (!shaderProgram) {
     return null
   }
@@ -45,7 +46,11 @@ export function createCircleRenderer(gl: WebGL2RenderingContext, width: number, 
   const projectionMatrix = mat4.create()
   mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
 
-  return function (position: vec2, radius: number, color: vec4) {
+  const dispose = () => {
+    gl.deleteBuffer(vertices.buffer)
+  }
+
+  const render = (position: vec2, radius: number, color: vec4) => {
     const modelViewMatrix = mat4.fromRotationTranslationScale(
       mat4.create(),
       quat.create(),
@@ -63,4 +68,6 @@ export function createCircleRenderer(gl: WebGL2RenderingContext, width: number, 
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.vertCount)
   }
+
+  return { render, dispose }
 }

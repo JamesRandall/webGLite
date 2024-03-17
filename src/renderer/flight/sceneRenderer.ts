@@ -47,7 +47,17 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
   let flashOn = true
   let flashOnTime = 0
 
-  return (game: Game, timeDelta: number) => {
+  const dispose = () => {
+    draw2d.dispose()
+    shipRenderer.dispose()
+    explosionRenderer.dispose()
+    stardustRenderer.dispose()
+    sunRenderer.dispose()
+    planetRenderer.dispose()
+    draw2d.dispose()
+  }
+
+  const render = (game: Game, timeDelta: number) => {
     const projectionMatrix = createProjectionMatrix(viewportWidth, viewportHeight, game.localBubble.clipSpaceRadius)
     const cameraMatrix = mat4.lookAt(mat4.create(), game.player.lookAt, [0, 0, 0], [0, 1, 0])
     const viewMatrix = mat4.invert(mat4.create(), cameraMatrix)
@@ -62,13 +72,13 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
     switch (game.currentScene) {
       case SceneEnum.Front:
         gl.enable(gl.DEPTH_TEST)
-        shipRenderer(viewProjectionMatrix, game.localBubble)
-        explosionRenderer(viewProjectionMatrix, game.localBubble)
+        shipRenderer.render(viewProjectionMatrix, game.localBubble)
+        explosionRenderer.render(viewProjectionMatrix, game.localBubble)
         if (!game.isInWitchspace) {
-          sunRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
-          planetRenderer(viewProjectionMatrix, game.localBubble, timeDelta)
+          sunRenderer.render(viewProjectionMatrix, game.localBubble, timeDelta)
+          planetRenderer.render(viewProjectionMatrix, game.localBubble, timeDelta)
         }
-        stardustRenderer(game)
+        stardustRenderer.render(game)
         gl.disable(gl.DEPTH_TEST)
         break
 
@@ -122,7 +132,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
     gl.disable(gl.DEPTH_TEST)
 
     drawCrosshairs(draw2d, game)
-    laserRenderer(game)
+    laserRenderer.render(game)
 
     if (game.hyperspace !== null && game.hyperspace.countdown > 0) {
       draw2d.text.draw(game.hyperspace.countdown.toString(), [0.5, 0.5])
@@ -142,4 +152,5 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
         draw2d.text.draw(item, [1, index + 1])
       })
   }
+  return { render, dispose }
 }

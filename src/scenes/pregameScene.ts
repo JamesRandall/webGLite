@@ -97,21 +97,26 @@ export const createPregameScene = (resources: Resources, gl: WebGL2RenderingCont
     isInWitchspace: false,
   }
 
+  let dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
+
   let rootRenderer = createRootRenderer(
     gl,
     resources,
     createPregameSceneRenderer(gl, resources),
-    createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight),
+    dashboardRenderer.render,
   )
-  let update = createPregameLoop(game, gl, resources, rootRenderer)
+  let update = createPregameLoop(game, gl, resources, rootRenderer.render)
   const resize = () => {
+    dashboardRenderer.dispose()
+    rootRenderer.dispose()
+    dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
     rootRenderer = createRootRenderer(
       gl,
       resources,
       createPregameSceneRenderer(gl, resources),
-      createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight),
+      dashboardRenderer.render,
     )
-    update = createPregameLoop(game, gl, resources, rootRenderer)
+    update = createPregameLoop(game, gl, resources, rootRenderer.render)
   }
 
   return {

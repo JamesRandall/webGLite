@@ -23,7 +23,7 @@ export function createPregameSceneRenderer(gl: WebGL2RenderingContext, resources
       loadoutEditorRenderer(game)
     } else {
       gl.enable(gl.DEPTH_TEST)
-      shipRenderer(projectionMatrix, game.localBubble)
+      shipRenderer.render(projectionMatrix, game.localBubble)
       gl.disable(gl.DEPTH_TEST)
       draw2d.text.center("---- webGLite ----", 1)
       draw2d.text.center("based on Elite", 2.5)

@@ -4,7 +4,7 @@ import { createBoundingBox, getConstraints, getSizeFromConstraints } from "../ut
 
 export interface RenderingModel {
   position: WebGLBuffer
-  color: WebGLBuffer
+  color: WebGLBuffer | null
   indices: WebGLBuffer
   normals: WebGLBuffer
   textureCoords: WebGLBuffer
@@ -13,6 +13,19 @@ export interface RenderingModel {
   boundingBox: vec3[]
   boundingBoxSize: vec3
   faceNormal: vec3 | null
+}
+
+export function disposeRenderingModel(gl: WebGL2RenderingContext, renderingModel: RenderingModel) {
+  gl.deleteBuffer(renderingModel.position)
+  if (renderingModel.color !== null) {
+    gl.deleteBuffer(renderingModel.color)
+  }
+  gl.deleteBuffer(renderingModel.indices)
+  gl.deleteBuffer(renderingModel.normals)
+  gl.deleteBuffer(renderingModel.textureCoords)
+  if (renderingModel.texture !== null) {
+    gl.deleteBuffer(renderingModel.position)
+  }
 }
 
 const materials: { [key: string]: number[] } = {

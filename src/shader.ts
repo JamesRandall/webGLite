@@ -36,8 +36,10 @@ export function compileShaderProgram(gl: WebGL2RenderingContext, vsSource: strin
   return shaderProgram
 }
 
-export function compileShaderProgram2(gl: WebGL2RenderingContext, source: ShaderSource) {
-  const vertexShader = loadShader(gl, gl.VERTEX_SHADER, source.vert)!
+export function compileShaderProgramFromSource(gl: WebGL2RenderingContext, source: ShaderSource) {
+  return compileShaderProgram(gl, source.vert, source.frag)
+
+  /*const vertexShader = loadShader(gl, gl.VERTEX_SHADER, source.vert)!
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, source.frag)!
 
   const shaderProgram = gl.createProgram()!
@@ -49,5 +51,5 @@ export function compileShaderProgram2(gl: WebGL2RenderingContext, source: Shader
     alert(`Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`)
     return null
   }
-  return shaderProgram
+  return shaderProgram*/
 }

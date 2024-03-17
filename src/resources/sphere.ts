@@ -111,7 +111,7 @@ function createBuffers(gl: WebGL2RenderingContext, geometry: ModelGeometry): Ren
   const constraints = getConstraints(toVectorArray(geometry.positions.items))
   return {
     position: positionBuffer,
-    color: 0,
+    color: null,
     indices: indexBuffer,
     normals: normalBuffer,
     vertexCount: geometry.indices.items.length,

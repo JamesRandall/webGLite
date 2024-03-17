@@ -2,15 +2,15 @@
 // Each character is positioned at a 16 offset (character 0 - x = 0, character 1 x = 16, character 2 x = 32 etc.)
 // There are 96 characters in the strip
 
-import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
-import { createSquareModelWithLoadedTexture } from "../../resources/models"
+import { compileShaderProgram, compileShaderProgramFromSource } from "../../shader"
+import { createSquareModelWithLoadedTexture, disposeRenderingModel } from "../../resources/models"
 import { LocalBubble } from "../../model/localBubble"
 import { mat4, quat, vec2, vec3, vec4 } from "gl-matrix"
 import { setCommonAttributes, setCommonAttributes2D, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.text)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.text)
   if (!shaderProgram) {
     return null
   }
@@ -71,6 +71,11 @@ export function createTextRenderer(
   const measure = (text: string) => {
     return { width: (characterWidth! + spacing) * text.length, height: characterHeight }
   }
+
+  const dispose = () => {
+    disposeRenderingModel(gl, square)
+  }
+
   const draw = (
     text: string,
     position: vec2,
@@ -154,5 +159,6 @@ export function createTextRenderer(
     drawAtSize,
     center,
     fontSize: { width: characterWidth, height: characterHeight },
+    dispose,
   }
 }

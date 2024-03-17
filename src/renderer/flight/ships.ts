@@ -1,4 +1,4 @@
-import { compileShaderProgram, compileShaderProgram2, loadShader } from "../../shader"
+import { compileShaderProgram, compileShaderProgramFromSource, loadShader } from "../../shader"
 import { LocalBubble } from "../../model/localBubble"
 import { mat4, quat, vec3 } from "gl-matrix"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
@@ -6,7 +6,7 @@ import { Resources } from "../../resources/resources"
 import { createNpcLaserRenderer } from "./npcLasers"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.ship)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.ship)
   if (!shaderProgram) {
     return null
   }
@@ -36,7 +36,8 @@ export function createShipsRenderer(
   const programInfo = initShaderProgram(gl, resources)!
   const npcLaser = createNpcLaserRenderer(gl, resources)
 
-  return function (projectionMatrix: mat4, localBubble: LocalBubble) {
+  const dispose = () => {}
+  const render = (projectionMatrix: mat4, localBubble: LocalBubble) => {
     localBubble.ships.forEach((ship) => npcLaser(projectionMatrix, ship))
 
     // Create a perspective matrix, a special matrix that is
@@ -91,4 +92,6 @@ export function createShipsRenderer(
       }
     })
   }
+
+  return { render, dispose }
 }

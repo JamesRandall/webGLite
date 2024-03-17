@@ -1,11 +1,11 @@
-import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
+import { compileShaderProgram, compileShaderProgramFromSource } from "../../shader"
 import { LocalBubble } from "../../model/localBubble"
 import { mat4, quat, vec2 } from "gl-matrix"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.sun)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.sun)
   if (!shaderProgram) {
     return null
   }
@@ -34,8 +34,8 @@ export function createSunRenderer(gl: WebGL2RenderingContext, resources: Resourc
   const programInfo = initShaderProgram(gl, resources)!
 
   let time = 0.0
-
-  return function (projectionMatrix: mat4, localBubble: LocalBubble, timeDelta: number) {
+  const dispose = () => {}
+  const render = (projectionMatrix: mat4, localBubble: LocalBubble, timeDelta: number) => {
     time += timeDelta
 
     gl.useProgram(programInfo.program)
@@ -80,4 +80,5 @@ export function createSunRenderer(gl: WebGL2RenderingContext, resources: Resourc
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
     }
   }
+  return { render, dispose }
 }

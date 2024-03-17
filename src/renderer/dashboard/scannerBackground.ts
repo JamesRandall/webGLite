@@ -1,8 +1,8 @@
-import { compileShaderProgram2 } from "../../shader"
+import { compileShaderProgramFromSource } from "../../shader"
 import { mat4, quat, vec3 } from "gl-matrix"
 import { Resources } from "../../resources/resources"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
-import { createSquareModelWithLoadedTexture } from "../../resources/models"
+import { createSquareModelWithLoadedTexture, disposeRenderingModel } from "../../resources/models"
 
 interface ProgramInfo {
   program: WebGLProgram
@@ -18,7 +18,7 @@ interface ProgramInfo {
 }
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources): ProgramInfo | null {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.simpleTexture)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.simpleTexture)
   if (!shaderProgram) {
     return null
   }
@@ -50,7 +50,10 @@ export function createScannerBackgroundRenderer(
   const position = vec3.fromValues(0, 0, 0)
   const modelViewMatrix = mat4.fromRotationTranslationScale(mat4.create(), rotate, position, scale)
 
-  return function () {
+  const dispose = () => {
+    disposeRenderingModel(gl, model)
+  }
+  const render = () => {
     gl.useProgram(programInfo.program)
     setCommonAttributes(gl, model, programInfo)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indices)
@@ -72,4 +75,6 @@ export function createScannerBackgroundRenderer(
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
     }
   }
+
+  return { render, dispose }
 }

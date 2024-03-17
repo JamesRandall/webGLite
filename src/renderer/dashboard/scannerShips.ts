@@ -1,6 +1,6 @@
 import { mat4, quat, vec3 } from "gl-matrix"
 import { Game } from "../../model/game"
-import { createSquareModel, RenderingModel } from "../../resources/models"
+import { createSquareModel, disposeRenderingModel, RenderingModel } from "../../resources/models"
 import { compileShaderProgram } from "../../shader"
 import { scannerRadialWorldRange } from "../../constants"
 import { ShipRoleEnum } from "../../model/ShipInstance"
@@ -80,7 +80,11 @@ export function createScannerShipRenderer(gl: WebGL2RenderingContext, projection
   const lineCapModel = createSquareModel(gl, [0.0, 1.0, 0.0, 1.0], lineCap)
   const programInfo = initShaderProgram(gl)!
 
-  return function (game: Game) {
+  const dispose = () => {
+    disposeRenderingModel(gl, verticalLineModel)
+    disposeRenderingModel(gl, lineCapModel)
+  }
+  const render = (game: Game) => {
     if (game.player.isDocked) {
       return
     }
@@ -141,4 +145,5 @@ export function createScannerShipRenderer(gl: WebGL2RenderingContext, projection
       }
     })
   }
+  return { render, dispose }
 }

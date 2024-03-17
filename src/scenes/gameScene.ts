@@ -18,9 +18,9 @@ export const createGameScene = (resources: Resources, gl: WebGL2RenderingContext
   let unbindMouse = bindMouse(game.player.controlState)
   let sceneRenderer = createSceneRenderer(gl, resources)
   let dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
-  let rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
+  let rootRenderer = createRootRenderer(gl, resources, sceneRenderer.render, dashboardRenderer.render)
 
-  let update = createGameLoop(resources, rootRenderer, () => {
+  let update = createGameLoop(resources, rootRenderer.render, () => {
     game = loadGame(gl, resources) ?? game
     unbindKeys()
     unbindMouse()
@@ -29,11 +29,15 @@ export const createGameScene = (resources: Resources, gl: WebGL2RenderingContext
   })
 
   let resize = () => {
+    sceneRenderer.dispose()
+    dashboardRenderer.dispose()
+    rootRenderer.dispose()
+
     sceneRenderer = createSceneRenderer(gl, resources)
     dashboardRenderer = createDashboardRenderer(gl, resources, dimensions.width, dimensions.dashboardHeight)
-    rootRenderer = createRootRenderer(gl, resources, sceneRenderer, dashboardRenderer)
+    rootRenderer = createRootRenderer(gl, resources, sceneRenderer.render, dashboardRenderer.render)
 
-    update = createGameLoop(resources, rootRenderer, () => {
+    update = createGameLoop(resources, rootRenderer.render, () => {
       unbindKeys()
       unbindMouse()
       bindKeys(game.player.controlState)

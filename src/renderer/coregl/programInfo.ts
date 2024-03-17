@@ -12,7 +12,7 @@ interface AttributeBuffers {
   position?: WebGLBuffer
   normals?: WebGLBuffer
   textureCoords?: WebGLBuffer
-  color?: WebGLBuffer
+  color?: WebGLBuffer | null
 }
 
 interface AttributeLocations {
@@ -59,7 +59,7 @@ function internalSetCommonAttributes(
   if (buffers.normals !== undefined && programInfo.attribLocations.vertexNormal !== undefined) {
     setNormalAttribute(gl, buffers.normals, programInfo.attribLocations.vertexNormal)
   }
-  if (buffers.color !== undefined && programInfo.attribLocations.vertexColor !== undefined) {
+  if (buffers.color !== undefined && buffers.color !== null && programInfo.attribLocations.vertexColor !== undefined) {
     setColorAttribute(gl, buffers.color, programInfo.attribLocations.vertexColor)
   }
 }

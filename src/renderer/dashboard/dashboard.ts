@@ -213,11 +213,18 @@ export function createDashboardRenderer(
   const scannerBackgroundRenderer = createScannerBackgroundRenderer(gl, resources, projectionMatrix, scannerScale)
   const scannerShipRenderer = createScannerShipRenderer(gl, projectionMatrix, scannerScale)
 
-  return (game: Game, _: number) => {
+  const dispose = () => {
+    draw2d.dispose()
+    scannerBackgroundRenderer.dispose()
+    scannerShipRenderer.dispose()
+  }
+
+  const render = (game: Game, _: number) => {
     gl.disable(gl.DEPTH_TEST)
-    scannerBackgroundRenderer()
-    scannerShipRenderer(game)
+    scannerBackgroundRenderer.render()
+    scannerShipRenderer.render(game)
     drawFrame(draw2d, width, height)
     drawHud(draw2d, width, height, game)
   }
+  return { render, dispose }
 }

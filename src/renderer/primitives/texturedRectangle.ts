@@ -1,11 +1,11 @@
-import { compileShaderProgram2 } from "../../shader"
-import { createSquareModel } from "../../resources/models"
+import { compileShaderProgramFromSource } from "../../shader"
+import { createSquareModel, disposeRenderingModel } from "../../resources/models"
 import { mat4, quat, vec2 } from "gl-matrix"
 import { setCommonAttributes, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.simpleTexture)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.simpleTexture)
   if (!shaderProgram) {
     return null
   }
@@ -35,7 +35,11 @@ export function createTexturedRectRenderer(
   const projectionMatrix = mat4.create()
   mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
 
-  return function (position: vec2, size: vec2, texture: WebGLTexture) {
+  const dispose = () => {
+    disposeRenderingModel(gl, square)
+  }
+
+  const render = (position: vec2, size: vec2, texture: WebGLTexture) => {
     // the divide by two is because the model has extents of -1.0 to 1.0
     const modelViewMatrix = mat4.fromRotationTranslationScale(
       mat4.create(),
@@ -63,4 +67,5 @@ export function createTexturedRectRenderer(
     const offset = 0
     gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
   }
+  return { render, dispose }
 }

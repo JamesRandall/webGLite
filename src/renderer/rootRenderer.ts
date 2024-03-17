@@ -4,8 +4,8 @@ import { dimensions } from "../constants"
 import { Game } from "../model/game"
 import { createPrimitiveRenderer } from "./primitives/primitives"
 import { Resources, ShaderSource } from "../resources/resources"
-import { compileShaderProgram2 } from "../shader"
-import { createSquareModel } from "../resources/models"
+import { compileShaderProgramFromSource } from "../shader"
+import { createSquareModel, disposeRenderingModel } from "../resources/models"
 import { mat4, quat, vec2 } from "gl-matrix"
 import { setCommonAttributes, setViewUniformLocations } from "./coregl/programInfo"
 
@@ -42,7 +42,7 @@ export function previousEffect(currentEffect: RenderEffect) {
 }
 
 function initShaderProgram(gl: WebGL2RenderingContext, shaderSource: ShaderSource) {
-  const shaderProgram = compileShaderProgram2(gl, shaderSource)
+  const shaderProgram = compileShaderProgramFromSource(gl, shaderSource)
   if (!shaderProgram) {
     return null
   }
@@ -77,7 +77,8 @@ function createRenderer(
   mat4.ortho(projectionMatrix, 0, width, height, 0, -1.0, 1.0)
   const resolution = vec2.fromValues(width, height)
 
-  return function (position: vec2, size: vec2, texture: WebGLTexture, time: number) {
+  const dispose = () => disposeRenderingModel(gl, square)
+  const render = (position: vec2, size: vec2, texture: WebGLTexture, time: number) => {
     // the divide by two is because the model has extents of -1.0 to 1.0
     const modelViewMatrix = mat4.fromRotationTranslationScale(
       mat4.create(),
@@ -108,6 +109,7 @@ function createRenderer(
     const offset = 0
     gl.drawElements(gl.TRIANGLES, vertexCount, type, offset)
   }
+  return { render, dispose }
 }
 
 function createFrameBuffer(gl: WebGL2RenderingContext, width: number, height: number) {
@@ -159,23 +161,36 @@ export function createRootRenderer(
   const draw2d = createPrimitiveRenderer(gl, false, resources, dimensions.width, dimensions.mainViewHeight)
 
   const applyFlightSceneMotionBlur = (effectTime: number) =>
-    flightSceneMotionBlur(
+    flightSceneMotionBlur.render(
       [0, 0],
       [dimensions.width, dimensions.mainViewHeight],
       flightSceneFrameBufferTexture,
       effectTime,
     )
   const applyFlightSceneEnergyBomb = (effectTime: number) =>
-    flightSceneEnergyBomb(
+    flightSceneEnergyBomb.render(
       [0, 0],
       [dimensions.width, dimensions.mainViewHeight],
       flightSceneFrameBufferTexture,
       effectTime,
     )
   const applyFlightSceneCopy = (effectTime: number) =>
-    flightSceneCopy([0, 0], [dimensions.width, dimensions.mainViewHeight], flightSceneFrameBufferTexture, effectTime)
+    flightSceneCopy.render(
+      [0, 0],
+      [dimensions.width, dimensions.mainViewHeight],
+      flightSceneFrameBufferTexture,
+      effectTime,
+    )
 
-  return (game: Game, timeDelta: number, effect: RenderEffect) => {
+  const dispose = () => {
+    draw2d.dispose()
+    globalEffects.forEach((ge) => ge.dispose())
+    flightSceneCopy.dispose()
+    flightSceneMotionBlur.dispose()
+    flightSceneEnergyBomb.dispose()
+  }
+
+  const render = (game: Game, timeDelta: number, effect: RenderEffect) => {
     time += timeDelta
     // First draw our flight scene to a texture so that we can apply post processing effects to it
     bindBufferAndSetViewport(gl, flightSceneFrameBuffer, dimensions.width, dimensions.mainViewHeight)
@@ -210,6 +225,7 @@ export function createRootRenderer(
     // finally target the output buffer and render our texture applying a whole screen post processing effect if
     // required
     bindBufferAndSetViewport(gl, null, dimensions.width, dimensions.totalHeight)
-    globalEffects.get(effect)!([0, 0], [dimensions.width, dimensions.totalHeight], frameBufferTexture, time)
+    globalEffects.get(effect)!.render([0, 0], [dimensions.width, dimensions.totalHeight], frameBufferTexture, time)
   }
+  return { render, dispose }
 }

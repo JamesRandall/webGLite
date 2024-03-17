@@ -1,10 +1,10 @@
-import { compileShaderProgram2 } from "../../shader"
+import { compileShaderProgramFromSource } from "../../shader"
 import { mat4, quat, vec2, vec4 } from "gl-matrix"
 import { setCommonAttributes2D, setViewUniformLocations } from "../coregl/programInfo"
 import { Resources } from "../../resources/resources"
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.uColor)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.uColor)
   if (!shaderProgram) {
     return null
   }

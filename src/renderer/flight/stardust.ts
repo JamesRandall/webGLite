@@ -2,7 +2,7 @@
 //  https://webglfundamentals.org/webgl/lessons/webgl-points-lines-triangles.html
 
 import { LocalBubble } from "../../model/localBubble"
-import { compileShaderProgram, compileShaderProgram2 } from "../../shader"
+import { compileShaderProgram, compileShaderProgramFromSource } from "../../shader"
 import { mat4 } from "gl-matrix"
 import { Resources } from "../../resources/resources"
 import { Game } from "../../model/game"
@@ -20,7 +20,7 @@ interface ProgramInfo {
 }
 
 function initShaderProgram(gl: WebGL2RenderingContext, resources: Resources) {
-  const shaderProgram = compileShaderProgram2(gl, resources.shaderSource.stardust)
+  const shaderProgram = compileShaderProgramFromSource(gl, resources.shaderSource.stardust)
   if (!shaderProgram) {
     return null
   }
@@ -53,7 +53,9 @@ function setPositionAttribute(gl: WebGL2RenderingContext, buffer: WebGLBuffer, p
 export function createStardustRenderer(gl: WebGL2RenderingContext, resources: Resources) {
   const programInfo = initShaderProgram(gl, resources)!
 
-  return function (game: Game) {
+  const dispose = () => {}
+
+  const render = (game: Game) => {
     const localBubble = game.localBubble
     const positions = localBubble.stardust.flatMap((pos) => [pos[0], pos[1], pos[2]])
     const positionBuffer = gl.createBuffer()
@@ -79,4 +81,6 @@ export function createStardustRenderer(gl: WebGL2RenderingContext, resources: Re
 
     gl.deleteBuffer(positionBuffer)
   }
+
+  return { render, dispose }
 }

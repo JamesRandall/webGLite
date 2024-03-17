@@ -1,7 +1,7 @@
 import { Primitives } from "../primitives/primitives"
 import { Game } from "../../model/game"
 import { mat4, quat, vec2, vec3 } from "gl-matrix"
-import { compileShaderProgram2 } from "../../shader"
+import { compileShaderProgramFromSource } from "../../shader"
 import { setPositionAttribute, setTextureAttribute } from "../coregl/programInfo"
 import { setupGl } from "../common"
 import { createSquareModel, createSquareModelWithLoadedTexture, RenderingModel } from "../../resources/models"
@@ -63,7 +63,7 @@ function createImageRenderer(
   pos: vec2,
   size: vec2,
 ) {
-  const shaderProgram = compileShaderProgram2(gl, { frag: imageFragmentShader, vert: imageVertexShader })!
+  const shaderProgram = compileShaderProgramFromSource(gl, { frag: imageFragmentShader, vert: imageVertexShader })!
   const positionLocation = gl.getAttribLocation(shaderProgram, "position")!
   const textureCoordsLocation = gl.getAttribLocation(shaderProgram, "textureCoords")
   const projectionMatrixLocation = gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!
@@ -117,7 +117,7 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   let starPointVisits = 0
   const planetBias = 128 * 128 //Math.pow(128, 2)
 
-  const shaderProgram = compileShaderProgram2(gl, { frag: fragmentShader, vert: vertexShader })!
+  const shaderProgram = compileShaderProgramFromSource(gl, { frag: fragmentShader, vert: vertexShader })!
   const positionLocation = gl.getAttribLocation(shaderProgram, "position")!
   const projectionMatrixLocation = gl.getUniformLocation(shaderProgram, "uProjectionMatrix")!
   const modelMatrixLocation = gl.getUniformLocation(shaderProgram, "uModelMatrix")
