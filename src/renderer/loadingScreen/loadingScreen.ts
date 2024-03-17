@@ -285,19 +285,10 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       logoRenderer(logoAlpha)
       startRenderer(logoAlpha)
 
-      if (
-        planetPointVisits >= numberOfPlanetPoints &&
-        ringPointVisits >= numberOfRingPoints &&
-        starPointVisits >= numberOfStarPoints &&
-        resourcesReady
-      ) {
-        canProceed = true
-      }
-
       const resourceStatus = getResourceStatus()
-      console.log(resourceStatus)
       if (resourceStatus.loaded >= resourceStatus.max) {
         loadingBarAlpha -= delta
+        canProceed = true
       }
       loadingBarOuter.style.width = `${Math.round(width * 0.6)}px`
       loadingBarOuter.style.opacity = loadingBarAlpha.toString()
