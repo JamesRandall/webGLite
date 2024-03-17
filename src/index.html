@@ -6,10 +6,12 @@
 </head>
 <body style="margin: 0; padding: 0; background-color: black; overflow: hidden;">
     <!-- in the original Elite the space view is 256x192 pixels and the scanner is 256x56 pixels -->
-    <div style="display: flex; flex-flow: row; justify-content: center; align-items: center; height: 100vh;">
+    <div style="position: relative; display: flex; flex-flow: row; justify-content: center; align-items: center; height: 100vh;">
         <canvas width="800" height="760" id="viewcanvas" style="display: block; width: 800px; height: 760px;"></canvas>
+        <div id="loading-bar-outer" style="padding: 2px; position: absolute; width: 60%; height: 1em; background-color: black; border: red solid 2px; bottom: 1.5em; color: white;">
+            <div style="height: 100%; width: 0%; background-color: red;" id="loading-bar-inner"></div>
+        </div>
     </div>
-
 
     <canvas width="480" height="760" id="doccanvas" style="display: none; width: 480px; height: 760px;"></canvas>
     <div id="game-console" style="margin-top: 1em; display:none; grid-column: 1/-1; background-color: black; border: solid 1px green; overflow-y: auto; height: 200px; max-height: 200px;">

@@ -6,6 +6,7 @@ import { setPositionAttribute, setTextureAttribute } from "../coregl/programInfo
 import { setupGl } from "../common"
 import { createSquareModel, createSquareModelWithLoadedTexture, RenderingModel } from "../../resources/models"
 import { loadTexture } from "../../resources/texture"
+import { getResourceStatus } from "../../resources/resources"
 
 // We have the shaders as static assets as we display this scene while the resources are loading
 const vertexShader = `#version 300 es
@@ -126,16 +127,17 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   const ringVertexBuffer = gl.createBuffer()!
   const starVertexBuffer = gl.createBuffer()!
 
-  const logoTexture = await loadTexture(gl, "./logo.png")
+  const logoTexture = await loadTexture(gl, "./logo.png", () => {})
   const logo = createSquareModelWithLoadedTexture(gl, logoTexture)
 
   // 964x30
-  const startTexture = await loadTexture(gl, "./start.png")
+  const startTexture = await loadTexture(gl, "./start.png", () => {})
   const start = createSquareModelWithLoadedTexture(gl, startTexture)
 
   let previousTime = 0
   let isFirst = true
   let logoAlpha = 0.0
+  let loadingBarAlpha = 1.0
   let canProceed = false
   let proceed = false
 
@@ -143,6 +145,8 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
 
   window.addEventListener("keydown", proceedHandler)
   window.addEventListener("mousedown", proceedHandler)
+  const loadingBarInner = document.getElementById("loading-bar-inner")!
+  const loadingBarOuter = document.getElementById("loading-bar-outer")!
 
   // Thinking the loading screen would be simple and is in a strange place in the system (before resource loading)
   // I didn't follow my usual scene / render split thinking "I'll just keep it simple". However... then I introduced
@@ -289,6 +293,16 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       ) {
         canProceed = true
       }
+
+      const resourceStatus = getResourceStatus()
+      if (resourceStatus.loaded >= resourceStatus.max) {
+        loadingBarAlpha -= delta
+      }
+      loadingBarOuter.style.width = `${Math.round(width * 0.6)}px`
+      loadingBarOuter.style.opacity = loadingBarAlpha.toString()
+      const percentage = Math.round((resourceStatus.loaded / resourceStatus.max) * 100)
+      loadingBarInner.style.width = `${percentage}%`
+
       return false
     }
   }

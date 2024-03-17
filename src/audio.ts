@@ -1,3 +1,5 @@
+import { ResourceLoadedFunc } from "./resources/resources"
+
 type AudioPlayer = (volume?: number) => void
 
 export interface SoundEffects {
@@ -25,13 +27,14 @@ function createSingleAudioPlayer(path: string): Promise<HTMLAudioElement> {
   })
 }
 
-async function createAudioPlayer(path: string) {
+async function createAudioPlayer(path: string, resourceLoaded: ResourceLoadedFunc) {
   const playerPromises: Promise<HTMLAudioElement>[] = []
   for (let i = 0; i < 10; i++) {
     playerPromises.push(createSingleAudioPlayer(path))
   }
   const players = await Promise.all(playerPromises)
   let currentIndex = 0
+  resourceLoaded()
   return function (volume: number = 1.0) {
     players[currentIndex].volume = volume
     try {
@@ -42,26 +45,28 @@ async function createAudioPlayer(path: string) {
   }
 }
 
-export async function createSoundEffects() {
-  const effects = await Promise.all(
-    [
-      "audio/BBC Boot Sound.mp3",
-      "audio/Docked.mp3",
-      "audio/Enemy Laser Hit.mp3",
-      "audio/Enemy Laser Miss.mp3",
-      "audio/Hyperspace.mp3",
-      "audio/Jump Blocked.mp3",
-      "audio/Launch.mp3",
-      "audio/Player Laser Hit.mp3",
-      "audio/Player Laser Miss.mp3",
-      "audio/Ship Explosion.mp3",
-      "audio/ECM.mp3",
-      "audio/Energy Bomb.mp3",
-      "audio/Danube.mp3",
-      "audio/Missile Target.mp3",
-      "audio/Missile Launch.mp3",
-    ].map((a) => createAudioPlayer(a)),
-  )
+const filenames = [
+  "audio/BBC Boot Sound.mp3",
+  "audio/Docked.mp3",
+  "audio/Enemy Laser Hit.mp3",
+  "audio/Enemy Laser Miss.mp3",
+  "audio/Hyperspace.mp3",
+  "audio/Jump Blocked.mp3",
+  "audio/Launch.mp3",
+  "audio/Player Laser Hit.mp3",
+  "audio/Player Laser Miss.mp3",
+  "audio/Ship Explosion.mp3",
+  "audio/ECM.mp3",
+  "audio/Energy Bomb.mp3",
+  "audio/Danube.mp3",
+  "audio/Missile Target.mp3",
+  "audio/Missile Launch.mp3",
+]
+
+export const numberOfSooundEffects = filenames.length
+
+export async function createSoundEffects(resourceLoaded: ResourceLoadedFunc) {
+  const effects = await Promise.all(filenames.map((a) => createAudioPlayer(a, resourceLoaded)))
 
   return {
     bootUp: effects[0],

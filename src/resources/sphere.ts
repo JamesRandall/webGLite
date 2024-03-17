@@ -134,7 +134,7 @@ export function createSphere(
   },
 ) {
   const geometry = createSphereVertices(options.radius, options.subdivisionsAxis, options.subdivisionsHeight)
-  const texture = options.glTexture ?? (options.textureFile ? loadTexture(gl, options.textureFile) : null)
+  const texture = options.glTexture ?? (options.textureFile ? loadTexture(gl, options.textureFile, () => {}) : null)
   const model = createBuffers(gl, geometry)
   model.texture = texture
   return model

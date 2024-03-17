@@ -1,6 +1,9 @@
+import { ResourceLoadedFunc } from "./resources"
+
 export function loadTexture(
   gl: WebGL2RenderingContext,
   url: string,
+  resourceLoaded: ResourceLoadedFunc,
   smoothScaling: boolean = false,
 ): Promise<WebGLTexture> {
   return new Promise((resolve) => {
@@ -45,6 +48,7 @@ export function loadTexture(
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
         }
       }
+      resourceLoaded()
       resolve(texture!)
     }
     image.src = url

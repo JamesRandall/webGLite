@@ -11,7 +11,7 @@ import { loadTexture } from "./texture"
 import { loadExplosionFromModel, loadModel } from "./models"
 import { shipMovementSpeeds, shipScaleFactor, stationScaleFactor } from "../constants"
 import { calculateOrientationsFromNose } from "../model/geometry"
-import { createSoundEffects, SoundEffects } from "../audio"
+import { createSoundEffects, numberOfSooundEffects, SoundEffects } from "../audio"
 
 export interface ShaderSource {
   frag: string
@@ -63,17 +63,24 @@ export interface Resources {
   soundEffects: SoundEffects
 }
 
-async function loadShaderSource(name: string) {
+async function loadShaderSource(name: string, resourceLoaded: ResourceLoadedFunc) {
   const fragResponse = await fetch(`shaders/${name}.frag`)
   const vertResponse = await fetch(`shaders/${name}.vert`)
-  return {
+  const result = {
     frag: await fragResponse.text(),
     vert: await vertResponse.text(),
   } as ShaderSource
+  resourceLoaded()
+  return result
 }
 
+let loadedResources = 0
+let maxResources = 0
+export const getResourceStatus = () => ({ loaded: loadedResources, max: maxResources })
+export const resourceLoaded = () => loadedResources++
+export type ResourceLoadedFunc = () => void
+
 export async function loadResources(gl: WebGL2RenderingContext): Promise<Resources> {
-  const ships = await loadShipSpecifications(gl)
   const shaderNames = [
     "stardust",
     "ship",
@@ -90,8 +97,7 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
     "energybomb",
   ]
   const textureNames = ["noise", "font", "starmask", "scanner"]
-  const shaderPromises = shaderNames.map((sn) => loadShaderSource(sn))
-  const planetPromises = [
+  const planetNames = [
     "./mars.png",
     "./neptune.png",
     "./venusSurface.png",
@@ -104,15 +110,23 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
     "./eris.png",
     "./haumea.png",
     "./makemake.png",
-  ].map((t) => loadTexture(gl, t))
-  const soundEffectPromise = createSoundEffects()
-  const texturePromises = textureNames.map((tn) => loadTexture(gl, `./${tn}.png`))
+    "./font.png",
+  ]
+
+  const shipsPromise = loadShipSpecifications(gl, resourceLoaded)
+  const shaderPromises = shaderNames.map((sn) => loadShaderSource(sn, resourceLoaded))
+  const planetPromises = planetNames.map((t) => loadTexture(gl, t, resourceLoaded))
+  const soundEffectPromise = createSoundEffects(resourceLoaded)
+  const texturePromises = textureNames.map((tn) => loadTexture(gl, `./${tn}.png`, resourceLoaded))
   const promiseResults = await Promise.all([
     ...shaderPromises,
     ...planetPromises,
     soundEffectPromise,
     ...texturePromises,
+    shipsPromise,
   ])
+  maxResources = promiseResults.length - 1 + numberOfSooundEffects
+
   const loadedShaders = promiseResults.slice(0, shaderPromises.length) as ShaderSource[]
   const planets = promiseResults.slice(
     shaderPromises.length,
@@ -121,13 +135,13 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
   const soundEffects = promiseResults[shaderPromises.length + planetPromises.length] as SoundEffects
   const loadedTextures = promiseResults.slice(
     shaderPromises.length + planetPromises.length + 1,
-    promiseResults.length,
+    promiseResults.length - 1,
   ) as WebGLTexture[]
+  const ships = promiseResults[promiseResults.length - 1] as ShipBlueprint[]
 
   const namedShaders = new Map<string, ShaderSource>(shaderNames.map((sn, index) => [sn, loadedShaders[index]]))
   const textures = new Map<string, WebGLTexture>(loadedTextures.map((t, i) => [textureNames[i], t]))
 
-  const instructionFont = await loadTexture(gl, "font.png")
   const traderIndexes = ships
     .map((s, i) => ({ s, i }))
     .filter(({ s }) => s.canBeTrader)
@@ -180,7 +194,7 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
       starmask: textures.get("starmask")!,
       scanner: textures.get("scanner")!,
       // We load the instructions font separately as its used in a different GL context
-      instructionsFont: instructionFont,
+      instructionsFont: textures.get("font")!,
     },
     shaderSource: {
       stardust: namedShaders.get("stardust")!,
@@ -264,7 +278,10 @@ function getRandomShip(ships: ShipBlueprint[]) {
   return ships[Math.floor(Math.random() * ships.length)]
 }
 
-async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipBlueprint[]> {
+async function loadShipSpecifications(
+  gl: WebGL2RenderingContext,
+  resourceLoaded: ResourceLoadedFunc,
+): Promise<ShipBlueprint[]> {
   const playerDefaults = {
     rollAcceleration: shipMovementSpeeds.rollAcceleration,
     rollDeceleration: shipMovementSpeeds.rollDeceleration,
@@ -835,6 +852,7 @@ async function loadShipSpecifications(gl: WebGL2RenderingContext): Promise<ShipB
   ]
   const loadedShips = await Promise.all(loadingShips.map((ls) => ls.renderingModel))
   const explodedShips = await Promise.all(loadingShips.map((ls) => ls.explosion))
+  resourceLoaded()
   return loadingShips.map((ls, lsi) => ({
     ...ls,
     renderingModel: loadedShips[lsi],
