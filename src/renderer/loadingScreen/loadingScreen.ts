@@ -141,7 +141,11 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
   let canProceed = false
   let proceed = false
 
-  const proceedHandler = () => (proceed = canProceed && true)
+  const proceedHandler = () => {
+    //loadingBarOuter.style.display = "none"
+    loadingBarOuter.remove()
+    return (proceed = canProceed && true)
+  }
 
   window.addEventListener("keydown", proceedHandler)
   window.addEventListener("mousedown", proceedHandler)

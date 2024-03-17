@@ -227,9 +227,20 @@ function createPregameLoop(game: Game, gl: WebGL2RenderingContext, resources: Re
           isMovingIn = false
           timeSinceMovedIn = now
         }
+        // if anything causes a huge time delta (switching user seems to do it on a Mac) due to things being paused
+        // then you can end out of the startingZ - targetZ range. If that happens then just reset by moving to the
+        // next ship
+        if (game.localBubble.ships[0].position[2] < startingZ) {
+          nextShip()
+          isMovingIn = true
+          isMovingOut = false
+        }
       } else if (isMovingOut) {
         game.localBubble.ships[0].position[2] += speed * deltaTime
-        if (game.localBubble.ships[0].position[2] <= startingZ) {
+        // if anything causes a huge time delta (switching user seems to do it on a Mac) due to things being paused
+        // then you can end out of rhe startingZ - targetZ range. If that happens then just reset by moving to the
+        // next ship
+        if (game.localBubble.ships[0].position[2] <= startingZ || game.localBubble.ships[0].position[2] > targetZ) {
           nextShip()
           isMovingIn = true
           isMovingOut = false
