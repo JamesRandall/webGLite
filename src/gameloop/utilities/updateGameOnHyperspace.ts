@@ -86,6 +86,7 @@ function spawnStationInOrbit(game: Game, resources: Resources) {
   const position = vec3.add(vec3.create(), game.localBubble.planet.position, translation)
   const station = resources.ships.getCoriolis([0, 0, 0], [0, 0, -1])
   station.position = position
+  station.aiEnabled = true
   station.roll = calculateSpaceStationRotationSpeed(game.player)
   // 2. Orient the station so that the gate is facing the planet
   station.noseOrientation = vec3.multiply(vec3.create(), randomDirection, [-1, -1, -1])

@@ -3,7 +3,7 @@ import { updateStardust } from "./stardust"
 import { updateOrbitalBodies } from "./orbitalBody"
 import { Game, SceneEnum } from "../model/game"
 import { isShipCollidingWithPlayer } from "./utilities/collisions"
-import { ShipRoleEnum } from "../model/ShipInstance"
+import { AttitudeEnum, ShipRoleEnum } from "../model/ShipInstance"
 import { isValidDocking } from "./utilities/docking"
 import { vec3 } from "gl-matrix"
 import { spawnNPCShips } from "./utilities/spawn"
@@ -121,15 +121,24 @@ function handleCollisions(game: Game, resources: Resources) {
       // check for a collision against the other ships
       const missileSize = Math.max(...ship.blueprint.renderingModel.boundingBoxSize)
       game.localBubble.ships.forEach((otherShip) => {
-        if (otherShip.isDestroyed || otherShip.id === ship.id) {
+        if (ship.isDestroyed || otherShip.isDestroyed || otherShip.id === ship.id) {
           return
         }
         const distance = vec3.length(vec3.subtract(vec3.create(), ship.position, otherShip.position))
         if (distance < (Math.max(...otherShip.blueprint.renderingModel.boundingBoxSize) + missileSize) / 2) {
-          otherShip.energy -= missileDamageAmount
-          if (otherShip.energy <= 0) {
-            otherShip.isDestroyed = true
-            otherShip.energy = 0
+          if (otherShip.role !== ShipRoleEnum.Station) {
+            otherShip.energy -= missileDamageAmount
+            if (otherShip.energy <= 0) {
+              otherShip.isDestroyed = true
+              otherShip.energy = 0
+            }
+          }
+          if (!otherShip.isDestroyed) {
+            otherShip.attitude = AttitudeEnum.Hostile
+            otherShip.aiEnabled = true
+            if (otherShip.aggressionLevel < 28) {
+              otherShip.aggressionLevel = 28
+            }
           }
           ship.isDestroyed = true
           resources.soundEffects.shipExplosion()

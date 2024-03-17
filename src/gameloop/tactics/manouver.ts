@@ -114,10 +114,10 @@ function getDirection(ship: ShipInstance, game: Game) {
 
 function headTowards(ship: ShipInstance, game: Game, timeDelta: number) {
   if (ship.role === ShipRoleEnum.Missile) {
-    headTowardsAcceleration(ship, game, timeDelta)
+    headTowardsNoAcceleration(ship, game, timeDelta)
   } else {
     // TODO: Keep an eye on this
-    // Experimenting with this - I'm not figuring out when I need to start decelerating but it might
+    // Experimenting with this - I'm not figuring out when I need to start accelerating and decelerating but it might
     // lead to more natural movement nevertheless
     // I don't do this for the missile though because the missile needs to be accurate
     headTowardsAcceleration(ship, game, timeDelta)

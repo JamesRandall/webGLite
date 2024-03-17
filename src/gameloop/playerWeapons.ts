@@ -99,7 +99,9 @@ function processLaserHits(game: Game, resources: Resources) {
   if (hit === null) {
     resources.soundEffects.playerLaserMiss()
   } else {
-    applyDamageToNpcWithLasers(game, resources, hit)
+    if (hit.role !== ShipRoleEnum.Station) {
+      applyDamageToNpcWithLasers(game, resources, hit)
+    }
     if (hit.attitude === AttitudeEnum.Friendly) {
       // if we've hit a friendly ship make it hostile and aggressive
       hit.attitude = AttitudeEnum.Hostile
@@ -108,6 +110,7 @@ function processLaserHits(game: Game, resources: Resources) {
         hit.aggressionLevel = 20 + Math.floor(Math.random() * 11)
       }
     }
+
     if (hit.isDestroyed) {
       resources.soundEffects.shipExplosion()
     } else {
