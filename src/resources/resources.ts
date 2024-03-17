@@ -118,14 +118,9 @@ export async function loadResources(gl: WebGL2RenderingContext): Promise<Resourc
   const planetPromises = planetNames.map((t) => loadTexture(gl, t, resourceLoaded))
   const soundEffectPromise = createSoundEffects(resourceLoaded)
   const texturePromises = textureNames.map((tn) => loadTexture(gl, `./${tn}.png`, resourceLoaded))
-  const promiseResults = await Promise.all([
-    ...shaderPromises,
-    ...planetPromises,
-    soundEffectPromise,
-    ...texturePromises,
-    shipsPromise,
-  ])
-  maxResources = promiseResults.length - 1 + numberOfSooundEffects
+  const promises = [...shaderPromises, ...planetPromises, soundEffectPromise, ...texturePromises, shipsPromise]
+  maxResources = promises.length - 1 + numberOfSooundEffects
+  const promiseResults = await Promise.all(promises)
 
   const loadedShaders = promiseResults.slice(0, shaderPromises.length) as ShaderSource[]
   const planets = promiseResults.slice(
