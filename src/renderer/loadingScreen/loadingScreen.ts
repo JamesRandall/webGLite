@@ -295,6 +295,7 @@ export async function createLoadingScreenRenderer(gl: WebGL2RenderingContext) {
       }
 
       const resourceStatus = getResourceStatus()
+      console.log(resourceStatus)
       if (resourceStatus.loaded >= resourceStatus.max) {
         loadingBarAlpha -= delta
       }
