@@ -30,14 +30,14 @@ export interface MarketItem {
 
 // The algorithm for this is described here:
 //    https://www.bbcelite.com/deep_dives/market_item_prices_and_availability.html
-// TODO: the implementation below is not entirely accurate. The original uses 8-bit arithmetic (essentially on a single
-// byte) which results in Narcotics, with their high economic factor taking calculations above 255 - in the original
-// code this results in the carry flag being set and used in various places. In the below... it does not.
+// The original uses 8-bit arithmetic so we need to wrap values at 256 to match the 6502 behavior.
+// This is especially important for Narcotics which has a high base price (235) and economic factor (29).
 export function generateMarketItems(system: StarSystem): MarketItem[] {
   const random = () => Math.floor(Math.random() * 256)
 
   return marketItemBaseStats.map((base) => {
-    const unitPrice = ((base.price + (random() & base.mask) + system.economy * base.economicFactor) * 4) / 10
+    // Simulate 8-bit arithmetic by masking to 0-255 before multiplying by 4
+    const unitPrice = ((((base.price + (random() & base.mask) + system.economy * base.economicFactor) & 0xff) >>> 0) * 4) / 10
     //const unitPrice = ((((base.price + (random() & base.mask) + system.economy)) * base.economicFactor) * 4)/10
     const quantityForSale = Math.max(
       0,
