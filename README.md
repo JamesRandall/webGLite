@@ -1,117 +1,96 @@
 # webGLite
 
-An approximate in some ways accurate in others TypeScript version of the classic BBC Micro game Elite that makes use of WebGL.
+### A WebGL/TypeScript port of the classic BBC Micro game Elite
 
-Obviously massive amounts of credit go the original authors of the game: David Braben and Ian Bell. I was blown away by this game on launch (1984?) and played it for staggering numbers of hours. I suspect its the game I've dedicated the most time to. The more I learn about how it works and just how much is going on the more blown away I am by how they managed to get all this running on an 8-bit micro. Its truly astounding. Even conceiving of this as a possibility on an 8-bit... just wow. 
+**[▶ Play it now at webglite.com](https://webglite.com)**
 
-In addition I am **heavily** indebted to Mark Moxon and his project to document the source code and inner workings. Its as much of a work of art as the original game. Just wonderful stuff. I don't think I'd have contemplated this without that.
+![webGLite screenshot](screenshot.png)
 
-https://www.bbcelite.com
+---
 
-I'm trying to use similar terminology in the code as is used on his website. The hope being that this is a useful expression of at least some of it in a friendly language.
+Trade, fight, and explore the original 1984 universe — running entirely in your browser. This is a faithful recreation of David Braben and Ian Bell's groundbreaking space game, built from the ground up in TypeScript and WebGL.
 
-I'll probably do some writing about this implementation over on my blog:
+## Features
 
-https://www.jamesdrandall.com
+- Full 3D flight and combat
+- Trading between systems
+- Procedurally generated galaxy (the original 8 galaxies)
+- Original ship models converted from Ian Bell's VRML archive
+- Authentic BBC Micro font and UI styling
+- Original audio and Blue Danube docking music
 
-## Running the Game
+## Running locally
 
-Should be as simple as:
+```bash
+npm install
+npm start
+```
 
-    npm install
-    npm start
+## Credits
 
-If its not.... log an issue and I'll see what I can do!
+This project wouldn't exist without:
 
-## Current Status
+- **David Braben and Ian Bell** — the original authors. I was blown away by this game on launch in 1984 and played it for staggering numbers of hours. The more I learn about how it works, the more astounded I am that they got all this running on an 8-bit micro.
 
-Early days. Bits and pieces are up and running but with lots left to figure out. Expect the code to twist around a lot in the coming weeks. I've done stuff with WebGL before but never a space game and there are definitely a couple of challenges in here (to my humble brain anyway).
+- **[Mark Moxon's Elite documentation](https://www.bbcelite.com/)** — an incredible work of art in its own right. His annotated source code made this project possible.
 
-If my previous retro-remake type work is anything to go by expect me to blunder around a lot: I'm neither a games programmer or a maths guy. I get by!
+- **[Ian Bell's Elite archive](http://www.elitehomepage.org/archive/index.htm)** — the ship models in VRML format that I converted for use here.
 
-Beyond finishing the game obvious to dos include:
+- **[Solar System Scope](https://www.solarsystemscope.com/textures/)** — planet textures (CC Attribution license).
 
-1. Move shaders to load from external files
-2. Rationalise the WebGL code - I've got a consistent view of what I'm doing now and this can be massively flattened now 
+## Technical notes
 
-## Ship Models
+I've tried to use similar terminology to Mark Moxon's documentation, so this codebase can serve as a readable expression of Elite's internals in a modern language.
 
-The original ship format is a bit weird to a modern general purpose renderer however Ian Bell (one of the original authors, we're not worthy we're not worthy) maintains an archive of files which include the ship models in VRML format.
+<details>
+<summary><strong>Coordinate system</strong></summary>
 
-http://www.elitehomepage.org/archive/index.htm
+Elite uses 23-bit numbers + 1 sign bit for ship coordinates (+/- 23 bits), represented as:
 
-The ship models in this demo / conversion come from taking those VRML files and running them through a converter to Wavefront Obj format which is then pretty straightforward to load into vertex and index buffers in WebGL.
+```
+x = (x_sign x_hi x_lo)
+y = (y_sign y_hi y_lo)
+z = (z_sign z_hi z_lo)
+```
 
-## Timings
+The player is always at (0,0,0) and the world revolves around them. Ships appear on the scanner when their high byte is < 63 (0x3300 units in any axis).
 
-In the original game things like acceleration aren't modelled in terms of meters per second. Instead times are expressed in terms of cycles through the main game loop. This worked fine for the original game which was running on fixed hardware but doesn't really work on modern hardware.
+</details>
 
-I've approximated the feel of the original game by recording myself playing Elite in BeebEm and then figuring out how long it takes to do accelerate to match speed, pitch, roll etc. And then time how long it takes to travel a distance on the scanner etc.
+<details>
+<summary><strong>Timing and game feel</strong></summary>
 
-I think I've landed in the right ballpark but due to its approach to timing and the very limited hardware available at the time the frame rate can vary wildly and this impacts how long it takes to get through the main loop. So the time to accelerate to max speed is impacted by, for example, how many objects are on the screen.
+The original game expressed acceleration and movement in terms of main loop cycles, not real time — which worked on fixed hardware but not on modern systems.
 
-## The scanner
+I approximated the original feel by recording myself playing Elite in BeebEm, measuring how long acceleration, pitch, roll, and scanner distances actually took, then calibrating to match. The original ran at 10-20fps depending on scene complexity; spawning happened roughly every 256 loop iterations (~17 seconds).
 
-I'm currently rendering the scanner in 3D using a texture however this leads to its "dirty" look as we are looking at it obliquely. Alternatives to consider:
+</details>
 
-0. Keep playing with the texture - I've just had a go at tweaking it based on knowing how it will be displayed, its yielded some improvement.
-1. See if it looks any better rendered as a 3D model (i.e. draw the circle and lines using triangles)
-2. Render it in 2D
+<details>
+<summary><strong>Scanner rendering</strong></summary>
 
-## Font
+Currently rendered in 3D using a texture, which creates the slightly "dirty" oblique look. Alternatives I've considered: rendering as a 3D model with triangles, or falling back to 2D.
 
-The font is pretty much the original BBC Micro font. Not sure I've got the spacing quite right as it should be 40 characters across and I'm 38ish characters across but it looks about right which is the main thing!
+</details>
 
-## World space
+<details>
+<summary><strong>Ship models</strong></summary>
 
-Elite uses 23 bit numbers + 1 bit for the sign for ship co-ordinates. So +/- 23-bits. This is represented as:
+Converted from Ian Bell's VRML archive to Wavefront OBJ format, then loaded into WebGL vertex and index buffers.
 
-    x = (x_sign x_hi x_lo)
-    y = (y_sign y_hi y_lo)
-    z = (z_sign z_hi z_lo)
+</details>
 
-The player is always at position (0,0,0) and the world "revolves", quite literally, around them.
+## To do
 
-The scanner shows shipBlueprint that have a high byte that is < 63 (0x33) and so to be in range the shipBlueprint must have co-ordinates:
-
-    x > -0x3300 and x < 0x3300
-    y > -0x3300 and x < 0x3300
-    z > -0x3300 and x < 0x3300
-
-## Planet textures
-
-I sourced the textures for the planets from here:
-
-https://www.solarsystemscope.com/textures/
-
-Super cool and, handily, licensed under the CC Attribution license.
-
-## Ship spawning (trader, pirate etc.)
-
-The game looks to spawn a ship every 256 times through its main loop (and then applies some random chance).
-
-From videoing and observing the game it appears to be running on average between 10 and 20 fps depending on how much is on screen.
-
-So 256 times through the loop will take around 17 seconds (256/15). We're starting by using that as the basis for spawning in this version.
-
-This is set, and changeable, in the constants file.
-
-The spawning is covered in the main game loop parts 1 to 6:
-
-https://www.bbcelite.com/master/main/subroutine/main_game_loop_part_1_of_6.html
-
-## Audio
-
-The audio is all from the original game with the exception of the Blue Danube which is CC licensed from here:
-
-https://www.youtube.com/channel/UCht8qITGkBvXKsR1Byln-wA
+- Move shaders to external files
+- Rationalise WebGL code (now that the approach is settled)
 
 ## License
 
-Obviously the original game, code, ship models, names, etc. is copyright the original authors and copyright owners.
+The original game, code, ship models, and names are copyright their original owners.
 
-From looking at other Elite variants.... OOLite is GPL and CC.
+The TypeScript code in this repository is licensed under **Creative Commons Attribution-NonCommercial-ShareAlike** — you can copy, use, and modify it, but you can't sell it, and derivative works must use the same license.
 
-And so in terms of the TypeScript code here: I've licensed it under the Creative Commons Attribution-NonCommercial-ShareAlike license. Basically you can copy, use it, modify it but you can't sell it and anything you create has to be under the same license.
+---
 
-I figured that was the best way to license the code for a homage such as this.
+*If you enjoy this, consider [starring the repo](https://github.com/JamesRandall/webGLite) — it helps others find it.*
