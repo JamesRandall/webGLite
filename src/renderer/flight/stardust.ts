@@ -58,9 +58,9 @@ export function createStardustRenderer(gl: WebGL2RenderingContext, resources: Re
   const render = (game: Game) => {
     const localBubble = game.localBubble
     const isRearView = game.currentScene === SceneEnum.Rear
-    // Rear view: flip X for mirror, invert Z so near becomes far (stars recede)
+    // Rear view: flip X for mirror effect (movement direction handled in update logic)
     const positions = localBubble.stardust.flatMap((pos) =>
-      isRearView ? [-pos[0], pos[1], 1.0 - pos[2]] : [pos[0], pos[1], pos[2]],
+      isRearView ? [-pos[0], pos[1], pos[2]] : [pos[0], pos[1], pos[2]],
     )
     const positionBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
