@@ -30,11 +30,12 @@ export function updateStardust(game: Game, timeDelta: number) {
     const playerSpeed =
       Math.max(game.player.speed / game.player.blueprint.maxSpeed, 0.02) *
       (game.player.isJumping ? stardustJumpSpeedMultiplier : 1)
+
+    // Stars move toward camera (Z decreases), X/Y spread outward
     const speed = ((1 - z) * distancePerSecondAtBack * 10 + distancePerSecondAtBack) * timeDelta * playerSpeed
     let newZ = sd[2] - speed
     if (newZ <= 0.0) {
-      newZ = 0.0
-      //return createRandomStar()
+      return createRandomStar()
     }
     const xy = vec2.fromValues(sd[0], sd[1])
     vec2.normalize(xy, xy)
@@ -47,11 +48,9 @@ export function updateStardust(game: Game, timeDelta: number) {
       newPosition[1] <= visibilityThreshold
     ) {
       vec3.rotateZ(newPosition, newPosition, [0, 0, 0], game.player.roll * timeDelta)
-      // we can't rotate around x as put positions are really 2D with z used for colour
       vec3.add(newPosition, newPosition, [0, game.player.pitch * timeDelta * 2, 0])
       return newPosition
     }
-    //return createRandomStar(0.5)
     return createRandomStar()
   })
 }

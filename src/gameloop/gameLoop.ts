@@ -60,6 +60,9 @@ function applySceneSelection(game: Game) {
       case 1:
         game.currentScene = SceneEnum.Front
         break
+      case 2:
+        game.currentScene = SceneEnum.Rear
+        break
       case 5:
         game.currentScene = SceneEnum.LongRangeMap
         break
@@ -141,7 +144,7 @@ function createApplyCameraShake() {
         time = 0
         const xDelta = (Math.random() - 0.5) * maxXDelta
         const yDelta = (Math.random() - 0.5) * maxYDelta
-        if (game.currentScene == SceneEnum.Front) {
+        if (game.currentScene == SceneEnum.Front || game.currentScene == SceneEnum.Rear) {
           const c = game.player.lookAt
           c[0] += xDelta
           c[1] += yDelta

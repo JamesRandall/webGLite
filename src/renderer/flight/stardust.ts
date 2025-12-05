@@ -5,7 +5,7 @@ import { LocalBubble } from "../../model/localBubble"
 import { compileShaderProgram, compileShaderProgramFromSource } from "../../shader"
 import { mat4 } from "gl-matrix"
 import { Resources } from "../../resources/resources"
-import { Game } from "../../model/game"
+import { Game, SceneEnum } from "../../model/game"
 
 interface ProgramInfo {
   program: WebGLProgram
@@ -57,7 +57,11 @@ export function createStardustRenderer(gl: WebGL2RenderingContext, resources: Re
 
   const render = (game: Game) => {
     const localBubble = game.localBubble
-    const positions = localBubble.stardust.flatMap((pos) => [pos[0], pos[1], pos[2]])
+    const isRearView = game.currentScene === SceneEnum.Rear
+    // Rear view: flip X for mirror, invert Z so near becomes far (stars recede)
+    const positions = localBubble.stardust.flatMap((pos) =>
+      isRearView ? [-pos[0], pos[1], 1.0 - pos[2]] : [pos[0], pos[1], pos[2]],
+    )
     const positionBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)

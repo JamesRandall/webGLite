@@ -71,6 +71,7 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
 
     switch (game.currentScene) {
       case SceneEnum.Front:
+      case SceneEnum.Rear:
         gl.enable(gl.DEPTH_TEST)
         shipRenderer.render(viewProjectionMatrix, game.localBubble)
         explosionRenderer.render(viewProjectionMatrix, game.localBubble)
