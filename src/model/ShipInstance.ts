@@ -42,6 +42,7 @@ export interface TacticsState {
   flyingTowards: FlyingTowardsEnum
   canApplyTactics: boolean
   targetIndex: number | null
+  viperSpawnTimer: number | null // Used by station to track when to spawn next Viper
 }
 
 export interface ShipInstance extends PositionedObject {

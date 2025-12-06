@@ -132,25 +132,36 @@ function headTowardsNoAcceleration(ship: ShipInstance, game: Game, timeDelta: nu
   const pDp = vec3.dot(normalisedDirection, ro)
   const orientationDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.noseOrientation), normalisedDirection)
 
-  if (orientationDotProduct > 0 && Math.abs(pDp) < 0.005) {
-    ship.pitch = 0
-  } else {
-    if (pDp > 0) {
-      ship.pitch = -ship.blueprint.maxPitchSpeed
-    } else if (pDp < 0) {
-      ship.pitch = ship.blueprint.maxPitchSpeed
-    } else {
-      ship.pitch = 0
-    }
-  }
-
+  // Check if we're pointing directly away from target (orientationDotProduct < 0)
+  // and the target is aligned with our roof/floor axis (sideDotProduct near 0)
+  // In this case we need to roll to break the deadlock
   const sideDotProduct = vec3.dot(normalisedDirection, cleanNormalise(ship.rightOrientation))
-  if (sideDotProduct > 0.03) {
-    ship.roll = -ship.blueprint.maxRollSpeed
-  } else if (sideDotProduct < -0.03) {
+  const isDeadlocked = orientationDotProduct < -0.9 && Math.abs(sideDotProduct) < 0.1
+
+  if (isDeadlocked) {
+    // Force a roll to break out of the deadlock
     ship.roll = ship.blueprint.maxRollSpeed
+    ship.pitch = ship.blueprint.maxPitchSpeed
   } else {
-    ship.roll = 0
+    if (orientationDotProduct > 0 && Math.abs(pDp) < 0.005) {
+      ship.pitch = 0
+    } else {
+      if (pDp > 0) {
+        ship.pitch = -ship.blueprint.maxPitchSpeed
+      } else if (pDp < 0) {
+        ship.pitch = ship.blueprint.maxPitchSpeed
+      } else {
+        ship.pitch = 0
+      }
+    }
+
+    if (sideDotProduct > 0.03) {
+      ship.roll = -ship.blueprint.maxRollSpeed
+    } else if (sideDotProduct < -0.03) {
+      ship.roll = ship.blueprint.maxRollSpeed
+    } else {
+      ship.roll = 0
+    }
   }
 
   const accelerationValue =
@@ -173,39 +184,53 @@ function headTowardsAcceleration(ship: ShipInstance, game: Game, timeDelta: numb
   const orientationDotProduct = vec3.dot(vec3.normalize(vec3.create(), ship.noseOrientation), normalisedDirection)
   const pitchDelta = timeDelta * ship.blueprint.pitchAcceleration
   const rollDelta = timeDelta * ship.blueprint.rollAcceleration
-  const deceleratePitch = () => {
-    if (ship.pitch > 0) {
-      ship.pitch -= pitchDelta
-      if (ship.pitch < 0) ship.pitch = 0
-    } else if (ship.pitch < 0) {
-      ship.pitch += pitchDelta
-      if (ship.pitch > 0) ship.pitch = 0
-    }
-  }
 
-  if (orientationDotProduct > 0 && Math.abs(pDp) < 0.1) {
-    deceleratePitch()
-  } else {
-    if (pDp > 0) {
-      ship.pitch -= pitchDelta
-      if (ship.pitch < -ship.blueprint.maxPitchSpeed) ship.pitch = -ship.blueprint.maxPitchSpeed
-    } else if (pDp < 0) {
-      ship.pitch += pitchDelta
-      if (ship.pitch > ship.blueprint.maxPitchSpeed) ship.pitch = ship.blueprint.maxPitchSpeed
-    } else {
-      deceleratePitch()
-    }
-  }
-
+  // Check if we're pointing directly away from target (orientationDotProduct < 0)
+  // and the target is aligned with our roof/floor axis (sideDotProduct near 0)
+  // In this case we need to roll to break the deadlock
   const sideDotProduct = vec3.dot(normalisedDirection, ship.rightOrientation)
-  if (sideDotProduct > 0) {
-    ship.roll -= rollDelta
-    if (ship.roll < -ship.blueprint.maxRollSpeed) ship.roll = -ship.blueprint.maxRollSpeed
-  } else if (sideDotProduct < 0) {
+  const isDeadlocked = orientationDotProduct < -0.9 && Math.abs(sideDotProduct) < 0.1
+
+  if (isDeadlocked) {
+    // Force a roll to break out of the deadlock
     ship.roll += rollDelta
     if (ship.roll > ship.blueprint.maxRollSpeed) ship.roll = ship.blueprint.maxRollSpeed
+    ship.pitch += pitchDelta
+    if (ship.pitch > ship.blueprint.maxPitchSpeed) ship.pitch = ship.blueprint.maxPitchSpeed
   } else {
-    ship.roll = 0
+    const deceleratePitch = () => {
+      if (ship.pitch > 0) {
+        ship.pitch -= pitchDelta
+        if (ship.pitch < 0) ship.pitch = 0
+      } else if (ship.pitch < 0) {
+        ship.pitch += pitchDelta
+        if (ship.pitch > 0) ship.pitch = 0
+      }
+    }
+
+    if (orientationDotProduct > 0 && Math.abs(pDp) < 0.1) {
+      deceleratePitch()
+    } else {
+      if (pDp > 0) {
+        ship.pitch -= pitchDelta
+        if (ship.pitch < -ship.blueprint.maxPitchSpeed) ship.pitch = -ship.blueprint.maxPitchSpeed
+      } else if (pDp < 0) {
+        ship.pitch += pitchDelta
+        if (ship.pitch > ship.blueprint.maxPitchSpeed) ship.pitch = ship.blueprint.maxPitchSpeed
+      } else {
+        deceleratePitch()
+      }
+    }
+
+    if (sideDotProduct > 0) {
+      ship.roll -= rollDelta
+      if (ship.roll < -ship.blueprint.maxRollSpeed) ship.roll = -ship.blueprint.maxRollSpeed
+    } else if (sideDotProduct < 0) {
+      ship.roll += rollDelta
+      if (ship.roll > ship.blueprint.maxRollSpeed) ship.roll = ship.blueprint.maxRollSpeed
+    } else {
+      ship.roll = 0
+    }
   }
 
   const accelerationValue =

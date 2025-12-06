@@ -3,7 +3,12 @@ import { Resources } from "../../resources/resources"
 import { AttitudeEnum, ShipInstance, ShipRoleEnum } from "../../model/ShipInstance"
 import { ShipModelEnum } from "../../model/shipBlueprint"
 import { vec3 } from "gl-matrix"
-import { scannerRadialWorldRange } from "../../constants"
+import { scannerRadialWorldRange, stationTacticsIntervalSeconds } from "../../constants"
+
+// Viper spawn timing constants
+const firstViperSpawnTime = 10 // First Viper spawns within 10 seconds of station becoming hostile
+const minViperSpawnInterval = 20 // Minimum time between subsequent Vipers
+const maxViperSpawnInterval = 30 // Maximum time between subsequent Vipers
 
 function spawnLaunchingTransporterOrShuttle(station: ShipInstance, game: Game, resources: Resources) {
   if (!game.player.isInSafeZone || game.localBubble.station === null) return false
@@ -33,21 +38,39 @@ function spawnHostileViper(station: ShipInstance, game: Game, resources: Resourc
   game.localBubble.ships.push(ship)
 }
 
-export function stationTactics(station: ShipInstance, game: Game, resources: Resources) {
-  if (!station.tacticsState.canApplyTactics) return
+function getNextViperSpawnInterval() {
+  return minViperSpawnInterval + Math.random() * (maxViperSpawnInterval - minViperSpawnInterval)
+}
 
+export function stationTactics(station: ShipInstance, game: Game, resources: Resources, timeDelta: number) {
   if (station.attitude === AttitudeEnum.Hostile && game.player.isInSafeZone) {
-    if (Math.random() < 0.062) {
+    // Initialize the Viper spawn timer when station first becomes hostile
+    if (station.tacticsState.viperSpawnTimer === null) {
+      station.tacticsState.viperSpawnTimer = firstViperSpawnTime
+    }
+
+    // Count down the timer
+    station.tacticsState.viperSpawnTimer -= timeDelta
+
+    // Spawn a Viper when timer expires
+    if (station.tacticsState.viperSpawnTimer <= 0) {
       const numberOfLocalVipers = game.localBubble.ships.filter(
         (s) => s.blueprint.model === ShipModelEnum.Viper && vec3.length(s.position) < scannerRadialWorldRange[0],
       ).length
       if (numberOfLocalVipers < 6) {
         spawnHostileViper(station, game, resources)
       }
+      // Reset timer for next Viper
+      station.tacticsState.viperSpawnTimer = getNextViperSpawnInterval()
     }
   } else {
-    if (Math.random() < 0.008) {
-      spawnLaunchingTransporterOrShuttle(station, game, resources)
+    // Reset Viper spawn timer when station is not hostile
+    station.tacticsState.viperSpawnTimer = null
+
+    if (station.tacticsState.canApplyTactics) {
+      if (Math.random() < 0.008) {
+        spawnLaunchingTransporterOrShuttle(station, game, resources)
+      }
     }
   }
 }

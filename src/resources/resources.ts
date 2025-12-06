@@ -258,6 +258,7 @@ function toInstance(ship: ShipBlueprint, position: vec3, noseOrientation: vec3, 
       flyingTowards: FlyingTowardsEnum.None,
       canApplyTactics: false,
       targetIndex: null,
+      viperSpawnTimer: null,
     },
     numberOfShipsToSpawn:
       ship.model === ShipModelEnum.Thargoid

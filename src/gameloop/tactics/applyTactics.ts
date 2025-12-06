@@ -65,7 +65,7 @@ export function applyTactics(game: Game, resources: Resources, timeDelta: number
         missileTactics(ship, game, resources, timeDelta)
         break
       case ShipRoleEnum.Station:
-        stationTactics(ship, game, resources)
+        stationTactics(ship, game, resources, timeDelta)
         break
       case ShipRoleEnum.RockHermit:
         rockHermitTactics(ship, game, resources)
