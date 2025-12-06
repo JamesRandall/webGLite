@@ -14,7 +14,7 @@ import { replaceDestroyedShipsWithExplosions } from "./explosions"
 import { recharge, reduceLaserTemperature } from "./playerEnergy"
 import { MissileStatusEnum } from "../model/player"
 import { findShipInCrosshairs } from "./utilities/findShipInCrosshairs"
-import { damagePlayerWithMissile } from "./utilities/damage"
+import { applyDamageToPlayer, damagePlayerWithMissile } from "./utilities/damage"
 import { ecmEnergyCostPerSecond, missileDamageAmount } from "../constants"
 import { calculateAltitudeAndMaxAltitude } from "../utilities"
 
@@ -155,6 +155,22 @@ function handleCollisions(game: Game, resources: Resources) {
         return
       } else if (ship.role === ShipRoleEnum.Missile) {
         damagePlayerWithMissile(game, resources, ship)
+      } else {
+        // Collision with regular ship - both take damage
+        // Damage is based on relative speed and ship mass
+        const collisionDamage = Math.max(game.player.speed, ship.speed) * 3 + 15
+
+        // Apply damage to player through shields first, then energy
+        applyDamageToPlayer(game, resources, ship, collisionDamage)
+
+        // Apply damage to the other ship
+        ship.energy -= collisionDamage
+        if (ship.energy <= 0) {
+          ship.isDestroyed = true
+          resources.soundEffects.shipExplosion()
+        } else {
+          resources.soundEffects.playerLaserHit()
+        }
       }
     }
   })
