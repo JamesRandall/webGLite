@@ -58,7 +58,7 @@ export function createStardustRenderer(gl: WebGL2RenderingContext, resources: Re
   const render = (game: Game) => {
     const localBubble = game.localBubble
     const isRearView = game.currentScene === SceneEnum.Rear
-    // Rear view: flip X for mirror effect (movement direction handled in update logic)
+    // Rear view: just flip X for mirror effect, movement is handled in update logic
     const positions = localBubble.stardust.flatMap((pos) =>
       isRearView ? [-pos[0], pos[1], pos[2]] : [pos[0], pos[1], pos[2]],
     )
