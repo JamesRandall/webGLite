@@ -1,15 +1,27 @@
-import { Game } from "../../model/game"
+import { Game, SceneEnum } from "../../model/game"
 import { ShipInstance } from "../../model/ShipInstance"
 import { vec2, vec3 } from "gl-matrix"
 
 export function findShipInCrosshairs(game: Game) {
+  const isRearView = game.currentScene === SceneEnum.Rear
+
   return game.localBubble.ships.reduce((hit: ShipInstance | null, ship) => {
-    if (ship.position[2] > 0) return hit
-    if (hit !== null && hit.position[2] > ship.position[2]) return hit
+    if (isRearView) {
+      // Rear view: ships must be behind player (positive Z)
+      if (ship.position[2] < 0) return hit
+      // Prefer closer ships (smaller positive Z)
+      if (hit !== null && hit.position[2] < ship.position[2]) return hit
+    } else {
+      // Front view: ships must be in front of player (negative Z)
+      if (ship.position[2] > 0) return hit
+      // Prefer closer ships (larger negative Z, i.e., closer to 0)
+      if (hit !== null && hit.position[2] > ship.position[2]) return hit
+    }
 
     const translatedBoundingBox = ship.boundingBox.map((v) => {
       const v2 = vec3.add(vec3.create(), v, ship.position)
-      return vec2.fromValues(v2[0], v2[1])
+      // Flip X for rear view since the view is mirrored
+      return vec2.fromValues(isRearView ? -v2[0] : v2[0], v2[1])
     })
     // This depends very much on the order that the bounding box is created in
     const faces = [
