@@ -3,8 +3,7 @@ import { createStartingScene, StartingSceneEnum } from "./scenes/sceneFactory"
 import { dimensions, setDimensions } from "./constants"
 import { createLoadingScreenRenderer } from "./renderer/loadingScreen/loadingScreen"
 import { Scene } from "./scenes/scene"
-
-require("./extensions.ts")
+import "./extensions"
 
 async function mount(viewCanvas: HTMLCanvasElement) {
   const retroRatio = 800 / 760
