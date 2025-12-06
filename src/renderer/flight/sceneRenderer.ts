@@ -72,6 +72,8 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
     switch (game.currentScene) {
       case SceneEnum.Front:
       case SceneEnum.Rear:
+      case SceneEnum.Left:
+      case SceneEnum.Right:
         gl.enable(gl.DEPTH_TEST)
         shipRenderer.render(viewProjectionMatrix, game.localBubble)
         explosionRenderer.render(viewProjectionMatrix, game.localBubble)
@@ -135,8 +137,24 @@ export function createSceneRenderer(gl: WebGL2RenderingContext, resources: Resou
     drawCrosshairs(draw2d, game)
     laserRenderer.render(game)
 
+    // Show view label at top of screen
+    switch (game.currentScene) {
+      case SceneEnum.Front:
+        draw2d.text.center("Front View", 1)
+        break
+      case SceneEnum.Rear:
+        draw2d.text.center("Rear View", 1)
+        break
+      case SceneEnum.Left:
+        draw2d.text.center("Left View", 1)
+        break
+      case SceneEnum.Right:
+        draw2d.text.center("Right View", 1)
+        break
+    }
+
     if (game.hyperspace !== null && game.hyperspace.countdown > 0) {
-      draw2d.text.draw(game.hyperspace.countdown.toString(), [0.5, 0.5])
+      draw2d.text.draw(game.hyperspace.countdown.toString(), [1, 1])
       const hyperspaceText = `HYPERSPACE - ${game.player.selectedSystem.name}`
       draw2d.text.center(hyperspaceText, 21.5)
     }

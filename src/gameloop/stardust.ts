@@ -25,6 +25,8 @@ export function createStardust() {
 // renderer) so we should probably change that or tweak the xy range to be broader so it still covers the display.
 export function updateStardust(game: Game, timeDelta: number) {
   const isRearView = game.currentScene === SceneEnum.Rear
+  const isLeftView = game.currentScene === SceneEnum.Left
+  const isRightView = game.currentScene === SceneEnum.Right
 
   game.localBubble.stardust = game.localBubble.stardust.map((sd) => {
     const z = sd[2]
@@ -56,6 +58,26 @@ export function updateStardust(game: Game, timeDelta: number) {
       const newPosition = vec3.fromValues(newX, newY, newZ)
 
       vec3.rotateZ(newPosition, newPosition, [0, 0, 0], -game.player.roll * timeDelta)
+      vec3.add(newPosition, newPosition, [0, game.player.pitch * timeDelta * 2, 0])
+      return newPosition
+    } else if (isLeftView || isRightView) {
+      // SIDE VIEWS: Stars move horizontally across the screen
+      // Left view: stars move from right to left (positive X to negative X)
+      // Right view: stars move from left to right (negative X to positive X)
+      const speed = ((1 - z) * distancePerSecondAtBack * 10 + distancePerSecondAtBack) * timeDelta * playerSpeed
+      const xDirection = isLeftView ? -1 : 1
+      let newX = sd[0] + speed * xDirection
+
+      // Reset when star goes off screen
+      if ((isLeftView && newX < -0.5) || (isRightView && newX > 0.5)) {
+        // Respawn on opposite edge
+        const spawnX = isLeftView ? 0.5 : -0.5
+        return vec3.fromValues(spawnX, Math.random() - 0.5, Math.random())
+      }
+
+      const newPosition = vec3.fromValues(newX, sd[1], sd[2])
+
+      // Apply pitch to Y movement
       vec3.add(newPosition, newPosition, [0, game.player.pitch * timeDelta * 2, 0])
       return newPosition
     } else {
